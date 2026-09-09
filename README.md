@@ -23,12 +23,23 @@ cp apps/api/.env.example apps/api/.env          # falta la base: ver infra/
 cp apps/mobile/.env.example apps/mobile/.env    # con la IP de tu red local
 
 bun run check            # lint y tipos, lo mismo que corre el hook de pre-push
-bun run dev:api          # API en el puerto 3000
-bun run dev:mobile       # Expo; necesita una build de desarrollo, no Expo Go
+bun run infra:up         # PostGIS en docker
+bun run db:migrate       # tablas y extensiones
+bun run osm:update       # ciclovías y grafo de ruteo, la primera vez tarda
+bun run dev:api          # API en el puerto 3001
 ```
 
-El API todavía no arranca sin PostGIS ni Valhalla, que son el siguiente paso y viven en
-[`infra/`](infra/).
+La app no corre en Expo Go, porque MapLibre lleva código nativo
+([0005](docs/decisiones/0005-expo-en-el-movil.md)). Hace falta una build de desarrollo propia, que
+con el SDK de Android instalado se compila local:
+
+```sh
+bun run --filter '@tupu/mobile' prebuild   # genera android/, que no se versiona
+bun run --filter '@tupu/mobile' android    # compila e instala en el teléfono conectado
+bun run dev:mobile                         # el servidor de Metro, una vez instalada
+```
+
+Lo que corre del lado servidor vive en [`infra/`](infra/).
 
 ## El repositorio
 
