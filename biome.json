@@ -1,0 +1,104 @@
+{
+  "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+  "vcs": { "enabled": true, "clientKind": "git", "useIgnoreFile": true },
+  "files": {
+    "includes": ["**", "!**/node_modules", "!apps/mobile/.expo", "!**/drizzle"]
+  },
+  "formatter": {
+    "enabled": true,
+    "indentStyle": "space",
+    "indentWidth": 2,
+    "lineWidth": 100
+  },
+  "javascript": {
+    "formatter": { "quoteStyle": "single", "semicolons": "asNeeded" }
+  },
+  "assist": { "actions": { "source": { "organizeImports": "on" } } },
+  "linter": {
+    "enabled": true,
+    "rules": { "preset": "recommended" }
+  },
+  "overrides": [
+    {
+      "includes": ["packages/**"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "paths": {
+                  "@tupu/api": "packages/* no puede importar de apps/*. La regla de dependencia va en un solo sentido (0002).",
+                  "@tupu/mobile": "packages/* no puede importar de apps/*. La regla de dependencia va en un solo sentido (0002)."
+                },
+                "patterns": [
+                  {
+                    "group": ["**/apps/**"],
+                    "message": "packages/* no puede importar de apps/*, tampoco por ruta relativa (0002)."
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "includes": ["apps/api/**"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "paths": {
+                  "@tupu/mobile": "El API no importa del móvil. Lo compartido va en packages/* (0002)."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "includes": ["apps/mobile/**"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "paths": {
+                  "@tupu/api": {
+                    "allowImportNames": ["AppType"],
+                    "message": "Del API solo se importa el tipo AppType, para el cliente RPC de Hono (0004). Cualquier otra cosa entra al bundle del móvil (0001)."
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "includes": ["apps/api/src/features/**"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "patterns": [
+                  {
+                    "group": ["../*/*", "../*/*/**", "!../*/index", "!../../**"],
+                    "message": "Una feature no entra a los internos de otra: solo a su index.ts (0008)."
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}
