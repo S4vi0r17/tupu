@@ -52,8 +52,9 @@ El mapa del stack completo, con las alternativas que se descartaron en cada capa
 | 32 | **Zod** para validar y definir los contratos | [0032](decisiones/0032-zod-en-contracts.md) |
 | 33 | **Drizzle también en el teléfono** | [0033](decisiones/0033-drizzle-tambien-en-el-telefono.md) |
 | 34 | El proyecto se llama **tupu** | [0034](decisiones/0034-el-proyecto-se-llama-tupu.md) |
-| 35 | Bun instala con **enlazador plano** · *sustituye en parte a [0001](decisiones/0001-monorepo-con-bun.md)* | [0035](decisiones/0035-bun-instala-con-enlazador-plano.md) |
+| 35 | ~~Bun instala con enlazador plano~~ — reemplazada por [0037](decisiones/0037-bun-se-queda-con-el-enlazador-aislado.md) | [0035](decisiones/0035-bun-instala-con-enlazador-plano.md) |
 | 36 | **NativeWind** para los estilos del móvil | [0036](decisiones/0036-nativewind-para-los-estilos.md) |
+| 37 | Bun se queda con el **enlazador aislado** · *el móvil ya no puede ni resolver el cliente de Postgres* | [0037](decisiones/0037-bun-se-queda-con-el-enlazador-aislado.md) |
 | — | ~~Alcance: cuentas + historial desde el inicio~~ — reemplazado por [0010](decisiones/0010-alcance-del-mvp.md) | — |
 | — | ~~El proyecto se llama rumbo~~ — reemplazado por [0034](decisiones/0034-el-proyecto-se-llama-tupu.md) | — |
 
@@ -70,7 +71,7 @@ El mapa del stack completo, con las alternativas que se descartaron en cada capa
 
 ## Planeación cerrada
 
-**36 decisiones. No queda ninguna abierta.** Cubren stack, datos, móvil, despliegue y proceso, y
+**37 decisiones. No queda ninguna abierta.** Cubren stack, datos, móvil, despliegue y proceso, y
 los tres huecos que aparecieron al auditar el resultado están cerrados también. El siguiente paso
 ya no es decidir: es escribir código.
 

@@ -5,13 +5,13 @@ archivo.
 
 ## Estado del proyecto
 
-**Planeación cerrada.** 36 decisiones tomadas, ninguna abierta.
+**Planeación cerrada.** 37 decisiones tomadas, ninguna abierta.
 
 | Documento | Para qué |
 |---|---|
 | [`docs/planeacion.md`](docs/planeacion.md) | **Leer esto primero.** Estado, orden de arranque, aplazados con disparador |
 | [`docs/stack.md`](docs/stack.md) | El stack de un vistazo, con el rival descartado de cada capa |
-| [`docs/decisiones/`](docs/decisiones/) | 0001–0036: el razonamiento y qué se dio a cambio |
+| [`docs/decisiones/`](docs/decisiones/) | 0001–0037: el razonamiento y qué se dio a cambio |
 | [`docs/modelo-datos.md`](docs/modelo-datos.md) | Las entidades campo por campo |
 | [`docs/glosario.md`](docs/glosario.md) | OSM, PostGIS, tiles, isócronas, APK… |
 | [`docs/conventions/commits.md`](docs/conventions/commits.md) | Todo mensaje de commit |
