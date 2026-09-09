@@ -15,6 +15,20 @@
       "when": 1788985521509,
       "tag": "0001_cycleways",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1788986972565,
+      "tag": "0002_enable_hstore",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1788987327462,
+      "tag": "0003_geography_index",
+      "breakpoints": true
     }
   ]
 }

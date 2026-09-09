@@ -1,3 +1,4 @@
+import { sql } from 'drizzle-orm'
 import {
   bigint,
   customType,
@@ -33,8 +34,10 @@ export const cycleways = pgTable(
     geom: lineString4326('geom').notNull(),
   },
   (table) => [
-    // PERF Sin el índice GiST, ST_DWithin recorre la tabla entera
-    index('cycleways_geom_idx').using('gist', table.geom),
+    // ! El índice va sobre la expresión ::geography, no sobre la columna: todas
+    // ! las consultas castean para medir en metros, y un índice sobre geometry
+    // ! pelada no se usa. Verificado con EXPLAIN, daba Seq Scan.
+    index('cycleways_geom_idx').using('gist', sql`(${table.geom}::geography)`),
   ],
 )
 
