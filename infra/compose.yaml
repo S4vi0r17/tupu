@@ -1,0 +1,58 @@
+name: tupu
+
+services:
+  postgis:
+    image: postgis/postgis:17-3.5
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:?falta en apps/api/.env}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?falta en apps/api/.env}
+      POSTGRES_DB: ${POSTGRES_DB:?falta en apps/api/.env}
+    ports:
+      # Solo la máquina local: en el VPS lo alcanza el API por la red interna
+      - '127.0.0.1:${POSTGRES_PORT:-5433}:5432'
+    volumes:
+      - postgis-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB']
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    restart: unless-stopped
+
+  valhalla:
+    image: ghcr.io/valhalla/valhalla:latest
+    command: ['valhalla_service', '/data/valhalla.json', '1']
+    ports:
+      # ! NUNCA se publica en el VPS: un motor de ruteo abierto es CPU gratis
+      # ! para cualquiera que lo encuentre (0009). Acá es 127.0.0.1 para probar.
+      - '127.0.0.1:${VALHALLA_PORT:-8002}:8002'
+    volumes:
+      - valhalla-data:/data
+    healthcheck:
+      test: ['CMD-SHELL', 'curl -sf http://localhost:8002/status || exit 1']
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    restart: unless-stopped
+
+  # Contenedor de un solo uso: trae osmium y ogr2ogr, que no están en la imagen
+  # del API y solo hacen falta al actualizar los datos (0012).
+  osm:
+    build: ./osm
+    profiles: ['tools']
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgis:5432/${POSTGRES_DB}
+      # config.ts valida el entorno entero, aunque el ingest no llame a Valhalla
+      VALHALLA_URL: http://valhalla:8002
+    volumes:
+      - ../:/repo
+      - valhalla-data:/data
+    working_dir: /repo
+    depends_on:
+      postgis:
+        condition: service_healthy
+
+volumes:
+  postgis-data:
+  valhalla-data:

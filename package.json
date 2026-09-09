@@ -12,6 +12,10 @@
   "scripts": {
     "dev:api": "bun run --filter '@tupu/api' dev",
     "dev:mobile": "bun run --filter '@tupu/mobile' start",
+    "db:migrate": "bun run --filter '@tupu/api' db:migrate",
+    "infra:up": "docker compose --env-file apps/api/.env -f infra/compose.yaml up -d --wait postgis",
+    "infra:down": "docker compose --env-file apps/api/.env -f infra/compose.yaml down",
+    "osm:update": "infra/osm/update.sh",
     "lint": "biome check .",
     "lint:fix": "biome check --write .",
     "typecheck": "bun run --filter '*' typecheck",
