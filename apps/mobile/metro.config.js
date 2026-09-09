@@ -2,6 +2,7 @@
 // y desde qué node_modules resolver, o los paquetes de packages/* no se ven (0002).
 const path = require('node:path')
 const { getDefaultConfig } = require('expo/metro-config')
+const { withNativewind } = require('nativewind/metro')
 
 const projectRoot = __dirname
 const workspaceRoot = path.resolve(projectRoot, '../..')
@@ -17,4 +18,5 @@ config.resolver.nodeModulesPaths = [
 // ! esto obliga a que una dependencia esté declarada para poder importarse (0001).
 config.resolver.disableHierarchicalLookup = true
 
-module.exports = config
+// globalClassNamePolyfill deja usar className en View y Text sin envolverlos
+module.exports = withNativewind(config, { globalClassNamePolyfill: true })
