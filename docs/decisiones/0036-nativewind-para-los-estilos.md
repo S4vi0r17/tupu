@@ -46,17 +46,28 @@ escribe la primera pantalla. La 5 es la que usa Tailwind 4 de verdad.
 - **Suma `react-native-worklets` y un transform de Babel y Metro** sobre la configuración de Metro
   del monorepo, que [0002](0002-layout-del-repo.md) ya marca como el sitio donde los errores son
   peores de leer.
-- **`@source` no funciona.** El parser de CSS de `react-native-css` no lo digiere y falla con
-  *failed to deserialize*. Hay que confiar en la detección automática de Tailwind 4.
+- **Costó tres piezas que ninguna guía menciona juntas**, y sin las tres la app compila, arranca
+  y **no aplica ni una clase**, que es el fallo más caro de diagnosticar porque no hay error:
+  1. `postcss.config.js` con `@tailwindcss/postcss`. En Tailwind 4 el compilador es un paquete
+     aparte; sin él `@import "tailwindcss"` entra como CSS literal.
+  2. `projectRoot` explícito en `withNativewind`. En un monorepo, sin eso Tailwind busca las
+     clases desde otra carpeta y compila un CSS sin ninguna utilidad.
+  3. `lightningcss` fijado en `1.30.1` con `overrides`. La SDK 57 trae la 1.33 y
+     `react-native-css` se construyó contra la 1.30: juntas fallan con *failed to deserialize*.
+- **`@source` no funciona.** El parser de CSS de `react-native-css` tampoco lo digiere. La
+  detección de fuentes se arregla con `projectRoot`, no con `@source`.
 - **Al mapa no le sirve.** MapLibre se estiliza con especificaciones de capa, no con clases, y el
   mapa es el peso visual de la app. NativeWind rinde en las superposiciones, que son pocas.
 
 **Qué se verificó al adoptarlo**, porque siendo un preview no alcanza con que instale:
 
 - El bundle de Android se construye entero.
-- Una clase arbitraria, `bg-[#123456]`, aparece compilada dentro del bundle nativo.
 - El `.css` que aparece vacío en la exportación es el artefacto **web**; los estilos nativos van
   dentro del bundle de JavaScript.
+- **La única prueba que vale es verlo en pantalla.** Buscar una clase compilada dentro del bundle
+  no prueba nada: el nombre de la clase ya contiene su propio valor. Se comprobó en el emulador,
+  y antes se bisecó con una regla de CSS propia para separar «el pipeline no anda» de «Tailwind
+  no genera utilidades».
 
 ## Alternativas descartadas
 
