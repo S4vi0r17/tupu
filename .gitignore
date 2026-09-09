@@ -1,0 +1,24 @@
+node_modules/
+*.log
+
+# Entorno: nunca al repo. La plantilla es .env.example
+.env
+.env.*
+!.env.example
+
+# Bun
+.bun/
+
+# Expo y Android
+apps/mobile/.expo/
+apps/mobile/android/
+apps/mobile/ios/
+*.apk
+*.aab
+*.keystore
+
+# Datos de OSM: pesan GB y se regeneran con osm:update
+infra/data/
+*.pbf
+
+.DS_Store
