@@ -75,7 +75,7 @@ ya no es decidir: es escribir código.
 Lo primero que conviene levantar, en este orden, porque cada paso desbloquea al siguiente:
 
 1. ~~El monorepo vacío con sus workspaces, y el repositorio en GitHub.~~ **Hecho.**
-2. `docker compose` con PostGIS y Valhalla, y el comando `osm:update` que llena los dos.
+2. ~~`docker compose` con PostGIS y Valhalla, y el comando `osm:update` que llena los dos.~~ **Hecho**, en `infra/`.
 3. El API con el endpoint de ciclovías cercanas y el de planificar ruta.
 4. La app con el mapa y las ciclovías resaltadas.
 5. Ruta A→B en pantalla — **acá se sabe si el proyecto tiene sentido**.

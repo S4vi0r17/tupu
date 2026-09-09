@@ -72,7 +72,9 @@ La red de infraestructura ciclista de Lima, sacada de OSM.
 | `surface` | `text` | sí | Material: `asphalt`, `concrete`, `unpaved`… | Avisar de tramos malos. Llega tal cual de OSM, sin traducir ([0003](decisiones/0003-idioma-del-codigo.md)) |
 | `geom` | `geometry(LineString, 4326)` | no | La línea del tramo, en coordenadas GPS | La consulta que justifica toda la decisión de PostGIS |
 
-Más un índice **GiST** sobre `geom`, que es lo que hace que buscar por cercanía tarde milisegundos.
+Más un índice **GiST** sobre `geom::geography`, que es lo que hace que buscar por cercanía tarde
+milisegundos. Va sobre la expresión y no sobre la columna pelada: las consultas castean a
+`geography` para medir en metros, y un índice sobre `geometry` a secas no lo usa el planificador.
 
 - **`4326`** es el sistema de coordenadas: latitud y longitud de toda la vida, el que usa el GPS.
   Aparece en cada columna geográfica y siempre es el mismo en este proyecto.
