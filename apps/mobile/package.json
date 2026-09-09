@@ -1,0 +1,33 @@
+{
+  "name": "@tupu/mobile",
+  "version": "0.0.0",
+  "private": true,
+  "main": "expo-router/entry",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo run:android",
+    "prebuild": "expo prebuild --platform android",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@tanstack/react-query": "^5.102.8",
+    "@tupu/contracts": "workspace:*",
+    "@tupu/geo": "workspace:*",
+    "expo": "^57.0.21",
+    "expo-constants": "~57.0.17",
+    "expo-linking": "~57.0.9",
+    "expo-router": "~57.0.20",
+    "expo-status-bar": "~57.0.1",
+    "hono": "^4.13.7",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "react-native": "0.86.3",
+    "react-native-safe-area-context": "~5.7.0",
+    "react-native-screens": "~4.26.0",
+    "zustand": "^5.0.15"
+  },
+  "devDependencies": {
+    "@tupu/api": "workspace:*",
+    "@types/react": "^19.3.0"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "expo": {
+    "name": "tupu",
+    "slug": "tupu",
+    "scheme": "tupu",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "android": {
+      "package": "pe.tupu.app",
+      "edgeToEdgeEnabled": true
+    },
+    "plugins": ["expo-router"],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}
