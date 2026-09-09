@@ -1,0 +1,6 @@
+[install]
+# ! Bun 1.4 instala aislado por defecto, con un store y enlaces como pnpm.
+# ! Metro y el ecosistema de React Native asumen node_modules plano: sin esto,
+# ! cada dependencia transitiva de expo-router hay que declararla a mano.
+# ! Ver docs/decisiones/0035.
+linker = "hoisted"
