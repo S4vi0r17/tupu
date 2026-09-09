@@ -44,3 +44,5 @@ marca la vieja como sustituida. El historial es el valor.
 | [0032](0032-zod-en-contracts.md) | Zod para validar y definir los contratos | Aceptada |
 | [0033](0033-drizzle-tambien-en-el-telefono.md) | Drizzle también en el teléfono | Aceptada |
 | [0034](0034-el-proyecto-se-llama-tupu.md) | El proyecto se llama `tupu` | Aceptada, **sustituye** al nombre `rumbo` |
+| [0035](0035-bun-instala-con-enlazador-plano.md) | Bun instala con enlazador plano | Aceptada, **sustituye en parte** a [0001](0001-monorepo-con-bun.md) |
+| [0036](0036-nativewind-para-los-estilos.md) | NativeWind para los estilos del móvil | Aceptada |

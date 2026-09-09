@@ -5,13 +5,13 @@ archivo.
 
 ## Estado del proyecto
 
-**Planeación cerrada, sin código todavía.** 34 decisiones tomadas, ninguna abierta.
+**Planeación cerrada.** 36 decisiones tomadas, ninguna abierta.
 
 | Documento | Para qué |
 |---|---|
 | [`docs/planeacion.md`](docs/planeacion.md) | **Leer esto primero.** Estado, orden de arranque, aplazados con disparador |
 | [`docs/stack.md`](docs/stack.md) | El stack de un vistazo, con el rival descartado de cada capa |
-| [`docs/decisiones/`](docs/decisiones/) | 0001–0034: el razonamiento y qué se dio a cambio |
+| [`docs/decisiones/`](docs/decisiones/) | 0001–0036: el razonamiento y qué se dio a cambio |
 | [`docs/modelo-datos.md`](docs/modelo-datos.md) | Las entidades campo por campo |
 | [`docs/glosario.md`](docs/glosario.md) | OSM, PostGIS, tiles, isócronas, APK… |
 | [`docs/conventions/commits.md`](docs/conventions/commits.md) | Todo mensaje de commit |
@@ -47,6 +47,7 @@ Lima.
 | Validación y contratos | **Zod** ([0032](docs/decisiones/0032-zod-en-contracts.md)) | class-validator, yup, tipos escritos a mano |
 | Lint y formato | **Biome**, una sola herramienta ([0031](docs/decisiones/0031-biome-para-lint-y-formato.md)) | ESLint, Prettier por separado |
 | Móvil | **Expo Router + Zustand + TanStack Query** ([0014](docs/decisiones/0014-expo-router-zustand-tanstack-query.md)) | React Navigation directo, Redux, Context para estado compartido |
+| Estilos del móvil | **NativeWind 5** con Tailwind 4 ([0036](docs/decisiones/0036-nativewind-para-los-estilos.md)) | `StyleSheet` a secas, NativeWind 4 |
 | Mapa | **MapLibre** + tiles de OpenFreeMap ([0005](docs/decisiones/0005-expo-en-el-movil.md), [0016](docs/decisiones/0016-tiles-openfreemap-en-el-mvp.md)) | react-native-maps, SDK de Mapbox, tiles de osm.org |
 | Ruteo | **Valhalla** self-hosted ([0006](docs/decisiones/0006-valhalla-para-ruteo.md)) | Mapbox Directions, Google, OSRM |
 | Tests | **Ninguno todavía** ([0024](docs/decisiones/0024-sin-tests-durante-el-mvp.md)) | No añadas tests sin hablarlo: es una decisión tomada |

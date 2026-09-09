@@ -52,6 +52,8 @@ El mapa del stack completo, con las alternativas que se descartaron en cada capa
 | 32 | **Zod** para validar y definir los contratos | [0032](decisiones/0032-zod-en-contracts.md) |
 | 33 | **Drizzle también en el teléfono** | [0033](decisiones/0033-drizzle-tambien-en-el-telefono.md) |
 | 34 | El proyecto se llama **tupu** | [0034](decisiones/0034-el-proyecto-se-llama-tupu.md) |
+| 35 | Bun instala con **enlazador plano** · *sustituye en parte a [0001](decisiones/0001-monorepo-con-bun.md)* | [0035](decisiones/0035-bun-instala-con-enlazador-plano.md) |
+| 36 | **NativeWind** para los estilos del móvil | [0036](decisiones/0036-nativewind-para-los-estilos.md) |
 | — | ~~Alcance: cuentas + historial desde el inicio~~ — reemplazado por [0010](decisiones/0010-alcance-del-mvp.md) | — |
 | — | ~~El proyecto se llama rumbo~~ — reemplazado por [0034](decisiones/0034-el-proyecto-se-llama-tupu.md) | — |
 
@@ -68,7 +70,7 @@ El mapa del stack completo, con las alternativas que se descartaron en cada capa
 
 ## Planeación cerrada
 
-**34 decisiones. No queda ninguna abierta.** Cubren stack, datos, móvil, despliegue y proceso, y
+**36 decisiones. No queda ninguna abierta.** Cubren stack, datos, móvil, despliegue y proceso, y
 los tres huecos que aparecieron al auditar el resultado están cerrados también. El siguiente paso
 ya no es decidir: es escribir código.
 
@@ -76,7 +78,7 @@ Lo primero que conviene levantar, en este orden, porque cada paso desbloquea al 
 
 1. ~~El monorepo vacío con sus workspaces, y el repositorio en GitHub.~~ **Hecho.**
 2. ~~`docker compose` con PostGIS y Valhalla, y el comando `osm:update` que llena los dos.~~ **Hecho**, en `infra/`.
-3. El API con el endpoint de ciclovías cercanas y el de planificar ruta.
+3. ~~El API con el endpoint de ciclovías cercanas y el de planificar ruta.~~ **Hecho**, falta el trato de errores.
 4. La app con el mapa y las ciclovías resaltadas.
 5. Ruta A→B en pantalla — **acá se sabe si el proyecto tiene sentido**.
 6. Grabación del recorrido y brújula.
@@ -111,8 +113,14 @@ Y dos cosas **a verificar al configurar**, que si fallan cambian una decisión:
   resuelve el único cruce legítimo entre apps: el móvil importa de `@tupu/api` el tipo `AppType`
   y nada más ([0004](decisiones/0004-hono-en-el-api.md)). ESLint queda descartado como salida
   ([0031](decisiones/0031-biome-para-lint-y-formato.md)).
-- Que los tiles de OpenFreeMap expongan la infraestructura ciclista de forma distinguible. Si no,
-  las ciclovías se dibujan desde el API ([0026](decisiones/0026-ciclovias-dibujadas-desde-el-tile.md)).
+- ~~Que los tiles de OpenFreeMap expongan la infraestructura ciclista de forma distinguible~~ —
+  **verificado, con un límite.** Los tiles usan el esquema OpenMapTiles: la vía propia llega como
+  `class=path` con `subclass=cycleway`, y trae además los campos `bicycle` y `surface`. Sobre
+  Miraflores aparecen con nombre, «Ciclovía Arequipa», «Ciclovía Larco». Lo que **no** expone el
+  tile es `cycleway=lane`: un carril pintado solo se distingue si además está etiquetado con
+  `bicycle`, y si no, se dibuja como calle común. Como 1483 de los 1700 tramos de Lima son vía
+  propia, 0026 se sostiene; el carril pintado es lo que activaría su disparador
+  ([0026](decisiones/0026-ciclovias-dibujadas-desde-el-tile.md)).
 
 ## Aplazado, con su disparador
 
