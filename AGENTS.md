@@ -62,6 +62,10 @@ Lima.
 [0003](docs/decisiones/0003-idioma-del-codigo.md) fija la regla; 0022 la reemplazó **solo** en los
 commits.
 
+**En los commits no van trailers de coautoría** — ni `Co-Authored-By`, ni enlaces de sesión, ni
+firmas de herramientas. Si tu agente los añade por defecto, desactivalos
+([convenciones](docs/conventions/commits.md)).
+
 ## La regla de dependencia
 
 ```

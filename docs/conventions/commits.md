@@ -76,6 +76,11 @@ distances in memory. With the GiST index the database answers in 3ms.
 
 ## Reglas propias de tupu
 
+- **Nada de trailers de coautoría.** Ni `Co-Authored-By`, ni enlaces de sesión, ni firmas de
+  herramientas. El historial dice qué cambió y por qué; quién movió el teclado no es parte del
+  registro, y un trailer automático ensucia todos los `git log` para siempre. Vale también para
+  los agentes de IA que trabajen en este repo, que traen esos trailers por defecto y hay que
+  desactivarlos.
 - **Las migraciones de Drizzle van en su propio commit**, nunca mezcladas con lógica. Son lo único
   del repo que no se puede revertir con un `git revert`
   ([0007](../decisiones/0007-drizzle-para-acceso-a-datos.md)).
