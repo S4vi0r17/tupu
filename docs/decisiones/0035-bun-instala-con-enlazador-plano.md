@@ -1,6 +1,9 @@
 # 0035 — Bun instala con enlazador plano
 
-**Estado:** Aceptada · 2026-09-09 · **sustituye en parte** a [0001](0001-monorepo-con-bun.md)
+**Estado:** **Sustituida** por [0037](0037-bun-se-queda-con-el-enlazador-aislado.md) · 2026-09-09
+
+> El diagnóstico de esta decisión era incorrecto: el problema no era el enlazador de Bun sino una
+> línea propia de `metro.config.js`. Se conserva porque el historial es el valor.
 
 ## Contexto
 

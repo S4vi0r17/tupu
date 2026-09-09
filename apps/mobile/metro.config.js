@@ -14,9 +14,14 @@ config.resolver.nodeModulesPaths = [
   path.resolve(projectRoot, 'node_modules'),
   path.resolve(workspaceRoot, 'node_modules'),
 ]
-// ! El node_modules aplanado de Bun deja resolver cualquier cosa desde arriba;
-// ! esto obliga a que una dependencia esté declarada para poder importarse (0001).
-config.resolver.disableHierarchicalLookup = true
 
+// ! NO pongas disableHierarchicalLookup acá. Bun instala aislado, así que cada
+// ! paquete guarda sus dependencias en su propio node_modules, y resolver
+// ! subiendo desde el archivo que importa es justo lo que lo hace funcionar (0037).
 // globalClassNamePolyfill deja usar className en View y Text sin envolverlos
-module.exports = withNativewind(config, { globalClassNamePolyfill: true })
+// ! projectRoot explícito: sin él, en un monorepo Tailwind busca las clases
+// ! desde otra carpeta y compila un CSS sin ninguna utilidad.
+module.exports = withNativewind(config, {
+  globalClassNamePolyfill: true,
+  projectRoot,
+})
