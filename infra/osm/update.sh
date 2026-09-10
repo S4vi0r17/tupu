@@ -6,6 +6,12 @@ set -euo pipefail
 INFRA_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$INFRA_DIR"
 
+# En el VPS esto apunta al proyecto que creó Dokploy y a su .env; en local,
+# al compose de desarrollo. Los pasos son los mismos en los dos lados (0009).
+COMPOSE_FILE="${COMPOSE_FILE:-compose.yaml}"
+COMPOSE_PROJECT="${COMPOSE_PROJECT:-tupu}"
+ENV_FILE="${ENV_FILE:-../apps/api/.env}"
+
 EXTRACT_URL="${EXTRACT_URL:-https://download.geofabrik.de/south-america/peru-latest.osm.pbf}"
 PBF="/data/pbf/peru-latest.osm.pbf"
 
@@ -13,7 +19,7 @@ PBF="/data/pbf/peru-latest.osm.pbf"
 # Sin elevación, use_hills del perfil ciclista no hace absolutamente nada (0029).
 ELEVATION_BBOX="${ELEVATION_BBOX:--77.25,-12.55,-76.65,-11.60}"
 
-compose() { docker compose --env-file ../apps/api/.env "$@"; }
+compose() { docker compose -p "$COMPOSE_PROJECT" -f "$COMPOSE_FILE" --env-file "$ENV_FILE" "$@"; }
 
 echo '==> 1/4  Levantando PostGIS'
 compose up -d --wait postgis
