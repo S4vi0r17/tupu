@@ -1,61 +1,99 @@
-import { Camera, Layer, Map as MapView } from '@maplibre/maplibre-react-native'
-import { StyleSheet, Text, View } from 'react-native'
-import { SafeAreaView } from 'react-native-safe-area-context'
 import {
-  BASE_SOURCE,
+  Camera,
+  GeoJSONSource,
+  Layer,
+  Map as MapView,
+  type ViewStateChangeEvent,
+} from '@maplibre/maplibre-react-native'
+import { useState } from 'react'
+import { type NativeSyntheticEvent, StyleSheet, Text, View } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
+import { type Bbox, useCyclewaysInBbox } from '../lib/cycleways.ts'
+import {
   CASING_COLOR,
   CASING_WIDTH,
-  CYCLEWAY_COLOR,
-  CYCLEWAY_WIDTH,
+  CYCLEWAYS_SOURCE,
+  IS_LANE,
+  IS_SHARED,
+  IS_TRACK,
+  LANE_COLOR,
+  LANE_DASH,
   LIMA_CENTER,
   MAP_STYLE_URL,
-  SEPARATED_CYCLEWAY,
   SHARED_COLOR,
   SHARED_DASH,
-  SHARED_WIDTH,
-  SIGNPOSTED_SHARED,
-  TRANSPORTATION_LAYER,
+  THIN_WIDTH,
+  TRACK_COLOR,
+  TRACK_WIDTH,
 } from '../lib/map.ts'
 
+const INITIAL_ZOOM = 14
+
 export default function MapScreen() {
+  const [bbox, setBbox] = useState<Bbox | null>(null)
+  const { collection, isError } = useCyclewaysInBbox(bbox)
+
+  const onRegionDidChange = (event: NativeSyntheticEvent<ViewStateChangeEvent>) => {
+    const [west, south, east, north] = event.nativeEvent.bounds
+    setBbox({ west, south, east, north })
+  }
+
   return (
     <View className="flex-1">
-      <MapView style={StyleSheet.absoluteFill} mapStyle={MAP_STYLE_URL} attribution logo={false}>
-        <Camera initialViewState={{ center: LIMA_CENTER, zoom: 14 }} />
+      <MapView
+        style={StyleSheet.absoluteFill}
+        mapStyle={MAP_STYLE_URL}
+        attribution
+        logo={false}
+        onRegionDidChange={onRegionDidChange}
+      >
+        <Camera initialViewState={{ center: LIMA_CENTER, zoom: INITIAL_ZOOM }} />
 
-        <Layer
-          id="tupu-shared"
-          type="line"
-          source={BASE_SOURCE}
-          source-layer={TRANSPORTATION_LAYER}
-          filter={SIGNPOSTED_SHARED}
-          layout={{ 'line-cap': 'butt', 'line-join': 'round' }}
-          paint={{
-            'line-color': SHARED_COLOR,
-            'line-width': SHARED_WIDTH,
-            'line-dasharray': SHARED_DASH,
-          }}
-        />
+        <GeoJSONSource id={CYCLEWAYS_SOURCE} data={collection}>
+          <Layer
+            id="tupu-shared"
+            type="line"
+            source={CYCLEWAYS_SOURCE}
+            filter={IS_SHARED}
+            layout={{ 'line-cap': 'butt', 'line-join': 'round' }}
+            paint={{
+              'line-color': SHARED_COLOR,
+              'line-width': THIN_WIDTH,
+              'line-dasharray': SHARED_DASH,
+            }}
+          />
 
-        <Layer
-          id="tupu-cycleways-casing"
-          type="line"
-          source={BASE_SOURCE}
-          source-layer={TRANSPORTATION_LAYER}
-          filter={SEPARATED_CYCLEWAY}
-          layout={{ 'line-cap': 'round', 'line-join': 'round' }}
-          paint={{ 'line-color': CASING_COLOR, 'line-width': CASING_WIDTH, 'line-opacity': 0.9 }}
-        />
+          <Layer
+            id="tupu-lane"
+            type="line"
+            source={CYCLEWAYS_SOURCE}
+            filter={IS_LANE}
+            layout={{ 'line-cap': 'butt', 'line-join': 'round' }}
+            paint={{
+              'line-color': LANE_COLOR,
+              'line-width': THIN_WIDTH,
+              'line-dasharray': LANE_DASH,
+            }}
+          />
 
-        <Layer
-          id="tupu-cycleways"
-          type="line"
-          source={BASE_SOURCE}
-          source-layer={TRANSPORTATION_LAYER}
-          filter={SEPARATED_CYCLEWAY}
-          layout={{ 'line-cap': 'round', 'line-join': 'round' }}
-          paint={{ 'line-color': CYCLEWAY_COLOR, 'line-width': CYCLEWAY_WIDTH }}
-        />
+          <Layer
+            id="tupu-track-casing"
+            type="line"
+            source={CYCLEWAYS_SOURCE}
+            filter={IS_TRACK}
+            layout={{ 'line-cap': 'round', 'line-join': 'round' }}
+            paint={{ 'line-color': CASING_COLOR, 'line-width': CASING_WIDTH, 'line-opacity': 0.9 }}
+          />
+
+          <Layer
+            id="tupu-track"
+            type="line"
+            source={CYCLEWAYS_SOURCE}
+            filter={IS_TRACK}
+            layout={{ 'line-cap': 'round', 'line-join': 'round' }}
+            paint={{ 'line-color': TRACK_COLOR, 'line-width': TRACK_WIDTH }}
+          />
+        </GeoJSONSource>
       </MapView>
 
       <SafeAreaView className="absolute inset-x-0 top-0" pointerEvents="none">
@@ -64,20 +102,37 @@ export default function MapScreen() {
 
           <View className="gap-1.5">
             <View className="flex-row items-center gap-2">
-              {/* El color sale de map.ts porque MapLibre necesita el literal */}
-              <View className="h-1 w-5 rounded-sm" style={{ backgroundColor: CYCLEWAY_COLOR }} />
+              {/* Los colores salen de map.ts porque MapLibre necesita el literal */}
+              <View className="h-1 w-5 rounded-sm" style={{ backgroundColor: TRACK_COLOR }} />
               <Text className="text-[11px] text-neutral-200">vía propia</Text>
+            </View>
+            <View className="flex-row items-center gap-2">
+              <View className="w-5 flex-row gap-[3px]">
+                <View className="h-1 flex-[2] rounded-sm" style={{ backgroundColor: LANE_COLOR }} />
+                <View className="h-1 flex-1 rounded-sm" style={{ backgroundColor: LANE_COLOR }} />
+              </View>
+              <Text className="text-[11px] text-neutral-300">carril pintado</Text>
             </View>
             <View className="flex-row items-center gap-2">
               <View className="w-5 flex-row gap-[3px]">
                 <View className="h-1 flex-1 rounded-sm" style={{ backgroundColor: SHARED_COLOR }} />
                 <View className="h-1 flex-1 rounded-sm" style={{ backgroundColor: SHARED_COLOR }} />
               </View>
-              <Text className="text-[11px] text-neutral-400">compartida</Text>
+              <Text className="text-[11px] text-neutral-400">compartida con autos</Text>
             </View>
           </View>
         </View>
       </SafeAreaView>
+
+      {isError ? (
+        <SafeAreaView className="absolute inset-x-0 bottom-0" pointerEvents="none">
+          <View className="mx-3.5 mb-3.5 rounded-2xl bg-neutral-950/90 px-4 py-3">
+            <Text className="text-[12px] leading-4 text-neutral-300">
+              No se pudo traer la red ciclista. El mapa base sigue funcionando.
+            </Text>
+          </View>
+        </SafeAreaView>
+      ) : null}
     </View>
   )
 }

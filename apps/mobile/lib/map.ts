@@ -7,34 +7,24 @@ export const MAP_STYLE_URL = 'https://tiles.openfreemap.org/styles/liberty'
 export const LIMA_CENTER: [number, number] = [-77.0297, -12.1219]
 
 /**
- * La fuente y la capa vectorial que ya trae el estilo base.
+ * La red ciclista ya no sale del tile.
  *
- * NOTE Esquema OpenMapTiles: la infraestructura ciclista viaja en
- * `transportation` como class=path con subclass=cycleway.
+ * WHY El tile solo transporta `subclass=cycleway`: no sabe de carriles
+ * pintados y trae casi ningún `bicycle=designated`. En el Centro mostraba 4
+ * tramos donde PostGIS tiene 128. Se dibuja desde el API (0026).
  */
-export const BASE_SOURCE = 'openmaptiles'
-export const TRANSPORTATION_LAYER = 'transportation'
+export const CYCLEWAYS_SOURCE = 'tupu-cycleways'
 
-/** Vía propia, separada del tráfico. Es la mayoría de la red de Lima. */
-export const SEPARATED_CYCLEWAY: FilterSpecification = ['==', ['get', 'subclass'], 'cycleway']
+/** Filtros sobre el GeoJSON del API: el tipo llega en la propiedad kind. */
+export const IS_TRACK: FilterSpecification = ['==', ['get', 'kind'], 'track']
+export const IS_LANE: FilterSpecification = ['==', ['get', 'kind'], 'lane']
+export const IS_SHARED: FilterSpecification = ['==', ['get', 'kind'], 'shared']
 
-/**
- * Vías sin espacio propio donde la bici está señalizada como corresponde.
- *
- * ! Solo `designated`, nunca `yes`: `yes` significa apenas «se permite», y
- * ! pintarlo convierte media ciudad en infraestructura ciclista que no existe.
- * ! El tile tampoco expone `cycleway=lane`, así que el carril pintado no se
- * ! distingue desde acá — es el disparador de 0026.
- */
-export const SIGNPOSTED_SHARED: FilterSpecification = [
-  'all',
-  ['!=', ['get', 'subclass'], 'cycleway'],
-  ['==', ['get', 'bicycle'], 'designated'],
-]
-
-/** Verde: tenés la vía para vos. */
-export const CYCLEWAY_COLOR = '#0E9F6E'
-/** Ámbar: compartís el espacio, y el color lo dice antes de leer la leyenda. */
+/** Verde: tenés la vía para vos, separada del tráfico. */
+export const TRACK_COLOR = '#0E9F6E'
+/** El mismo verde punteado: es infraestructura, pero solo pintura. */
+export const LANE_COLOR = '#0E9F6E'
+/** Ámbar: compartís el asfalto con los autos. */
 export const SHARED_COLOR = '#D97706'
 /** Halo blanco por debajo, para que la línea no se pierda sobre el mapa base. */
 export const CASING_COLOR = '#FFFFFF'
@@ -42,33 +32,14 @@ export const CASING_COLOR = '#FFFFFF'
 type LineWidth = NonNullable<NonNullable<LineLayerSpecification['paint']>['line-width']>
 
 /** Se engrosa con el zoom para que la red siga leyéndose al alejarse. */
-export const CYCLEWAY_WIDTH: LineWidth = [
-  'interpolate',
-  ['linear'],
-  ['zoom'],
-  10,
-  1.8,
-  14,
-  4,
-  18,
-  9,
-]
+export const TRACK_WIDTH: LineWidth = ['interpolate', ['linear'], ['zoom'], 10, 1.8, 14, 4, 18, 9]
 
 /** El halo va siempre un poco más ancho que la línea que envuelve. */
 export const CASING_WIDTH: LineWidth = ['interpolate', ['linear'], ['zoom'], 10, 3.4, 14, 7, 18, 13]
 
-/** La compartida va más fina: no es lo mismo y no debe pesar lo mismo. */
-export const SHARED_WIDTH: LineWidth = [
-  'interpolate',
-  ['linear'],
-  ['zoom'],
-  10,
-  1.2,
-  14,
-  2.6,
-  18,
-  5,
-]
+/** Carril y compartida van más finas: no son lo mismo y no deben pesar igual. */
+export const THIN_WIDTH: LineWidth = ['interpolate', ['linear'], ['zoom'], 10, 1.2, 14, 2.8, 18, 6]
 
-/** Guiones cortos, que se leen como «esto no es continuo ni es tuyo». */
+/** Guiones: se leen como «acá no hay separación». */
+export const LANE_DASH: [number, number] = [3, 1.5]
 export const SHARED_DASH: [number, number] = [1.5, 1.5]
