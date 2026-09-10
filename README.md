@@ -5,10 +5,14 @@ saber cuánto se tarda de un punto a otro, ver alternativas, contar kilómetros 
 historial de recorridos. La app incluye una brújula que indica hacia dónde apunta
 físicamente el teléfono sobre el mapa.
 
-> **Estado: el esqueleto está en pie, sin funcionalidad todavía.** Las 34 decisiones que definen
-> el MVP están tomadas. El stack de un vistazo, con las alternativas que se descartaron en cada
-> capa, está en [`docs/stack.md`](docs/stack.md); el razonamiento completo de cada decisión en
-> [`docs/decisiones/`](docs/decisiones/); el estado y lo que queda aplazado, en
+> **Estado: en el aire y andando.** El lado servidor está desplegado, y la app muestra el mapa con
+> la red ciclista de Lima, dónde estás y hacia dónde miras. Falta dibujar la ruta en pantalla y
+> grabar el recorrido. Las 38 decisiones que definen el MVP están tomadas.
+>
+> Para entender cómo funciona, [`docs/como-funciona.md`](docs/como-funciona.md); para saber qué
+> comando corre qué, [`docs/comandos.md`](docs/comandos.md). El stack de un vistazo, con las
+> alternativas descartadas en cada capa, en [`docs/stack.md`](docs/stack.md); el razonamiento de
+> cada decisión en [`docs/decisiones/`](docs/decisiones/); el estado y lo aplazado, en
 > [`docs/planeacion.md`](docs/planeacion.md). Las palabras raras están en
 > [`docs/glosario.md`](docs/glosario.md), las entidades en
 > [`docs/modelo-datos.md`](docs/modelo-datos.md), y cómo se escribe el código en
@@ -39,7 +43,16 @@ bun run --filter '@tupu/mobile' android    # compila e instala en el teléfono c
 bun run dev:mobile                         # el servidor de Metro, una vez instalada
 ```
 
-Lo que corre del lado servidor vive en [`infra/`](infra/).
+Para un APK que ande solo, sin Metro detrás:
+
+```sh
+apps/mobile/android/gradlew -p apps/mobile/android assembleRelease
+```
+
+Ojo con `EXPO_PUBLIC_API_URL` de `apps/mobile/.env` antes de compilarlo: esa URL se hornea dentro
+del APK. Todos los comandos, con sus trampas, en [`docs/comandos.md`](docs/comandos.md).
+
+Lo que corre del lado servidor vive en [`infra/`](infra/), desplegado en Dokploy.
 
 ## El repositorio
 

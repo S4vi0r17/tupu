@@ -12,7 +12,7 @@ código, en [convenciones](conventions/). Las entidades, en [modelo de datos](mo
 El mapa del stack completo, con las alternativas que se descartaron en cada capa, está en
 [`stack.md`](stack.md).
 
-Última sesión: **2026-09-09**.
+Última sesión: **2026-09-10**.
 
 ## Decisiones cerradas
 
@@ -63,6 +63,8 @@ El mapa del stack completo, con las alternativas que se descartaron en cada capa
 
 | Documento | Para qué |
 |---|---|
+| [`como-funciona.md`](como-funciona.md) | El recorrido de un dato de OSM a la pantalla, pieza por pieza |
+| [`comandos.md`](comandos.md) | Qué hace cada comando, cuándo se usa y con qué muerde |
 | [`stack.md`](stack.md) | El stack de un vistazo, con el rival descartado de cada capa |
 | [`decisiones/`](decisiones/) | El razonamiento completo de cada elección y qué se dio a cambio |
 | [`modelo-datos.md`](modelo-datos.md) | Las entidades campo por campo, y por qué dos no tienen `id` |
@@ -80,10 +82,17 @@ Lo primero que conviene levantar, en este orden, porque cada paso desbloquea al 
 
 1. ~~El monorepo vacío con sus workspaces, y el repositorio en GitHub.~~ **Hecho.**
 2. ~~`docker compose` con PostGIS y Valhalla, y el comando `osm:update` que llena los dos.~~ **Hecho**, en `infra/`.
-3. ~~El API con el endpoint de ciclovías cercanas y el de planificar ruta.~~ **Hecho**, falta el trato de errores.
+3. ~~El API con el endpoint de ciclovías cercanas y el de planificar ruta.~~ **Hecho**, con el
+   trato de errores: Valhalla caído devuelve 503 y no un error crudo.
 4. ~~La app con el mapa y las ciclovías resaltadas.~~ **Hecho**, dibujadas desde el API.
-5. Ruta A→B en pantalla — **acá se sabe si el proyecto tiene sentido**.
-6. Grabación del recorrido y brújula.
+5. Ruta A→B — **el API la calcula y responde en producción**, así que ya se sabe que el motor da
+   rutas ciclistas en Lima. **Falta la pantalla**: elegir destino tocando el mapa
+   ([0028](decisiones/0028-destino-por-mapa-o-coordenadas.md)) y dibujar el trazado.
+6. Grabación del recorrido y brújula — **la brújula está hecha**: cono de visión, rosa del norte y
+   suavizado. Falta la grabación, y con ella el mapa que sigue al ciclista y rota
+   ([0027](decisiones/0027-brujula-muestra-hacia-donde-miras.md)).
+7. ~~Desplegar el lado servidor~~ **Hecho**: los tres contenedores en Dokploy detrás de Traefik, y
+   el APK compilado apuntando ahí ([`infra/README.md`](../infra/README.md)).
 
 ## Lo que hay que resolver escribiendo, no decidiendo
 
@@ -95,8 +104,15 @@ Nada de esto necesita discusión, pero conviene no descubrirlo tarde:
 - **Icono de la app.** El nombre y el `package id` ya están en `apps/mobile/app.json`
   (`pe.tupu.app`, [0034](decisiones/0034-el-proyecto-se-llama-tupu.md)); falta el icono para el APK.
 - ~~Cómo se construye la build de desarrollo del móvil~~ — resuelto: `expo prebuild` y
-  `expo run:android` en local, con el SDK de Android. EAS queda para cuando llegue iOS.
-- **Qué hace la app si Valhalla está caído.** Hoy la respuesta sería un error crudo.
+  `expo run:android` en local, con el SDK de Android. El APK que se instala en el teléfono sale
+  de `gradlew assembleRelease`, firmado con la clave de depuración que genera Expo. Sirve para
+  probar uno mismo y para nada más — ver **EAS Build** en los aplazados.
+- ~~Qué hace la app si Valhalla está caído~~ — resuelto en el API: `UpstreamError` se traduce a
+  503 con código `upstream_unavailable`, comprobado en producción. **Falta el lado del móvil**,
+  que todavía no tiene pantalla de ruta donde mostrarlo.
+- **El mapa no sigue al ciclista.** Hoy se centra una sola vez, en el primer fix, y ahí se queda:
+  si avanzás, el punto azul se va de la pantalla. El seguimiento va junto con la rotación, y las
+  dos con la grabación ([0027](decisiones/0027-brujula-muestra-hacia-donde-miras.md)).
 - **Mantener la pantalla encendida** en el portacelular
   ([0027](decisiones/0027-brujula-muestra-hacia-donde-miras.md)).
 - ~~El estilo del mapa~~ — hecho: vía propia en verde continuo con halo, carril pintado en verde
@@ -138,6 +154,7 @@ Nada de esto está sin decidir: está decidido que se hace **después**, y cada 
 | Cron para `osm:update` | Cuando correrlo a mano moleste | [0012](decisiones/0012-ingesta-de-osm-por-extracto.md), [0020](decisiones/0020-actualizacion-de-datos-en-un-comando.md) |
 | Entorno de pruebas | Cuando haya gente usando la app | [0018](decisiones/0018-sin-entorno-de-pruebas.md) |
 | iOS | Después del MVP | [0019](decisiones/0019-mvp-solo-android.md) |
+| **EAS Build con perfiles y scripts**, como el repo hermano `crs-field` | El primer APK que vaya a otra persona, o iOS — lo que llegue antes | [0005](decisiones/0005-expo-en-el-movil.md), [0019](decisiones/0019-mvp-solo-android.md) |
 | Ciclovías dibujadas desde el API | Cuando haga falta resaltar un tramo concreto | [0026](decisiones/0026-ciclovias-dibujadas-desde-el-tile.md) |
 | `react-native-background-geolocation` | Si `expo-location` resulta poco fiable en la calle | [0015](decisiones/0015-grabacion-en-segundo-plano.md) |
 | Geocodificador (buscar por nombre) | Cuando pegar coordenadas moleste, o la use alguien más | [0028](decisiones/0028-destino-por-mapa-o-coordenadas.md) |
@@ -145,6 +162,19 @@ Nada de esto está sin decidir: está decidido que se hace **después**, y cada 
 | Afinar el perfil ciclista | **Desde la primera salida en bici** — los valores actuales están puestos a ojo | [0029](decisiones/0029-perfil-ciclista-de-valhalla.md) |
 | Turborepo | Cuando los tests dejen de correr en segundos | [0001](decisiones/0001-monorepo-con-bun.md) |
 | **Límite de uso en el API** | **Bloqueante antes de pasarle el APK a otra persona** — el APK lleva la URL dentro, y repartirlo está en el plan de [0019](decisiones/0019-mvp-solo-android.md) | [0030](decisiones/0030-sin-limite-de-uso-en-el-api.md) |
+
+### Por qué EAS termina entrando
+
+`crs-field` ya tiene el camino hecho: `eas.json` con perfiles `development`, `preview` y
+`production`, y scripts que los envuelven (`apk:preview`, `build:prod`, `submit:ios`). Acá se hará
+algo parecido, y **no solo por iOS**: lo que hoy falta para producción es la firma. El
+`assembleRelease` de ahora usa la clave de depuración, y en Android **un APK firmado con otra
+clave no se instala encima del anterior** — hay que desinstalar, y con eso se va el historial de
+recorridos que vive en SQLite en el teléfono ([0013](decisiones/0013-recorrido-en-sqlite-local.md)).
+
+Por eso el disparador es el primer APK que salga de las manos de quien lo desarrolla: ahí hay que
+tener un keystore que no cambie nunca más, y EAS es quien lo guarda. Cae junto al límite de uso
+del API ([0030](decisiones/0030-sin-limite-de-uso-en-el-api.md)), que tiene el mismo disparador.
 
 ## Fuera del MVP, sin decidir todavía
 
