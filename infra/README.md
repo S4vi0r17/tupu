@@ -4,9 +4,10 @@ Lo que corre al lado del API y no es código de aplicación: la base de datos, e
 el comando que los llena con datos de OpenStreetMap.
 
 ```
-compose.yaml     postgis · valhalla · osm
-osm/Dockerfile   imagen de un solo uso con osmium y ogr2ogr
-osm/update.sh    el comando osm:update, los cuatro pasos de 0020
+compose.yaml       desarrollo: postgis · valhalla · osm, con puertos en local
+compose.prod.yaml  producción en Dokploy: api · postgis · valhalla, detrás de Traefik
+osm/Dockerfile     imagen de un solo uso con osmium y ogr2ogr
+osm/update.sh      el comando osm:update, los cuatro pasos de 0020
 ```
 
 ## Levantarlo
@@ -51,10 +52,76 @@ se encoge a menos de la mitad: una ingesta rota no puede dejar la app sin ciclov
   gratis para cualquiera que lo encuentre
   ([0009](../docs/decisiones/0009-despliegue-en-dokploy.md)).
 
+## Producción, en Dokploy
+
+Un solo proyecto de Dokploy de tipo **Compose**, apuntando a `infra/compose.prod.yaml`
+([0009](../docs/decisiones/0009-despliegue-en-dokploy.md)). Traefik queda delante y **solo el API
+sale a internet**: PostGIS y Valhalla viven en la red `internal` y no publican ningún puerto.
+
+El Dockerfile del API se construye **desde la raíz del repo**, porque sin `bun.lock` ni
+`packages/` no hay instalación posible ([0001](../docs/decisiones/0001-monorepo-con-bun.md)). El
+`--filter '@tupu/api'` del install deja fuera las dependencias del móvil: la imagen queda en unos
+150 MB en vez de arrastrar Expo entero.
+
+### Variables de entorno en Dokploy
+
+| Variable | Qué |
+|---|---|
+| `API_DOMAIN` | El dominio del API, solo el host: `api.ejemplo.pe`, sin `https://` ni barra final |
+| `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_DB` | Credenciales de la base. **No** las de `.env.example`, que son de juguete |
+
+`DATABASE_URL` y `VALHALLA_URL` no se cargan a mano: las arma el compose con los nombres de
+servicio de la red interna. Si falta cualquiera de las cuatro, el despliegue falla al interpolar y
+dice cuál.
+
+### El primer despliegue
+
+1. **Apuntá el DNS al VPS antes de desplegar.** Sin el registro resuelto, Let's Encrypt no emite
+   el certificado y Traefik sirve el suyo, autofirmado.
+2. Proyecto nuevo en Dokploy, tipo Compose, con el repositorio y la ruta
+   `infra/compose.prod.yaml`.
+3. Cargá las variables de arriba y desplegá. El API corre las migraciones al arrancar y recién
+   después sirve ([0009](../docs/decisiones/0009-despliegue-en-dokploy.md)).
+4. **Valhalla todavía no arranca**: no hay grafo. Eso es el paso siguiente, y no es parte del
+   despliegue.
+
+Si preferís cargar el dominio desde la interfaz de Dokploy en vez del compose, borrá las etiquetas
+de Traefik del servicio `api`. Las dos cosas a la vez dejan dos routers peleando por el mismo host.
+
+### Los datos de OSM, a mano y aparte
+
+Decenas de minutos y varios GB: no puede ir en un `git push`
+([0009](../docs/decisiones/0009-despliegue-en-dokploy.md)). Por SSH en el VPS, en la carpeta donde
+Dokploy clonó el repositorio:
+
+```sh
+docker compose ls                     # el nombre del proyecto que creó Dokploy
+
+COMPOSE_FILE=compose.prod.yaml \
+COMPOSE_PROJECT=<el nombre de arriba> \
+ENV_FILE=/ruta/absoluta/al/.env \
+  infra/osm/update.sh
+```
+
+`ENV_FILE` es el `.env` que Dokploy escribe en la carpeta del proyecto; va en ruta absoluta porque
+el script se mueve a `infra/` antes de correr. Las tres variables tienen valores por defecto que
+apuntan al compose de desarrollo, así que en local se sigue corriendo `bun run osm:update` sin
+nada delante.
+
+Al terminar, el script reinicia Valhalla con el grafo nuevo y el API empieza a devolver rutas.
+
+### Dimensionar el VPS
+
+Valhalla es el que manda el tamaño, y el pico no es servir sino **construir el grafo**. Con el
+extracto de Perú, que hoy pesa unos 250 MB, la estimación de partida es **no bajar de 8 GB de RAM**
+y dejar **20-30 GB de disco** libres entre el `.pbf`, los tiles de elevación y el grafo. Es una
+estimación, no una medición: si el VPS queda corto, `valhalla_build_tiles` muere sin explicar
+mucho.
+
 ## Lo que falta
 
 | Qué | Por qué | Decisión |
 |---|---|---|
-| `Dockerfile` del API, construido **desde la raíz del repo** | Sin el lockfile y sin `packages/` no puede instalar | [0001](../docs/decisiones/0001-monorepo-con-bun.md) |
-| Correr `drizzle-kit migrate` al arrancar el contenedor del API | Funciona con una réplica; con dos, dos contenedores migrando a la vez es un problema | [0009](../docs/decisiones/0009-despliegue-en-dokploy.md) |
-| Backups de la base | **Bloqueante antes de la primera cuenta de usuario** | [0017](../docs/decisiones/0017-backups-aplazados-con-disparador.md) |
+| Backups de la base | PostGIS va dentro del compose, así que la interfaz de Dokploy no lo respalda: hace falta un `pg_dump` propio. **Bloqueante antes de la primera cuenta de usuario** | [0017](../docs/decisiones/0017-backups-aplazados-con-disparador.md) |
+| Límite de uso en el API | **Bloqueante antes de pasarle el APK a otra persona**, porque el APK lleva la URL dentro | [0030](../docs/decisiones/0030-sin-limite-de-uso-en-el-api.md) |
+| Sacar las migraciones del arranque | Con una réplica está bien; con dos, dos contenedores migrando a la vez es un problema | [0009](../docs/decisiones/0009-despliegue-en-dokploy.md) |
