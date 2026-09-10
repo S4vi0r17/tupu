@@ -12,7 +12,7 @@ código, en [convenciones](conventions/). Las entidades, en [modelo de datos](mo
 El mapa del stack completo, con las alternativas que se descartaron en cada capa, está en
 [`stack.md`](stack.md).
 
-Última sesión: **2026-09-09**.
+Última sesión: **2026-09-10**.
 
 ## Decisiones cerradas
 
@@ -63,6 +63,8 @@ El mapa del stack completo, con las alternativas que se descartaron en cada capa
 
 | Documento | Para qué |
 |---|---|
+| [`como-funciona.md`](como-funciona.md) | El recorrido de un dato de OSM a la pantalla, pieza por pieza |
+| [`comandos.md`](comandos.md) | Qué hace cada comando, cuándo se usa y con qué muerde |
 | [`stack.md`](stack.md) | El stack de un vistazo, con el rival descartado de cada capa |
 | [`decisiones/`](decisiones/) | El razonamiento completo de cada elección y qué se dio a cambio |
 | [`modelo-datos.md`](modelo-datos.md) | Las entidades campo por campo, y por qué dos no tienen `id` |
@@ -80,10 +82,17 @@ Lo primero que conviene levantar, en este orden, porque cada paso desbloquea al 
 
 1. ~~El monorepo vacío con sus workspaces, y el repositorio en GitHub.~~ **Hecho.**
 2. ~~`docker compose` con PostGIS y Valhalla, y el comando `osm:update` que llena los dos.~~ **Hecho**, en `infra/`.
-3. ~~El API con el endpoint de ciclovías cercanas y el de planificar ruta.~~ **Hecho**, falta el trato de errores.
+3. ~~El API con el endpoint de ciclovías cercanas y el de planificar ruta.~~ **Hecho**, con el
+   trato de errores: Valhalla caído devuelve 503 y no un error crudo.
 4. ~~La app con el mapa y las ciclovías resaltadas.~~ **Hecho**, dibujadas desde el API.
-5. Ruta A→B en pantalla — **acá se sabe si el proyecto tiene sentido**.
-6. Grabación del recorrido y brújula.
+5. Ruta A→B — **el API la calcula y responde en producción**, así que ya se sabe que el motor da
+   rutas ciclistas en Lima. **Falta la pantalla**: elegir destino tocando el mapa
+   ([0028](decisiones/0028-destino-por-mapa-o-coordenadas.md)) y dibujar el trazado.
+6. Grabación del recorrido y brújula — **la brújula está hecha**: cono de visión, rosa del norte y
+   suavizado. Falta la grabación, y con ella el mapa que sigue al ciclista y rota
+   ([0027](decisiones/0027-brujula-muestra-hacia-donde-miras.md)).
+7. ~~Desplegar el lado servidor~~ **Hecho**: los tres contenedores en Dokploy detrás de Traefik, y
+   el APK compilado apuntando ahí ([`infra/README.md`](../infra/README.md)).
 
 ## Lo que hay que resolver escribiendo, no decidiendo
 
@@ -98,7 +107,12 @@ Nada de esto necesita discusión, pero conviene no descubrirlo tarde:
   `expo run:android` en local, con el SDK de Android. El APK que se instala en el teléfono sale
   de `gradlew assembleRelease`, firmado con la clave de depuración que genera Expo. Sirve para
   probar uno mismo y para nada más — ver **EAS Build** en los aplazados.
-- **Qué hace la app si Valhalla está caído.** Hoy la respuesta sería un error crudo.
+- ~~Qué hace la app si Valhalla está caído~~ — resuelto en el API: `UpstreamError` se traduce a
+  503 con código `upstream_unavailable`, comprobado en producción. **Falta el lado del móvil**,
+  que todavía no tiene pantalla de ruta donde mostrarlo.
+- **El mapa no sigue al ciclista.** Hoy se centra una sola vez, en el primer fix, y ahí se queda:
+  si avanzás, el punto azul se va de la pantalla. El seguimiento va junto con la rotación, y las
+  dos con la grabación ([0027](decisiones/0027-brujula-muestra-hacia-donde-miras.md)).
 - **Mantener la pantalla encendida** en el portacelular
   ([0027](decisiones/0027-brujula-muestra-hacia-donde-miras.md)).
 - ~~El estilo del mapa~~ — hecho: vía propia en verde continuo con halo, carril pintado en verde
