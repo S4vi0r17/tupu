@@ -29,3 +29,32 @@ export function bearingDegrees(from: Point, to: Point): number {
 export function angleDeltaDegrees(from: number, to: number): number {
   return ((to - from + 540) % 360) - 180
 }
+
+/**
+ * Peso de la lectura nueva frente al valor acumulado en cada paso, entre 0 y 1.
+ *
+ * @remarks Se afina en la calle: más peso tiembla, menos peso va con retraso.
+ */
+export const HEADING_SMOOTHING = 0.2
+
+/**
+ * Suaviza el rumbo de la brújula con un filtro paso bajo exponencial.
+ *
+ * @remarks Promedia seno y coseno, no los grados: entre 359° y 1° la media
+ * aritmética da 180° y la brújula pega la vuelta entera al cruzar el norte.
+ */
+export function smoothHeadingDegrees(
+  previous: number | null,
+  next: number,
+  weight: number = HEADING_SMOOTHING,
+): number {
+  if (previous === null) return normalizeDegrees(next)
+
+  const kept = 1 - weight
+  const previousRadians = toRadians(previous)
+  const nextRadians = toRadians(next)
+  const sin = Math.sin(previousRadians) * kept + Math.sin(nextRadians) * weight
+  const cos = Math.cos(previousRadians) * kept + Math.cos(nextRadians) * weight
+
+  return normalizeDegrees(toDegrees(Math.atan2(sin, cos)))
+}

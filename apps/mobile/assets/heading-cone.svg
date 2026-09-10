@@ -1,0 +1,19 @@
+<!--
+  Fuente del haz de la brújula. Los PNG de al lado se regeneran con:
+    rsvg-convert -w  64 -h  64 heading-cone.svg -o heading-cone.png
+    rsvg-convert -w 128 -h 128 heading-cone.svg -o heading-cone@2x.png
+    rsvg-convert -w 192 -h 192 heading-cone.svg -o heading-cone@3x.png
+
+  El vértice va en el centro del lienzo, que es donde MapLibre ancla el icono,
+  y el haz apunta al norte: `icon-rotate` lo gira hasta el rumbo del teléfono.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="beam" gradientUnits="userSpaceOnUse" x1="32" y1="32" x2="32" y2="2">
+      <stop offset="0" stop-color="#2563EB" stop-opacity="0.6" />
+      <stop offset="0.5" stop-color="#2563EB" stop-opacity="0.32" />
+      <stop offset="1" stop-color="#2563EB" stop-opacity="0" />
+    </linearGradient>
+  </defs>
+  <path d="M32 32 L19.32 4.81 A30 30 0 0 1 44.68 4.81 Z" fill="url(#beam)" />
+</svg>
