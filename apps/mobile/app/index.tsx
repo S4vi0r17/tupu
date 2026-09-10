@@ -9,6 +9,7 @@ import {
 import { useEffect, useRef, useState } from 'react'
 import { type NativeSyntheticEvent, StyleSheet, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import { NorthRose } from '../components/north-rose.tsx'
 import { RiderPuck } from '../components/rider-puck.tsx'
 import { type Bbox, useCyclewaysInBbox } from '../lib/cycleways.ts'
 import { useHeading } from '../lib/heading.ts'
@@ -56,6 +57,7 @@ function noticeFor({
 
 export default function MapScreen() {
   const [bbox, setBbox] = useState<Bbox | null>(null)
+  const [bearing, setBearing] = useState(0)
   const { collection, isError } = useCyclewaysInBbox(bbox)
 
   const { permission, point, accuracyM } = useCurrentLocation()
@@ -76,6 +78,11 @@ export default function MapScreen() {
     setBbox({ west, south, east, north })
   }
 
+  // WHY La aguja sigue al dedo: onRegionDidChange solo avisa al soltar
+  const onRegionIsChanging = (event: NativeSyntheticEvent<ViewStateChangeEvent>) => {
+    setBearing(event.nativeEvent.bearing)
+  }
+
   const notice = noticeFor({
     cyclewaysFailed: isError,
     isLocationDenied: permission === 'denied',
@@ -91,6 +98,7 @@ export default function MapScreen() {
         attribution
         logo={false}
         onRegionDidChange={onRegionDidChange}
+        onRegionIsChanging={onRegionIsChanging}
       >
         <Camera ref={cameraRef} initialViewState={{ center: LIMA_CENTER, zoom: INITIAL_ZOOM }} />
 
@@ -168,6 +176,15 @@ export default function MapScreen() {
               <Text className="text-[11px] text-neutral-400">compartida con autos</Text>
             </View>
           </View>
+        </View>
+      </SafeAreaView>
+
+      <SafeAreaView className="absolute right-0 top-0">
+        <View className="m-3.5">
+          <NorthRose
+            bearingDegrees={bearing}
+            onPress={() => cameraRef.current?.setStop({ bearing: 0, duration: 300 })}
+          />
         </View>
       </SafeAreaView>
 
