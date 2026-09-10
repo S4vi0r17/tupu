@@ -67,26 +67,34 @@ El Dockerfile del API se construye **desde la raíz del repo**, porque sin `bun.
 
 | Variable | Qué |
 |---|---|
-| `API_DOMAIN` | El dominio del API, solo el host: `api.ejemplo.pe`, sin `https://` ni barra final |
 | `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_DB` | Credenciales de la base. **No** las de `.env.example`, que son de juguete |
 
-`DATABASE_URL` y `VALHALLA_URL` no se cargan a mano: las arma el compose con los nombres de
-servicio de la red interna. Si falta cualquiera de las cuatro, el despliegue falla al interpolar y
-dice cuál.
+Son las tres, y ninguna más. `DATABASE_URL` y `VALHALLA_URL` no se cargan a mano: las arma el
+compose con los nombres de servicio de la red interna. Si falta una, el despliegue falla al
+interpolar y dice cuál.
+
+**La contraseña, solo letras y números** — `openssl rand -hex 24`. Se interpola dentro de
+`postgresql://usuario:clave@postgis:5432/base`, y un `@` o un `/` parten la URL.
+
+Dokploy escribe esas variables en `infra/.env`, junto al compose, y las pasa con `--env-file`.
 
 ### El primer despliegue
 
 1. **Apuntá el DNS al VPS antes de desplegar.** Sin el registro resuelto, Let's Encrypt no emite
    el certificado y Traefik sirve el suyo, autofirmado.
-2. Proyecto nuevo en Dokploy, tipo Compose, con el repositorio y la ruta
-   `infra/compose.prod.yaml`.
-3. Cargá las variables de arriba y desplegá. El API corre las migraciones al arrancar y recién
-   después sirve ([0009](../docs/decisiones/0009-despliegue-en-dokploy.md)).
-4. **Valhalla todavía no arranca**: no hay grafo. Eso es el paso siguiente, y no es parte del
+2. Servicio nuevo en Dokploy, tipo **Compose**, con el repositorio y la ruta
+   `infra/compose.prod.yaml`. Que el tipo sea `docker-compose` y no `stack`: el compose construye
+   la imagen del API con `build:`, y Swarm no construye imágenes ni respeta el `depends_on` que
+   hace esperar a la base.
+3. En Domains, el dominio apuntando al servicio **`api`, puerto 3000**.
+4. Cargá las tres variables y desplegá. El API corre las migraciones al arrancar y recién después
+   sirve ([0009](../docs/decisiones/0009-despliegue-en-dokploy.md)).
+5. **Valhalla todavía no arranca**: no hay grafo. Eso es el paso siguiente, y no es parte del
    despliegue.
 
-Si preferís cargar el dominio desde la interfaz de Dokploy en vez del compose, borrá las etiquetas
-de Traefik del servicio `api`. Las dos cosas a la vez dejan dos routers peleando por el mismo host.
+Es un solo servicio de Dokploy con los tres contenedores dentro, no uno por contenedor. El API no
+se despliega aparte: lo construye este mismo compose desde `apps/api/Dockerfile`, con la raíz del
+repositorio como contexto.
 
 ### Los datos de OSM, a mano y aparte
 
@@ -99,14 +107,17 @@ docker compose ls                     # el nombre del proyecto que creó Dokploy
 
 COMPOSE_FILE=compose.prod.yaml \
 COMPOSE_PROJECT=<el nombre de arriba> \
-ENV_FILE=/ruta/absoluta/al/.env \
+ENV_FILE=.env \
   infra/osm/update.sh
 ```
 
-`ENV_FILE` es el `.env` que Dokploy escribe en la carpeta del proyecto; va en ruta absoluta porque
-el script se mueve a `infra/` antes de correr. Las tres variables tienen valores por defecto que
-apuntan al compose de desarrollo, así que en local se sigue corriendo `bun run osm:update` sin
-nada delante.
+`ENV_FILE=.env` es el que escribe Dokploy en `infra/`, y se resuelve ahí porque el script se mueve
+a esa carpeta antes de correr. `COMPOSE_PROJECT` importa: Dokploy nombra el proyecto con un sufijo
+al azar —`tupu-intra-6txm2f` y parecidos—, y con otro nombre Docker crearía volúmenes nuevos y
+vacíos en vez de tocar los que ya están sirviendo.
+
+Las tres variables tienen valores por defecto que apuntan al compose de desarrollo, así que en
+local se sigue corriendo `bun run osm:update` sin nada delante.
 
 Al terminar, el script reinicia Valhalla con el grafo nuevo y el API empieza a devolver rutas.
 
