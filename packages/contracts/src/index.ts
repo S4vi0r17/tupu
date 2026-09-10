@@ -1,12 +1,18 @@
 export type {
   Cycleway,
+  CyclewayCollection,
+  CyclewayFeature,
   CyclewayKind,
+  CyclewaysInBboxQuery,
   NearbyCyclewaysQuery,
   NearbyCyclewaysResponse,
 } from './cycleways.ts'
 export {
+  cyclewayCollectionSchema,
+  cyclewayFeatureSchema,
   cyclewayKindSchema,
   cyclewaySchema,
+  cyclewaysInBboxQuerySchema,
   nearbyCyclewaysQuerySchema,
   nearbyCyclewaysResponseSchema,
 } from './cycleways.ts'
