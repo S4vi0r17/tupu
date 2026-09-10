@@ -15,16 +15,10 @@ services:
     depends_on:
       postgis:
         condition: service_healthy
+    # El dominio se carga en la pestaña Domains de Dokploy, apuntando a este
+    # servicio en el puerto 3000: es Dokploy quien escribe las etiquetas de
+    # Traefik. Por eso `api` es el único que toca la red compartida.
     networks: [internal, dokploy-network]
-    # Si preferís cargar el dominio desde la interfaz de Dokploy, borrá estas
-    # etiquetas: las dos cosas juntas dejan dos routers peleando por el host.
-    labels:
-      - traefik.enable=true
-      - traefik.docker.network=dokploy-network
-      - traefik.http.routers.tupu-api.rule=Host(`${API_DOMAIN:?falta el dominio del API}`)
-      - traefik.http.routers.tupu-api.entrypoints=websecure
-      - traefik.http.routers.tupu-api.tls.certresolver=letsencrypt
-      - traefik.http.services.tupu-api.loadbalancer.server.port=3000
     restart: unless-stopped
 
   postgis:
