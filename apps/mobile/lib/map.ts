@@ -19,20 +19,25 @@ export const TRANSPORTATION_LAYER = 'transportation'
 export const SEPARATED_CYCLEWAY: FilterSpecification = ['==', ['get', 'subclass'], 'cycleway']
 
 /**
- * Calles donde la bici está señalizada, sin vía propia.
+ * Vías sin espacio propio donde la bici está señalizada como corresponde.
  *
- * ! El tile no expone `cycleway=lane`, así que un carril pintado solo se
- * ! distingue si además está etiquetado con bicycle. Es el límite de dibujar
- * ! desde el tile, y el disparador de 0026 si algún día molesta.
+ * ! Solo `designated`, nunca `yes`: `yes` significa apenas «se permite», y
+ * ! pintarlo convierte media ciudad en infraestructura ciclista que no existe.
+ * ! El tile tampoco expone `cycleway=lane`, así que el carril pintado no se
+ * ! distingue desde acá — es el disparador de 0026.
  */
-export const BIKE_FRIENDLY_ROAD: FilterSpecification = [
+export const SIGNPOSTED_SHARED: FilterSpecification = [
   'all',
   ['!=', ['get', 'subclass'], 'cycleway'],
-  ['in', ['get', 'bicycle'], ['literal', ['designated', 'yes']]],
+  ['==', ['get', 'bicycle'], 'designated'],
 ]
 
-export const CYCLEWAY_COLOR = '#0FA47F'
-export const BIKE_FRIENDLY_COLOR = '#6FB3A0'
+/** Verde: tenés la vía para vos. */
+export const CYCLEWAY_COLOR = '#0E9F6E'
+/** Ámbar: compartís el espacio, y el color lo dice antes de leer la leyenda. */
+export const SHARED_COLOR = '#D97706'
+/** Halo blanco por debajo, para que la línea no se pierda sobre el mapa base. */
+export const CASING_COLOR = '#FFFFFF'
 
 type LineWidth = NonNullable<NonNullable<LineLayerSpecification['paint']>['line-width']>
 
@@ -42,9 +47,28 @@ export const CYCLEWAY_WIDTH: LineWidth = [
   ['linear'],
   ['zoom'],
   10,
-  1.4,
+  1.8,
   14,
-  3.2,
+  4,
   18,
-  7,
+  9,
 ]
+
+/** El halo va siempre un poco más ancho que la línea que envuelve. */
+export const CASING_WIDTH: LineWidth = ['interpolate', ['linear'], ['zoom'], 10, 3.4, 14, 7, 18, 13]
+
+/** La compartida va más fina: no es lo mismo y no debe pesar lo mismo. */
+export const SHARED_WIDTH: LineWidth = [
+  'interpolate',
+  ['linear'],
+  ['zoom'],
+  10,
+  1.2,
+  14,
+  2.6,
+  18,
+  5,
+]
+
+/** Guiones cortos, que se leen como «esto no es continuo ni es tuyo». */
+export const SHARED_DASH: [number, number] = [1.5, 1.5]

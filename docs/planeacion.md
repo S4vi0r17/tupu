@@ -119,7 +119,9 @@ Y dos cosas **a verificar al configurar**, que si fallan cambian una decisión:
   `class=path` con `subclass=cycleway`, y trae además los campos `bicycle` y `surface`. Sobre
   Miraflores aparecen con nombre, «Ciclovía Arequipa», «Ciclovía Larco». Lo que **no** expone el
   tile es `cycleway=lane`: un carril pintado solo se distingue si además está etiquetado con
-  `bicycle`, y si no, se dibuja como calle común. Como 1483 de los 1700 tramos de Lima son vía
+  `bicycle=designated`, y si no, se dibuja como calle común. Ojo con `bicycle=yes`, que significa
+  apenas «se permite» y no es infraestructura: filtrarlo por error pinta calles menores y veredas
+  como si fueran ciclovías. Como 1483 de los 1700 tramos de Lima son vía
   propia, 0026 se sostiene; el carril pintado es lo que activaría su disparador
   ([0026](decisiones/0026-ciclovias-dibujadas-desde-el-tile.md)).
 
