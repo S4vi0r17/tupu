@@ -82,7 +82,9 @@ se saturan.
 La primera versión son cuatro cosas, y ninguna más ([0010](docs/decisiones/0010-alcance-del-mvp.md)):
 el mapa con las ciclovías resaltadas, una ruta en bici entre dos puntos con su distancia y tiempo,
 la grabación del recorrido guardada en el teléfono, y la brújula —el cono que muestra hacia dónde
-miras, con el mapa rotando mientras grabas. Sin cuentas y solo en Android.
+miras, con el mapa rotando mientras grabas. Sin cuentas y solo en Android — y por ahora, solo en
+Android **con Google Play Services**: sin ellos no hay ubicación, y el porqué está en
+[`docs/como-funciona.md`](docs/como-funciona.md).
 
 Lo que se valida con eso es lo único que de verdad importa al principio: **si el motor de ruteo da
 rutas ciclistas decentes en Lima.** Si eso sale mal, el resto no importa.

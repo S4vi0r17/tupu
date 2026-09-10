@@ -16,6 +16,9 @@ Si aparece una palabra rara, está en el [glosario](glosario.md).
 | Grabación del recorrido | No empezada |
 | Mapa que te sigue y rota al pedalear | No empezada, va con la grabación |
 
+Y un requisito que conviene tener presente: **el teléfono necesita Google Play Services** para
+ubicarte. Está explicado más abajo, en «Dónde estoy».
+
 ## El recorrido de un dato
 
 Hay dos caminos distintos, y arrancan en la misma descarga.
@@ -182,6 +185,37 @@ El cono está alineado **al mapa** y no a la pantalla, así que el día que el m
 el cono va a seguir apuntando al norte magnético correcto sin tocar nada.
 
 El azul es deliberado: en este mapa el verde y el ámbar ya significan otra cosa.
+
+## Dónde estoy, y por qué hace falta Google
+
+La posición sale de `Location.watchPositionAsync` de `expo-location`, cada cinco metros. Y ahí hay
+un límite que conviene conocer antes de que aparezca en la calle.
+
+**`expo-location` en Android pide la posición solo a Google Play Services.** Su módulo nativo
+declara un `FusedLocationProviderClient` y lo obtiene con `LocationServices.getFusedLocationProviderClient(...)`.
+No comprueba si Play Services está y no cae a ningún otro proveedor.
+
+En un teléfono sin GMS —un Huawei posterior a 2019, por ejemplo— eso **no falla: calla**. No llega
+ninguna posición, no se lanza ningún error, y la app se queda sin punto azul sin poder explicar
+por qué. Comprobado en un Huawei Y7p con Android 10.
+
+Dos consecuencias que no son obvias:
+
+- **La brújula sigue funcionando** en ese teléfono. El rumbo sale de `SensorManager` directo, sin
+  pasar por Google. Ver el cono girar y no ver el punto es exactamente el síntoma.
+- **`hasServicesEnabledAsync()` no sirve para detectarlo.** Consulta el `LocationManager` del
+  sistema, que está encendido. Diría que todo está bien.
+
+**Existe una salida y no está tomada.** MapLibre trae su propio motor de ubicación: su
+`DefaultLocationEngineProvider` usa `LocationEngineDefault`, que devuelve
+`MapLibreFusedLocationEngineImpl`, y esa clase solo referencia `android.location.LocationManager`
+— el proveedor del sistema, sin nada de Google. Como MapLibre ya está instalada para dibujar el
+mapa, cambiar la fuente de posición sería barato. Se dejó fuera a propósito: hoy tupu **requiere
+un Android con Google Play Services**, y el disparador para revisarlo está en
+[`planeacion.md`](planeacion.md).
+
+Lo mismo va a pasar con la grabación en segundo plano, que también se apoya en `expo-location`
+([0015](decisiones/0015-grabacion-en-segundo-plano.md)).
 
 ## La rosa del norte
 

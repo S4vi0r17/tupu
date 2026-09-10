@@ -154,6 +154,7 @@ Nada de esto está sin decidir: está decidido que se hace **después**, y cada 
 | Cron para `osm:update` | Cuando correrlo a mano moleste | [0012](decisiones/0012-ingesta-de-osm-por-extracto.md), [0020](decisiones/0020-actualizacion-de-datos-en-un-comando.md) |
 | Entorno de pruebas | Cuando haya gente usando la app | [0018](decisiones/0018-sin-entorno-de-pruebas.md) |
 | iOS | Después del MVP | [0019](decisiones/0019-mvp-solo-android.md) |
+| **Ubicación en teléfonos sin Google Play Services** | Cuando el APK vaya a alguien con un Huawei posterior a 2019, o si se decide cubrirlos | — |
 | **EAS Build con perfiles y scripts**, como el repo hermano `crs-field` | El primer APK que vaya a otra persona, o iOS — lo que llegue antes | [0005](decisiones/0005-expo-en-el-movil.md), [0019](decisiones/0019-mvp-solo-android.md) |
 | Ciclovías dibujadas desde el API | Cuando haga falta resaltar un tramo concreto | [0026](decisiones/0026-ciclovias-dibujadas-desde-el-tile.md) |
 | `react-native-background-geolocation` | Si `expo-location` resulta poco fiable en la calle | [0015](decisiones/0015-grabacion-en-segundo-plano.md) |
@@ -162,6 +163,22 @@ Nada de esto está sin decidir: está decidido que se hace **después**, y cada 
 | Afinar el perfil ciclista | **Desde la primera salida en bici** — los valores actuales están puestos a ojo | [0029](decisiones/0029-perfil-ciclista-de-valhalla.md) |
 | Turborepo | Cuando los tests dejen de correr en segundos | [0001](decisiones/0001-monorepo-con-bun.md) |
 | **Límite de uso en el API** | **Bloqueante antes de pasarle el APK a otra persona** — el APK lleva la URL dentro, y repartirlo está en el plan de [0019](decisiones/0019-mvp-solo-android.md) | [0030](decisiones/0030-sin-limite-de-uso-en-el-api.md) |
+
+### Por qué tupu hoy necesita Google Play Services
+
+`expo-location` pide la posición al proveedor fusionado de Google, sin comprobar si existe y sin
+caer a ningún otro. En un teléfono sin GMS no falla: **calla**, y la app se queda sin punto azul
+sin poder decir por qué. Comprobado en un Huawei Y7p con Android 10, donde la brújula sí funciona
+porque el rumbo no pasa por Google.
+
+Se sabe cómo arreglarlo y no está hecho: MapLibre, que ya está instalada, trae un motor de
+ubicación que usa el proveedor del sistema y funciona con GMS y sin él. El detalle técnico está en
+[`como-funciona.md`](como-funciona.md). Queda pendiente porque hoy la app se prueba en un solo
+teléfono; el día que el APK salga a otras manos, esto y el límite de uso del API caen juntos.
+
+La otra salida que se está considerando es una app aparte para teléfonos viejos o sin servicios.
+Es viable sin tocar nada del servidor: el API no sabe qué teléfono lo llama, y `packages/contracts`
+y `packages/geo` se reusan tal cual.
 
 ### Por qué EAS termina entrando
 
