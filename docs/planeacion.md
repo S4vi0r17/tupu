@@ -95,7 +95,9 @@ Nada de esto necesita discusión, pero conviene no descubrirlo tarde:
 - **Icono de la app.** El nombre y el `package id` ya están en `apps/mobile/app.json`
   (`pe.tupu.app`, [0034](decisiones/0034-el-proyecto-se-llama-tupu.md)); falta el icono para el APK.
 - ~~Cómo se construye la build de desarrollo del móvil~~ — resuelto: `expo prebuild` y
-  `expo run:android` en local, con el SDK de Android. EAS queda para cuando llegue iOS.
+  `expo run:android` en local, con el SDK de Android. El APK que se instala en el teléfono sale
+  de `gradlew assembleRelease`, firmado con la clave de depuración que genera Expo. Sirve para
+  probar uno mismo y para nada más — ver **EAS Build** en los aplazados.
 - **Qué hace la app si Valhalla está caído.** Hoy la respuesta sería un error crudo.
 - **Mantener la pantalla encendida** en el portacelular
   ([0027](decisiones/0027-brujula-muestra-hacia-donde-miras.md)).
@@ -138,6 +140,7 @@ Nada de esto está sin decidir: está decidido que se hace **después**, y cada 
 | Cron para `osm:update` | Cuando correrlo a mano moleste | [0012](decisiones/0012-ingesta-de-osm-por-extracto.md), [0020](decisiones/0020-actualizacion-de-datos-en-un-comando.md) |
 | Entorno de pruebas | Cuando haya gente usando la app | [0018](decisiones/0018-sin-entorno-de-pruebas.md) |
 | iOS | Después del MVP | [0019](decisiones/0019-mvp-solo-android.md) |
+| **EAS Build con perfiles y scripts**, como el repo hermano `crs-field` | El primer APK que vaya a otra persona, o iOS — lo que llegue antes | [0005](decisiones/0005-expo-en-el-movil.md), [0019](decisiones/0019-mvp-solo-android.md) |
 | Ciclovías dibujadas desde el API | Cuando haga falta resaltar un tramo concreto | [0026](decisiones/0026-ciclovias-dibujadas-desde-el-tile.md) |
 | `react-native-background-geolocation` | Si `expo-location` resulta poco fiable en la calle | [0015](decisiones/0015-grabacion-en-segundo-plano.md) |
 | Geocodificador (buscar por nombre) | Cuando pegar coordenadas moleste, o la use alguien más | [0028](decisiones/0028-destino-por-mapa-o-coordenadas.md) |
@@ -145,6 +148,19 @@ Nada de esto está sin decidir: está decidido que se hace **después**, y cada 
 | Afinar el perfil ciclista | **Desde la primera salida en bici** — los valores actuales están puestos a ojo | [0029](decisiones/0029-perfil-ciclista-de-valhalla.md) |
 | Turborepo | Cuando los tests dejen de correr en segundos | [0001](decisiones/0001-monorepo-con-bun.md) |
 | **Límite de uso en el API** | **Bloqueante antes de pasarle el APK a otra persona** — el APK lleva la URL dentro, y repartirlo está en el plan de [0019](decisiones/0019-mvp-solo-android.md) | [0030](decisiones/0030-sin-limite-de-uso-en-el-api.md) |
+
+### Por qué EAS termina entrando
+
+`crs-field` ya tiene el camino hecho: `eas.json` con perfiles `development`, `preview` y
+`production`, y scripts que los envuelven (`apk:preview`, `build:prod`, `submit:ios`). Acá se hará
+algo parecido, y **no solo por iOS**: lo que hoy falta para producción es la firma. El
+`assembleRelease` de ahora usa la clave de depuración, y en Android **un APK firmado con otra
+clave no se instala encima del anterior** — hay que desinstalar, y con eso se va el historial de
+recorridos que vive en SQLite en el teléfono ([0013](decisiones/0013-recorrido-en-sqlite-local.md)).
+
+Por eso el disparador es el primer APK que salga de las manos de quien lo desarrolla: ahí hay que
+tener un keystore que no cambie nunca más, y EAS es quien lo guarda. Cae junto al límite de uso
+del API ([0030](decisiones/0030-sin-limite-de-uso-en-el-api.md)), que tiene el mismo disparador.
 
 ## Fuera del MVP, sin decidir todavía
 
