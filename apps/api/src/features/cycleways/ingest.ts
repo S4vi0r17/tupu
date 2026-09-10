@@ -26,14 +26,25 @@ async function run(command: string[]): Promise<string> {
   return stdout.trim()
 }
 
-/** Las tres formas en que OSM etiqueta infraestructura ciclista (0012). */
+/**
+ * Cómo etiqueta OSM la infraestructura ciclista (0012).
+ *
+ * ! Las variantes por lado no son un detalle: en Lima el carril pintado se
+ * ! mapea casi siempre como cycleway:left o cycleway:right sobre la calle.
+ * ! Sin ellas se pierde un tercio de la red, medido contra el extracto.
+ */
+const CYCLING_VALUES = 'lane,track,shared_lane,opposite_lane,opposite_track'
+
 async function filterCycleways(): Promise<void> {
   await run([
     'osmium',
     'tags-filter',
     PBF_PATH,
     'w/highway=cycleway',
-    'w/cycleway=track,lane',
+    `w/cycleway=${CYCLING_VALUES}`,
+    `w/cycleway:both=${CYCLING_VALUES}`,
+    `w/cycleway:left=${CYCLING_VALUES}`,
+    `w/cycleway:right=${CYCLING_VALUES}`,
     'w/bicycle=designated',
     '--overwrite',
     '-o',
@@ -88,16 +99,25 @@ async function replaceCycleways(extractDate: string): Promise<number> {
   return db.transaction(async (tx) => {
     await tx.execute(sql`truncate table cycleways`)
 
-    // La prioridad importa: una vía propia etiquetada además como designada
-    // es track, no shared.
     const inserted = await tx.execute(sql`
       insert into cycleways (osm_id, name, kind, surface, geom)
       select distinct on (osm_id)
         osm_id::bigint,
         name,
+        -- La prioridad importa: una vía propia etiquetada además como
+        -- designada es track, y un carril pintado a un lado sigue siendo lane.
         case
-          when highway = 'cycleway' or other_tags -> 'cycleway' = 'track' then 'track'
-          when other_tags -> 'cycleway' = 'lane' then 'lane'
+          when highway = 'cycleway'
+            or coalesce(other_tags -> 'cycleway', '') = 'track'
+            or coalesce(other_tags -> 'cycleway:both', '') = 'track'
+            or coalesce(other_tags -> 'cycleway:left', '') = 'track'
+            or coalesce(other_tags -> 'cycleway:right', '') = 'track'
+            then 'track'
+          when coalesce(other_tags -> 'cycleway', '') in ('lane', 'opposite_lane')
+            or coalesce(other_tags -> 'cycleway:both', '') in ('lane', 'opposite_lane')
+            or coalesce(other_tags -> 'cycleway:left', '') in ('lane', 'opposite_lane')
+            or coalesce(other_tags -> 'cycleway:right', '') in ('lane', 'opposite_lane')
+            then 'lane'
           else 'shared'
         end::cycleway_kind,
         other_tags -> 'surface',
