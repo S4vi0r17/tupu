@@ -1,14 +1,18 @@
 import {
   Camera,
+  type CameraRef,
   GeoJSONSource,
   Layer,
   Map as MapView,
   type ViewStateChangeEvent,
 } from '@maplibre/maplibre-react-native'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { type NativeSyntheticEvent, StyleSheet, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import { RiderPuck } from '../components/rider-puck.tsx'
 import { type Bbox, useCyclewaysInBbox } from '../lib/cycleways.ts'
+import { useHeading } from '../lib/heading.ts'
+import { useCurrentLocation } from '../lib/location.ts'
 import {
   CASING_COLOR,
   CASING_WIDTH,
@@ -28,15 +32,56 @@ import {
 } from '../lib/map.ts'
 
 const INITIAL_ZOOM = 14
+const RIDER_ZOOM = 16
+
+type NoticeState = {
+  cyclewaysFailed: boolean
+  isLocationDenied: boolean
+  hasCompass: boolean
+  needsCalibration: boolean
+}
+
+function noticeFor({
+  cyclewaysFailed,
+  isLocationDenied,
+  hasCompass,
+  needsCalibration,
+}: NoticeState) {
+  if (cyclewaysFailed) return 'No se pudo traer la red ciclista. El mapa base sigue funcionando.'
+  if (isLocationDenied) return 'Sin permiso de ubicación no se puede mostrar dónde estás.'
+  if (!hasCompass) return 'Este teléfono no tiene brújula: no puede mostrar hacia dónde mirás.'
+  if (needsCalibration) return 'Brújula perdida. Mové el teléfono dibujando un ocho en el aire.'
+  return null
+}
 
 export default function MapScreen() {
   const [bbox, setBbox] = useState<Bbox | null>(null)
   const { collection, isError } = useCyclewaysInBbox(bbox)
 
+  const { permission, point, accuracyM } = useCurrentLocation()
+  const { degrees, hasCompass, needsCalibration } = useHeading(permission === 'granted')
+
+  const cameraRef = useRef<CameraRef>(null)
+  const hasCentered = useRef(false)
+
+  useEffect(() => {
+    if (!point || hasCentered.current) return
+
+    hasCentered.current = true
+    cameraRef.current?.easeTo({ center: [point.lng, point.lat], zoom: RIDER_ZOOM, duration: 700 })
+  }, [point])
+
   const onRegionDidChange = (event: NativeSyntheticEvent<ViewStateChangeEvent>) => {
     const [west, south, east, north] = event.nativeEvent.bounds
     setBbox({ west, south, east, north })
   }
+
+  const notice = noticeFor({
+    cyclewaysFailed: isError,
+    isLocationDenied: permission === 'denied',
+    hasCompass,
+    needsCalibration,
+  })
 
   return (
     <View className="flex-1">
@@ -47,7 +92,7 @@ export default function MapScreen() {
         logo={false}
         onRegionDidChange={onRegionDidChange}
       >
-        <Camera initialViewState={{ center: LIMA_CENTER, zoom: INITIAL_ZOOM }} />
+        <Camera ref={cameraRef} initialViewState={{ center: LIMA_CENTER, zoom: INITIAL_ZOOM }} />
 
         <GeoJSONSource id={CYCLEWAYS_SOURCE} data={collection}>
           <Layer
@@ -94,6 +139,8 @@ export default function MapScreen() {
             paint={{ 'line-color': TRACK_COLOR, 'line-width': TRACK_WIDTH }}
           />
         </GeoJSONSource>
+
+        {point ? <RiderPuck point={point} headingDegrees={degrees} accuracyM={accuracyM} /> : null}
       </MapView>
 
       <SafeAreaView className="absolute inset-x-0 top-0" pointerEvents="none">
@@ -124,12 +171,10 @@ export default function MapScreen() {
         </View>
       </SafeAreaView>
 
-      {isError ? (
+      {notice ? (
         <SafeAreaView className="absolute inset-x-0 bottom-0" pointerEvents="none">
           <View className="mx-3.5 mb-3.5 rounded-2xl bg-neutral-950/90 px-4 py-3">
-            <Text className="text-[12px] leading-4 text-neutral-300">
-              No se pudo traer la red ciclista. El mapa base sigue funcionando.
-            </Text>
+            <Text className="text-[12px] leading-4 text-neutral-300">{notice}</Text>
           </View>
         </SafeAreaView>
       ) : null}
