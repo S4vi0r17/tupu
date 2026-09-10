@@ -35,7 +35,7 @@ marca la vieja como sustituida. El historial es el valor.
 | [0023](0023-sin-ci-dokploy-despliega.md) | Sin CI: Dokploy despliega al mergear | Aceptada |
 | [0024](0024-sin-tests-durante-el-mvp.md) | Sin tests durante el MVP | Aceptada |
 | [0025](0025-brujula-heading-fusionado.md) | La brújula usa el rumbo fusionado, suavizado en el círculo | Aceptada |
-| [0026](0026-ciclovias-dibujadas-desde-el-tile.md) | Las ciclovías se dibujan desde el tile | Aceptada |
+| [0026](0026-ciclovias-dibujadas-desde-el-tile.md) | Las ciclovías se dibujan desde el tile | **Sustituida** por [0038](0038-ciclovias-dibujadas-desde-el-api.md) |
 | [0027](0027-brujula-muestra-hacia-donde-miras.md) | La brújula muestra hacia dónde miras | Aceptada |
 | [0028](0028-destino-por-mapa-o-coordenadas.md) | El destino se elige tocando el mapa o pegando coordenadas | Aceptada |
 | [0029](0029-perfil-ciclista-de-valhalla.md) | Perfil ciclista: prioriza ciclovía y evita cuestas | Aceptada |
@@ -47,3 +47,4 @@ marca la vieja como sustituida. El historial es el valor.
 | [0035](0035-bun-instala-con-enlazador-plano.md) | Bun instala con enlazador plano | **Sustituida** por [0037](0037-bun-se-queda-con-el-enlazador-aislado.md) |
 | [0036](0036-nativewind-para-los-estilos.md) | NativeWind para los estilos del móvil | Aceptada |
 | [0037](0037-bun-se-queda-con-el-enlazador-aislado.md) | Bun se queda con el enlazador aislado | Aceptada, **sustituye** a [0035](0035-bun-instala-con-enlazador-plano.md) |
+| [0038](0038-ciclovias-dibujadas-desde-el-api.md) | Las ciclovías se dibujan desde el API | Aceptada, **sustituye** a [0026](0026-ciclovias-dibujadas-desde-el-tile.md) |

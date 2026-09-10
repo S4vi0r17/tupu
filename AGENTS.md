@@ -5,13 +5,13 @@ archivo.
 
 ## Estado del proyecto
 
-**Planeación cerrada.** 37 decisiones tomadas, ninguna abierta.
+**Planeación cerrada.** 38 decisiones tomadas, ninguna abierta.
 
 | Documento | Para qué |
 |---|---|
 | [`docs/planeacion.md`](docs/planeacion.md) | **Leer esto primero.** Estado, orden de arranque, aplazados con disparador |
 | [`docs/stack.md`](docs/stack.md) | El stack de un vistazo, con el rival descartado de cada capa |
-| [`docs/decisiones/`](docs/decisiones/) | 0001–0037: el razonamiento y qué se dio a cambio |
+| [`docs/decisiones/`](docs/decisiones/) | 0001–0038: el razonamiento y qué se dio a cambio |
 | [`docs/modelo-datos.md`](docs/modelo-datos.md) | Las entidades campo por campo |
 | [`docs/glosario.md`](docs/glosario.md) | OSM, PostGIS, tiles, isócronas, APK… |
 | [`docs/conventions/commits.md`](docs/conventions/commits.md) | Todo mensaje de commit |
@@ -101,6 +101,5 @@ Si fallan, cambian una decisión ya tomada:
 
 - Que `noRestrictedImports` de Biome alcance para la regla entre features. Si no, la salida es
   ESLint ([0031](docs/decisiones/0031-biome-para-lint-y-formato.md)).
-- Que los tiles de OpenFreeMap expongan la infraestructura ciclista de forma distinguible. Si no,
-  las ciclovías se dibujan desde el API
-  ([0026](docs/decisiones/0026-ciclovias-dibujadas-desde-el-tile.md)).
+- ~~Que los tiles de OpenFreeMap expongan la infraestructura ciclista~~ — verificado y **no alcanzan**:
+  las ciclovías se dibujan desde el API ([0038](docs/decisiones/0038-ciclovias-dibujadas-desde-el-api.md)).

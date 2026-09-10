@@ -1,6 +1,9 @@
 # 0026 — Las ciclovías se dibujan desde el tile, no desde el API
 
-**Estado:** Aceptada · 2026-09-08
+**Estado:** **Sustituida** por [0038](0038-ciclovias-dibujadas-desde-el-api.md) · 2026-09-09
+
+> El tile resultó no transportar la red: 4 tramos donde PostGIS tiene 128. Se conserva
+> porque el historial es el valor.
 
 ## Contexto
 

@@ -55,6 +55,7 @@ El mapa del stack completo, con las alternativas que se descartaron en cada capa
 | 35 | ~~Bun instala con enlazador plano~~ — reemplazada por [0037](decisiones/0037-bun-se-queda-con-el-enlazador-aislado.md) | [0035](decisiones/0035-bun-instala-con-enlazador-plano.md) |
 | 36 | **NativeWind** para los estilos del móvil | [0036](decisiones/0036-nativewind-para-los-estilos.md) |
 | 37 | Bun se queda con el **enlazador aislado** · *el móvil ya no puede ni resolver el cliente de Postgres* | [0037](decisiones/0037-bun-se-queda-con-el-enlazador-aislado.md) |
+| 38 | Las ciclovías se dibujan **desde el API** · *sustituye a [0026](decisiones/0026-ciclovias-dibujadas-desde-el-tile.md)* | [0038](decisiones/0038-ciclovias-dibujadas-desde-el-api.md) |
 | — | ~~Alcance: cuentas + historial desde el inicio~~ — reemplazado por [0010](decisiones/0010-alcance-del-mvp.md) | — |
 | — | ~~El proyecto se llama rumbo~~ — reemplazado por [0034](decisiones/0034-el-proyecto-se-llama-tupu.md) | — |
 
@@ -71,7 +72,7 @@ El mapa del stack completo, con las alternativas que se descartaron en cada capa
 
 ## Planeación cerrada
 
-**37 decisiones. No queda ninguna abierta.** Cubren stack, datos, móvil, despliegue y proceso, y
+**38 decisiones. No queda ninguna abierta.** Cubren stack, datos, móvil, despliegue y proceso, y
 los tres huecos que aparecieron al auditar el resultado están cerrados también. El siguiente paso
 ya no es decidir: es escribir código.
 
@@ -80,7 +81,7 @@ Lo primero que conviene levantar, en este orden, porque cada paso desbloquea al 
 1. ~~El monorepo vacío con sus workspaces, y el repositorio en GitHub.~~ **Hecho.**
 2. ~~`docker compose` con PostGIS y Valhalla, y el comando `osm:update` que llena los dos.~~ **Hecho**, en `infra/`.
 3. ~~El API con el endpoint de ciclovías cercanas y el de planificar ruta.~~ **Hecho**, falta el trato de errores.
-4. La app con el mapa y las ciclovías resaltadas.
+4. ~~La app con el mapa y las ciclovías resaltadas.~~ **Hecho**, dibujadas desde el API.
 5. Ruta A→B en pantalla — **acá se sabe si el proyecto tiene sentido**.
 6. Grabación del recorrido y brújula.
 
