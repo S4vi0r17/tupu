@@ -94,14 +94,13 @@ Nada de esto necesita discusión, pero conviene no descubrirlo tarde:
   valida con Zod y lanza en el arranque, y cada app tiene su `.env.example`.
 - **Icono de la app.** El nombre y el `package id` ya están en `apps/mobile/app.json`
   (`pe.tupu.app`, [0034](decisiones/0034-el-proyecto-se-llama-tupu.md)); falta el icono para el APK.
-- **Cómo se construye la build de desarrollo del móvil**, que MapLibre obliga a tener
-  ([0005](decisiones/0005-expo-en-el-movil.md)): EAS Build en la nube o `prebuild` y compilar local
-  con el SDK de Android instalado. Bloquea el paso 4.
+- ~~Cómo se construye la build de desarrollo del móvil~~ — resuelto: `expo prebuild` y
+  `expo run:android` en local, con el SDK de Android. EAS queda para cuando llegue iOS.
 - **Qué hace la app si Valhalla está caído.** Hoy la respuesta sería un error crudo.
 - **Mantener la pantalla encendida** en el portacelular
   ([0027](decisiones/0027-brujula-muestra-hacia-donde-miras.md)).
-- **El estilo del mapa** — colores y grosores para que las ciclovías resalten
-  ([0016](decisiones/0016-tiles-openfreemap-en-el-mvp.md), [0026](decisiones/0026-ciclovias-dibujadas-desde-el-tile.md)).
+- ~~El estilo del mapa~~ — hecho: vía propia en verde continuo con halo, carril pintado en verde
+  punteado y compartida en ámbar punteado ([0038](decisiones/0038-ciclovias-dibujadas-desde-el-api.md)).
 - **La pantalla que explica los permisos** de ubicación «siempre»
   ([0015](decisiones/0015-grabacion-en-segundo-plano.md) avisa de que hay que escribirla bien o la
   gente los deniega).
@@ -122,9 +121,9 @@ Y dos cosas **a verificar al configurar**, que si fallan cambian una decisión:
   tile es `cycleway=lane`: un carril pintado solo se distingue si además está etiquetado con
   `bicycle=designated`, y si no, se dibuja como calle común. Ojo con `bicycle=yes`, que significa
   apenas «se permite» y no es infraestructura: filtrarlo por error pinta calles menores y veredas
-  como si fueran ciclovías. Como 1483 de los 1700 tramos de Lima son vía
-  propia, 0026 se sostiene; el carril pintado es lo que activaría su disparador
-  ([0026](decisiones/0026-ciclovias-dibujadas-desde-el-tile.md)).
+  como si fueran ciclovías. Ese límite terminó siendo decisivo: sobre el Centro el tile
+  traía 4 tramos donde PostGIS tiene 128, así que 0026 quedó sustituida y la red se dibuja desde
+  el API ([0038](decisiones/0038-ciclovias-dibujadas-desde-el-api.md)).
 
 ## Aplazado, con su disparador
 
