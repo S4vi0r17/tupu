@@ -44,7 +44,7 @@ El mapa del stack completo, con las alternativas que se descartaron en cada capa
 | 24 | **Sin tests** durante el MVP | [0024](decisiones/0024-sin-tests-durante-el-mvp.md) |
 | 25 | Brújula: rumbo fusionado del sistema, suavizado en el círculo | [0025](decisiones/0025-brujula-heading-fusionado.md) |
 | 26 | Las ciclovías se dibujan **desde el tile** | [0026](decisiones/0026-ciclovias-dibujadas-desde-el-tile.md) |
-| 27 | La brújula muestra **hacia dónde miras**, no el destino | [0027](decisiones/0027-brujula-muestra-hacia-donde-miras.md) |
+| 27 | La brújula muestra **hacia dónde miras**, no el destino · *la rotación redefinida por [0039](decisiones/0039-tres-modos-de-camara.md)* | [0027](decisiones/0027-brujula-muestra-hacia-donde-miras.md) |
 | 28 | Destino: **tocar el mapa o pegar coordenadas** | [0028](decisiones/0028-destino-por-mapa-o-coordenadas.md) |
 | 29 | Perfil ciclista: **prioriza ciclovía, evita cuestas** | [0029](decisiones/0029-perfil-ciclista-de-valhalla.md) |
 | 30 | **Sin límite de uso** en el API, con disparador | [0030](decisiones/0030-sin-limite-de-uso-en-el-api.md) |
@@ -56,6 +56,7 @@ El mapa del stack completo, con las alternativas que se descartaron en cada capa
 | 36 | **NativeWind** para los estilos del móvil | [0036](decisiones/0036-nativewind-para-los-estilos.md) |
 | 37 | Bun se queda con el **enlazador aislado** · *el móvil ya no puede ni resolver el cliente de Postgres* | [0037](decisiones/0037-bun-se-queda-con-el-enlazador-aislado.md) |
 | 38 | Las ciclovías se dibujan **desde el API** · *sustituye a [0026](decisiones/0026-ciclovias-dibujadas-desde-el-tile.md)* | [0038](decisiones/0038-ciclovias-dibujadas-desde-el-api.md) |
+| 39 | La cámara tiene **tres modos**, y un botón los cicla · *sustituye en parte a [0027](decisiones/0027-brujula-muestra-hacia-donde-miras.md)* | [0039](decisiones/0039-tres-modos-de-camara.md) |
 | — | ~~Alcance: cuentas + historial desde el inicio~~ — reemplazado por [0010](decisiones/0010-alcance-del-mvp.md) | — |
 | — | ~~El proyecto se llama rumbo~~ — reemplazado por [0034](decisiones/0034-el-proyecto-se-llama-tupu.md) | — |
 
@@ -74,7 +75,7 @@ El mapa del stack completo, con las alternativas que se descartaron en cada capa
 
 ## Planeación cerrada
 
-**38 decisiones. No queda ninguna abierta.** Cubren stack, datos, móvil, despliegue y proceso, y
+**39 decisiones. No queda ninguna abierta.** Cubren stack, datos, móvil, despliegue y proceso, y
 los tres huecos que aparecieron al auditar el resultado están cerrados también. El siguiente paso
 ya no es decidir: es escribir código.
 
@@ -88,9 +89,10 @@ Lo primero que conviene levantar, en este orden, porque cada paso desbloquea al 
 5. Ruta A→B — **el API la calcula y responde en producción**, así que ya se sabe que el motor da
    rutas ciclistas en Lima. **Falta la pantalla**: elegir destino tocando el mapa
    ([0028](decisiones/0028-destino-por-mapa-o-coordenadas.md)) y dibujar el trazado.
-6. Grabación del recorrido y brújula — **la brújula está hecha**: cono de visión, rosa del norte y
-   suavizado. Falta la grabación, y con ella el mapa que sigue al ciclista y rota
-   ([0027](decisiones/0027-brujula-muestra-hacia-donde-miras.md)).
+6. Grabación del recorrido y brújula — **la brújula está hecha**: cono de visión y suavizado. **El
+   mapa que sigue al ciclista y rota también**, con los tres modos de cámara que decidió
+   [0039](decisiones/0039-tres-modos-de-camara.md), que se soltaron de la grabación. Falta la
+   grabación en sí.
 7. ~~Desplegar el lado servidor~~ **Hecho**: los tres contenedores en Dokploy detrás de Traefik, y
    el APK compilado apuntando ahí ([`infra/README.md`](../infra/README.md)).
 
@@ -110,9 +112,12 @@ Nada de esto necesita discusión, pero conviene no descubrirlo tarde:
 - ~~Qué hace la app si Valhalla está caído~~ — resuelto en el API: `UpstreamError` se traduce a
   503 con código `upstream_unavailable`, comprobado en producción. **Falta el lado del móvil**,
   que todavía no tiene pantalla de ruta donde mostrarlo.
-- **El mapa no sigue al ciclista.** Hoy se centra una sola vez, en el primer fix, y ahí se queda:
-  si avanzás, el punto azul se va de la pantalla. El seguimiento va junto con la rotación, y las
-  dos con la grabación ([0027](decisiones/0027-brujula-muestra-hacia-donde-miras.md)).
+- ~~El mapa no sigue al ciclista~~ — hecho: tres modos de cámara —libre, te sigue, te sigue y
+  gira— que cicla un botón, y cualquier gesto con el dedo vuelve a libre
+  ([0039](decisiones/0039-tres-modos-de-camara.md)). **Quedan dos valores a afinar en la calle**:
+  los 3° de giro que mueven el mapa y los 300 ms de cada animación.
+- **Las etiquetas del mapa rotan con él.** MapLibre puede mantenerlas horizontales y hay que
+  configurarlo ([0039](decisiones/0039-tres-modos-de-camara.md)).
 - **Mantener la pantalla encendida** en el portacelular
   ([0027](decisiones/0027-brujula-muestra-hacia-donde-miras.md)).
 - ~~El estilo del mapa~~ — hecho: vía propia en verde continuo con halo, carril pintado en verde

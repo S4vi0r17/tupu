@@ -36,7 +36,7 @@ marca la vieja como sustituida. El historial es el valor.
 | [0024](0024-sin-tests-durante-el-mvp.md) | Sin tests durante el MVP | Aceptada |
 | [0025](0025-brujula-heading-fusionado.md) | La brújula usa el rumbo fusionado, suavizado en el círculo | Aceptada |
 | [0026](0026-ciclovias-dibujadas-desde-el-tile.md) | Las ciclovías se dibujan desde el tile | **Sustituida** por [0038](0038-ciclovias-dibujadas-desde-el-api.md) |
-| [0027](0027-brujula-muestra-hacia-donde-miras.md) | La brújula muestra hacia dónde miras | Aceptada |
+| [0027](0027-brujula-muestra-hacia-donde-miras.md) | La brújula muestra hacia dónde miras | Aceptada, **sustituida en parte** por [0039](0039-tres-modos-de-camara.md) |
 | [0028](0028-destino-por-mapa-o-coordenadas.md) | El destino se elige tocando el mapa o pegando coordenadas | Aceptada |
 | [0029](0029-perfil-ciclista-de-valhalla.md) | Perfil ciclista: prioriza ciclovía y evita cuestas | Aceptada |
 | [0030](0030-sin-limite-de-uso-en-el-api.md) | Sin límite de uso en el API, con disparador | Aceptada |
@@ -48,3 +48,4 @@ marca la vieja como sustituida. El historial es el valor.
 | [0036](0036-nativewind-para-los-estilos.md) | NativeWind para los estilos del móvil | Aceptada |
 | [0037](0037-bun-se-queda-con-el-enlazador-aislado.md) | Bun se queda con el enlazador aislado | Aceptada, **sustituye** a [0035](0035-bun-instala-con-enlazador-plano.md) |
 | [0038](0038-ciclovias-dibujadas-desde-el-api.md) | Las ciclovías se dibujan desde el API | Aceptada, **sustituye** a [0026](0026-ciclovias-dibujadas-desde-el-tile.md) |
+| [0039](0039-tres-modos-de-camara.md) | La cámara del mapa tiene tres modos, y un botón los cicla | Aceptada, **sustituye en parte** a [0027](0027-brujula-muestra-hacia-donde-miras.md) |

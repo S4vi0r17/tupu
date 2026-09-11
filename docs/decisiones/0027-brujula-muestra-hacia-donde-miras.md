@@ -3,6 +3,9 @@
 **Estado:** Aceptada · 2026-09-08
 **Reemplaza:** el punto 4 de [0010](0010-alcance-del-mvp.md), que describía la brújula como *"la
 flecha que apunta al destino según hacia dónde mira el teléfono"*.
+**Reemplazada en parte** por [0039](0039-tres-modos-de-camara.md): la rotación del mapa dejó de
+colgar de la grabación y pasó a un botón de tres modos. El cono de visión y el resto siguen
+vigentes.
 
 ## Contexto
 

@@ -6,11 +6,12 @@ import {
   Map as MapView,
   type ViewStateChangeEvent,
 } from '@maplibre/maplibre-react-native'
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import { type NativeSyntheticEvent, StyleSheet, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { NorthRose } from '../components/north-rose.tsx'
+import { CameraModeButton } from '../components/camera-mode-button.tsx'
 import { RiderPuck } from '../components/rider-puck.tsx'
+import { useFollowCamera } from '../lib/camera.ts'
 import { type Bbox, useCyclewaysInBbox } from '../lib/cycleways.ts'
 import { useHeading } from '../lib/heading.ts'
 import { useCurrentLocation } from '../lib/location.ts'
@@ -33,7 +34,6 @@ import {
 } from '../lib/map.ts'
 
 const INITIAL_ZOOM = 14
-const RIDER_ZOOM = 16
 
 type NoticeState = {
   cyclewaysFailed: boolean
@@ -57,30 +57,25 @@ function noticeFor({
 
 export default function MapScreen() {
   const [bbox, setBbox] = useState<Bbox | null>(null)
-  const [bearing, setBearing] = useState(0)
   const { collection, isError } = useCyclewaysInBbox(bbox)
 
   const { permission, point, accuracyM } = useCurrentLocation()
   const { degrees, hasCompass, needsCalibration } = useHeading(permission === 'granted')
 
   const cameraRef = useRef<CameraRef>(null)
-  const hasCentered = useRef(false)
-
-  useEffect(() => {
-    if (!point || hasCentered.current) return
-
-    hasCentered.current = true
-    cameraRef.current?.easeTo({ center: [point.lng, point.lat], zoom: RIDER_ZOOM, duration: 700 })
-  }, [point])
+  const { mode, cycleMode, releaseOnGesture } = useFollowCamera({
+    cameraRef,
+    point,
+    headingDegrees: degrees,
+  })
 
   const onRegionDidChange = (event: NativeSyntheticEvent<ViewStateChangeEvent>) => {
     const [west, south, east, north] = event.nativeEvent.bounds
     setBbox({ west, south, east, north })
   }
 
-  // WHY La aguja sigue al dedo: onRegionDidChange solo avisa al soltar
-  const onRegionIsChanging = (event: NativeSyntheticEvent<ViewStateChangeEvent>) => {
-    setBearing(event.nativeEvent.bearing)
+  const onRegionWillChange = (event: NativeSyntheticEvent<ViewStateChangeEvent>) => {
+    releaseOnGesture(event.nativeEvent)
   }
 
   const notice = noticeFor({
@@ -97,8 +92,8 @@ export default function MapScreen() {
         mapStyle={MAP_STYLE_URL}
         attribution
         logo={false}
+        onRegionWillChange={onRegionWillChange}
         onRegionDidChange={onRegionDidChange}
-        onRegionIsChanging={onRegionIsChanging}
       >
         <Camera ref={cameraRef} initialViewState={{ center: LIMA_CENTER, zoom: INITIAL_ZOOM }} />
 
@@ -179,22 +174,19 @@ export default function MapScreen() {
         </View>
       </SafeAreaView>
 
-      <SafeAreaView className="absolute right-0 top-0">
-        <View className="m-3.5">
-          <NorthRose
-            bearingDegrees={bearing}
-            onPress={() => cameraRef.current?.setStop({ bearing: 0, duration: 300 })}
-          />
+      <SafeAreaView className="absolute inset-x-0 bottom-0" pointerEvents="box-none">
+        <View className="m-3.5 gap-2.5">
+          {notice ? (
+            <View className="rounded-2xl bg-neutral-950/90 px-4 py-3" pointerEvents="none">
+              <Text className="text-[12px] leading-4 text-neutral-300">{notice}</Text>
+            </View>
+          ) : null}
+
+          <View className="self-end">
+            <CameraModeButton mode={mode} onPress={cycleMode} />
+          </View>
         </View>
       </SafeAreaView>
-
-      {notice ? (
-        <SafeAreaView className="absolute inset-x-0 bottom-0" pointerEvents="none">
-          <View className="mx-3.5 mb-3.5 rounded-2xl bg-neutral-950/90 px-4 py-3">
-            <Text className="text-[12px] leading-4 text-neutral-300">{notice}</Text>
-          </View>
-        </SafeAreaView>
-      ) : null}
     </View>
   )
 }

@@ -11,10 +11,9 @@ Si aparece una palabra rara, está en el [glosario](glosario.md).
 |---|---|
 | Mapa con la red ciclista de Lima | Funciona, con datos del API |
 | Dónde estoy, con el cono de la brújula | Funciona |
-| Rosa del norte, y volver al norte | Funciona |
+| Mapa que te sigue y rota, en tres modos | Funciona |
 | Ruta A→B | El API la calcula; **la pantalla todavía no la dibuja** |
 | Grabación del recorrido | No empezada |
-| Mapa que te sigue y rota al pedalear | No empezada, va con la grabación |
 
 Y un requisito que conviene tener presente: **el teléfono necesita Google Play Services** para
 ubicarte. Está explicado más abajo, en «Dónde estoy».
@@ -217,11 +216,39 @@ un Android con Google Play Services**, y el disparador para revisarlo está en
 Lo mismo va a pasar con la grabación en segundo plano, que también se apoya en `expo-location`
 ([0015](decisiones/0015-grabacion-en-segundo-plano.md)).
 
-## La rosa del norte
+## Los tres modos de cámara
 
-`onRegionIsChanging` da el giro del mapa mientras el dedo todavía está encima —`onRegionDidChange`
-solo avisa al soltar— y la aguja gira al revés que el mapa, así que la punta roja siempre apunta
-al norte geográfico. Al tocarla, la cámara vuelve a `bearing: 0`.
+La cámara de MapLibre tiene tres mandos: `center`, `zoom` y `bearing` —hacia dónde apunta el borde
+de arriba de la pantalla—. Quién los mueve depende del modo
+([0039](decisiones/0039-tres-modos-de-camara.md)):
+
+| Modo | `center` | `bearing` |
+|---|---|---|
+| `free` | Quieto | Solo los dos dedos |
+| `follow` | El ciclista | `0`, norte arriba |
+| `follow-heading` | El ciclista | El rumbo suavizado de la brújula |
+
+`useFollowCamera` (`lib/camera.ts`) guarda lo último que le mandó a la cámara y solo vuelve a
+mandar si el punto cambió o si el rumbo giró más de 3°. Sin ese umbral llegarían veinte
+animaciones por segundo, porque el filtro de la brújula entrega un valor cada 50 ms.
+
+### El gesto propio no se distingue solo
+
+Para salir del modo hace falta saber si el mapa se movió por un dedo o por nosotros, y el campo
+obvio miente. En Android, `userInteraction` vale `true` **también para nuestras propias
+animaciones** — `CameraChangeTracker` cuenta `DEVELOPER_ANIMATION` como interacción. Si se usara
+tal cual, el seguimiento se apagaría solo en el primer movimiento.
+
+Lo que separa los dos casos es el otro campo del evento:
+
+| Origen | `userInteraction` | `animated` |
+|---|---|---|
+| Un dedo | `true` | `false` |
+| Nuestro `easeTo` | `true` | `true` |
+| Animación interna del SDK | `false` | `true` |
+
+Así que un gesto es `userInteraction && !animated`. En iOS no hace falta, porque ahí se enmascara
+lo programático, pero el MVP es Android ([0019](decisiones/0019-mvp-solo-android.md)).
 
 ## El API por dentro
 
