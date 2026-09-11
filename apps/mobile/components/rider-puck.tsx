@@ -80,7 +80,7 @@ export function RiderPuck({ point, headingDegrees, accuracyM }: RiderPuckProps) 
               'icon-ignore-placement': true,
               'icon-pitch-alignment': 'map',
               // ! Alineado al mapa, no a la pantalla: el cono tiene que girar
-              // ! también cuando gire el mapa al grabar (0027).
+              // ! también cuando gire el mapa en el modo que lo sigue (0039).
               'icon-rotation-alignment': 'map',
               'icon-rotate': headingDegrees,
             }}
