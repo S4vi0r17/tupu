@@ -14,6 +14,11 @@ El mapa del stack completo, con las alternativas que se descartaron en cada capa
 
 Última sesión: **2026-09-10**.
 
+> **Este proyecto está en pausa desde el 2026-09-10.** El trabajo sigue en
+> [`LagartoSoft/chasqui`](https://github.com/LagartoSoft/chasqui), sin backend y con la red
+> ciclista dentro del APK ([0041](decisiones/0041-tupu-en-pausa-sigue-chasqui.md)). Acá no se
+> borra nada y el API sigue desplegado; simplemente no se le añade funcionalidad.
+
 ## Decisiones cerradas
 
 | # | Decisión | Documento |
@@ -57,7 +62,8 @@ El mapa del stack completo, con las alternativas que se descartaron en cada capa
 | 37 | Bun se queda con el **enlazador aislado** · *el móvil ya no puede ni resolver el cliente de Postgres* | [0037](decisiones/0037-bun-se-queda-con-el-enlazador-aislado.md) |
 | 38 | Las ciclovías se dibujan **desde el API** · *sustituye a [0026](decisiones/0026-ciclovias-dibujadas-desde-el-tile.md)* | [0038](decisiones/0038-ciclovias-dibujadas-desde-el-api.md) |
 | 39 | La cámara tiene **tres modos**, y un botón los cicla · *sustituye en parte a [0027](decisiones/0027-brujula-muestra-hacia-donde-miras.md)* | [0039](decisiones/0039-tres-modos-de-camara.md) |
-| 40 | Los teléfonos **sin Google Play Services** van en una app aparte | [0040](decisiones/0040-app-aparte-para-telefonos-sin-google.md) |
+| 40 | Los teléfonos **sin Google Play Services** van en una app aparte · *sustituida en parte por [0041](decisiones/0041-tupu-en-pausa-sigue-chasqui.md)* | [0040](decisiones/0040-app-aparte-para-telefonos-sin-google.md) |
+| 41 | **`tupu` en pausa**; la línea que sigue es `chasqui`, sin backend | [0041](decisiones/0041-tupu-en-pausa-sigue-chasqui.md) |
 | — | ~~Alcance: cuentas + historial desde el inicio~~ — reemplazado por [0010](decisiones/0010-alcance-del-mvp.md) | — |
 | — | ~~El proyecto se llama rumbo~~ — reemplazado por [0034](decisiones/0034-el-proyecto-se-llama-tupu.md) | — |
 
@@ -76,7 +82,7 @@ El mapa del stack completo, con las alternativas que se descartaron en cada capa
 
 ## Planeación cerrada
 
-**40 decisiones. No queda ninguna abierta.** Cubren stack, datos, móvil, despliegue y proceso, y
+**41 decisiones. No queda ninguna abierta.** Cubren stack, datos, móvil, despliegue y proceso, y
 los tres huecos que aparecieron al auditar el resultado están cerrados también. El siguiente paso
 ya no es decidir: es escribir código.
 

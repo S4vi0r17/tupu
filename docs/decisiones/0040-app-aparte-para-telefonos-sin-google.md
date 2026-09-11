@@ -1,6 +1,8 @@
 # 0040 — Los teléfonos sin Google Play Services van en una app aparte
 
 **Estado:** Aceptada · 2026-09-10
+**Reemplazada en parte** por [0041](0041-tupu-en-pausa-sigue-chasqui.md): la segunda app no
+usa este API ni ningún otro, y `tupu` queda en pausa en vez de seguir como línea principal.
 
 ## Contexto
 
