@@ -92,8 +92,7 @@ Lo primero que conviene levantar, en este orden, porque cada paso desbloquea al 
    ([0028](decisiones/0028-destino-por-mapa-o-coordenadas.md)) y dibujar el trazado.
 6. Grabación del recorrido y brújula — **la brújula está hecha**: cono de visión y suavizado. **El
    mapa que sigue al ciclista y rota también**, con los tres modos de cámara que decidió
-   [0039](decisiones/0039-tres-modos-de-camara.md), que se soltaron de la grabación. Falta la
-   grabación en sí.
+   [0039](decisiones/0039-tres-modos-de-camara.md), probados en la calle. Falta la grabación en sí.
 7. ~~Desplegar el lado servidor~~ **Hecho**: los tres contenedores en Dokploy detrás de Traefik, y
    el APK compilado apuntando ahí ([`infra/README.md`](../infra/README.md)).
 
@@ -113,10 +112,11 @@ Nada de esto necesita discusión, pero conviene no descubrirlo tarde:
 - ~~Qué hace la app si Valhalla está caído~~ — resuelto en el API: `UpstreamError` se traduce a
   503 con código `upstream_unavailable`, comprobado en producción. **Falta el lado del móvil**,
   que todavía no tiene pantalla de ruta donde mostrarlo.
-- ~~El mapa no sigue al ciclista~~ — hecho: tres modos de cámara —libre, te sigue, te sigue y
-  gira— que cicla un botón, y cualquier gesto con el dedo vuelve a libre
-  ([0039](decisiones/0039-tres-modos-de-camara.md)). **Quedan dos valores a afinar en la calle**:
-  los 3° de giro que mueven el mapa y los 300 ms de cada animación.
+- ~~El mapa no sigue al ciclista~~ — hecho y **probado en la calle el 2026-09-10**: los tres modos
+  de cámara —libre, te sigue, te sigue y gira— que cicla un botón, y cualquier gesto con el dedo
+  vuelve a libre ([0039](decisiones/0039-tres-modos-de-camara.md)). Los dos valores que quedaban a
+  ojo se dan por buenos: **los 3° de giro y los 300 ms de animación no se tocan.** El gesto propio
+  tampoco se confunde con el del dedo, que era el riesgo real.
 - **Las etiquetas del mapa rotan con él.** MapLibre puede mantenerlas horizontales y hay que
   configurarlo ([0039](decisiones/0039-tres-modos-de-camara.md)).
 - **Mantener la pantalla encendida** en el portacelular

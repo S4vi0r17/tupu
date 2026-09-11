@@ -11,7 +11,7 @@ Si aparece una palabra rara, está en el [glosario](glosario.md).
 |---|---|
 | Mapa con la red ciclista de Lima | Funciona, con datos del API |
 | Dónde estoy, con el cono de la brújula | Funciona |
-| Mapa que te sigue y rota, en tres modos | Funciona |
+| Mapa que te sigue y rota, en tres modos | Funciona, probado en la calle |
 | Ruta A→B | El API la calcula; **la pantalla todavía no la dibuja** |
 | Grabación del recorrido | No empezada |
 
