@@ -49,3 +49,4 @@ marca la vieja como sustituida. El historial es el valor.
 | [0037](0037-bun-se-queda-con-el-enlazador-aislado.md) | Bun se queda con el enlazador aislado | Aceptada, **sustituye** a [0035](0035-bun-instala-con-enlazador-plano.md) |
 | [0038](0038-ciclovias-dibujadas-desde-el-api.md) | Las ciclovías se dibujan desde el API | Aceptada, **sustituye** a [0026](0026-ciclovias-dibujadas-desde-el-tile.md) |
 | [0039](0039-tres-modos-de-camara.md) | La cámara del mapa tiene tres modos, y un botón los cicla | Aceptada, **sustituye en parte** a [0027](0027-brujula-muestra-hacia-donde-miras.md) |
+| [0040](0040-app-aparte-para-telefonos-sin-google.md) | Los teléfonos sin Google Play Services van en una app aparte | Aceptada |

@@ -205,16 +205,20 @@ Dos consecuencias que no son obvias:
 - **`hasServicesEnabledAsync()` no sirve para detectarlo.** Consulta el `LocationManager` del
   sistema, que está encendido. Diría que todo está bien.
 
-**Existe una salida y no está tomada.** MapLibre trae su propio motor de ubicación: su
-`DefaultLocationEngineProvider` usa `LocationEngineDefault`, que devuelve
-`MapLibreFusedLocationEngineImpl`, y esa clase solo referencia `android.location.LocationManager`
-— el proveedor del sistema, sin nada de Google. Como MapLibre ya está instalada para dibujar el
-mapa, cambiar la fuente de posición sería barato. Se dejó fuera a propósito: hoy tupu **requiere
-un Android con Google Play Services**, y el disparador para revisarlo está en
-[`planeacion.md`](planeacion.md).
+- **Los tres modos de cámara quedan muertos ahí.** Siguen a una posición que nunca llega: el
+  botón se ve, se toca, y el mapa no se mueve ([0039](decisiones/0039-tres-modos-de-camara.md)).
 
-Lo mismo va a pasar con la grabación en segundo plano, que también se apoya en `expo-location`
-([0015](decisiones/0015-grabacion-en-segundo-plano.md)).
+**La salida existe, y va en otra app.** MapLibre trae su propio motor de ubicación: con
+`org.maplibre.reactnative.locationEngine=default` —el valor que usa esta build— su
+`DefaultLocationEngineProvider` solo referencia `android.location.LocationManager`, el proveedor
+del sistema, sin nada de Google. Y lo expone en JS como `LocationManager`, con `addListener`,
+`start()` y `requestPermissions()`.
+
+No se usa acá porque **es solo de primer plano**, y la grabación necesita segundo plano con
+`expo-location` ([0015](decisiones/0015-grabacion-en-segundo-plano.md)). Tener las dos fuentes en
+la misma app sale caro en permisos y en errores irreproducibles, así que los teléfonos sin GMS van
+en una app aparte ([0040](decisiones/0040-app-aparte-para-telefonos-sin-google.md)). `tupu`
+**requiere un Android con Google Play Services** y se queda así.
 
 ## Los tres modos de cámara
 
