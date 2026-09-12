@@ -1,0 +1,16 @@
+# El contexto es la raíz del repo (0001): sin esto se copian gigabytes
+node_modules
+**/node_modules
+apps/mobile/android
+apps/mobile/ios
+apps/mobile/.expo
+infra/data
+.git
+**/.env
+**/.env.*
+!**/.env.example
+*.log
+*.pbf
+*.apk
+*.aab
+*.keystore

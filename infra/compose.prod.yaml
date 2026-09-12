@@ -1,0 +1,79 @@
+# Producción en Dokploy: Traefik por delante y solo el API expuesto (0009).
+# El de al lado, compose.yaml, es el de desarrollo y publica puertos en local.
+
+services:
+  api:
+    build:
+      # ! La raíz del repo, no infra/: sin bun.lock ni packages/ no instala (0001)
+      context: ..
+      dockerfile: apps/api/Dockerfile
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      DATABASE_URL: postgresql://${POSTGRES_USER:?falta en el entorno de Dokploy}:${POSTGRES_PASSWORD:?falta en el entorno de Dokploy}@postgis:5432/${POSTGRES_DB:?falta en el entorno de Dokploy}
+      VALHALLA_URL: http://valhalla:8002
+    depends_on:
+      postgis:
+        condition: service_healthy
+    # El dominio se carga en la pestaña Domains de Dokploy, apuntando a este
+    # servicio en el puerto 3000: es Dokploy quien escribe las etiquetas de
+    # Traefik. Por eso `api` es el único que toca la red compartida.
+    networks: [internal, dokploy-network]
+    restart: unless-stopped
+
+  postgis:
+    image: postgis/postgis:17-3.5
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:?falta en el entorno de Dokploy}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?falta en el entorno de Dokploy}
+      POSTGRES_DB: ${POSTGRES_DB:?falta en el entorno de Dokploy}
+    volumes:
+      - postgis-data:/var/lib/postgresql/data
+    networks: [internal]
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB']
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    restart: unless-stopped
+
+  valhalla:
+    image: ghcr.io/valhalla/valhalla:latest
+    command: ['valhalla_service', '/data/valhalla.json', '1']
+    volumes:
+      - valhalla-data:/data
+    networks: [internal]
+    healthcheck:
+      test: ['CMD-SHELL', 'curl -sf http://localhost:8002/status || exit 1']
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    restart: unless-stopped
+
+  # Igual que en desarrollo: contenedor de un solo uso para osm:update (0012).
+  # No lo arranca el despliegue, se corre a mano y tarda decenas de minutos.
+  osm:
+    build: ./osm
+    profiles: ['tools']
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgis:5432/${POSTGRES_DB}
+      VALHALLA_URL: http://valhalla:8002
+    volumes:
+      - ../:/repo
+      - valhalla-data:/data
+    working_dir: /repo
+    networks: [internal]
+    depends_on:
+      postgis:
+        condition: service_healthy
+
+networks:
+  internal:
+  # La red que crea Dokploy y donde vive su Traefik
+  dokploy-network:
+    external: true
+
+volumes:
+  postgis-data:
+  valhalla-data:

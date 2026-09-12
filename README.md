@@ -5,10 +5,14 @@ saber cuánto se tarda de un punto a otro, ver alternativas, contar kilómetros 
 historial de recorridos. La app incluye una brújula que indica hacia dónde apunta
 físicamente el teléfono sobre el mapa.
 
-> **Estado: el esqueleto está en pie, sin funcionalidad todavía.** Las 34 decisiones que definen
-> el MVP están tomadas. El stack de un vistazo, con las alternativas que se descartaron en cada
-> capa, está en [`docs/stack.md`](docs/stack.md); el razonamiento completo de cada decisión en
-> [`docs/decisiones/`](docs/decisiones/); el estado y lo que queda aplazado, en
+> **Estado: en el aire y andando.** El lado servidor está desplegado, y la app muestra el mapa con
+> la red ciclista de Lima, dónde estás y hacia dónde miras. Falta dibujar la ruta en pantalla y
+> grabar el recorrido. Las 38 decisiones que definen el MVP están tomadas.
+>
+> Para entender cómo funciona, [`docs/como-funciona.md`](docs/como-funciona.md); para saber qué
+> comando corre qué, [`docs/comandos.md`](docs/comandos.md). El stack de un vistazo, con las
+> alternativas descartadas en cada capa, en [`docs/stack.md`](docs/stack.md); el razonamiento de
+> cada decisión en [`docs/decisiones/`](docs/decisiones/); el estado y lo aplazado, en
 > [`docs/planeacion.md`](docs/planeacion.md). Las palabras raras están en
 > [`docs/glosario.md`](docs/glosario.md), las entidades en
 > [`docs/modelo-datos.md`](docs/modelo-datos.md), y cómo se escribe el código en
@@ -39,7 +43,16 @@ bun run --filter '@tupu/mobile' android    # compila e instala en el teléfono c
 bun run dev:mobile                         # el servidor de Metro, una vez instalada
 ```
 
-Lo que corre del lado servidor vive en [`infra/`](infra/).
+Para un APK que ande solo, sin Metro detrás:
+
+```sh
+apps/mobile/android/gradlew -p apps/mobile/android assembleRelease
+```
+
+Ojo con `EXPO_PUBLIC_API_URL` de `apps/mobile/.env` antes de compilarlo: esa URL se hornea dentro
+del APK. Todos los comandos, con sus trampas, en [`docs/comandos.md`](docs/comandos.md).
+
+Lo que corre del lado servidor vive en [`infra/`](infra/), desplegado en Dokploy.
 
 ## El repositorio
 
@@ -64,12 +77,20 @@ Sirvió para confirmar que los datos existen y son utilizables. Sus límites son
 proyecto viene a resolver: no calcula rutas, no guarda nada, y depende de servidores públicos que
 se saturan.
 
+> **En pausa desde el 2026-09-10.** El trabajo sigue en
+> [`LagartoSoft/chasqui`](https://github.com/LagartoSoft/chasqui) —
+> [por qué](docs/decisiones/0041-tupu-en-pausa-sigue-chasqui.md).
+
 ## El MVP
 
 La primera versión son cuatro cosas, y ninguna más ([0010](docs/decisiones/0010-alcance-del-mvp.md)):
 el mapa con las ciclovías resaltadas, una ruta en bici entre dos puntos con su distancia y tiempo,
 la grabación del recorrido guardada en el teléfono, y la brújula —el cono que muestra hacia dónde
-miras, con el mapa rotando mientras grabas. Sin cuentas y solo en Android.
+miras, con un botón que hace que el mapa te siga y rote
+([0039](docs/decisiones/0039-tres-modos-de-camara.md)). Sin cuentas y solo en Android
+**con Google Play Services**: sin ellos no hay ubicación, y esos teléfonos van a tener una app
+aparte ([0040](docs/decisiones/0040-app-aparte-para-telefonos-sin-google.md)). El porqué está en
+[`docs/como-funciona.md`](docs/como-funciona.md).
 
 Lo que se valida con eso es lo único que de verdad importa al principio: **si el motor de ruteo da
 rutas ciclistas decentes en Lima.** Si eso sale mal, el resto no importa.

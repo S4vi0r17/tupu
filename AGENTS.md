@@ -10,6 +10,8 @@ archivo.
 | Documento | Para qué |
 |---|---|
 | [`docs/planeacion.md`](docs/planeacion.md) | **Leer esto primero.** Estado, orden de arranque, aplazados con disparador |
+| [`docs/como-funciona.md`](docs/como-funciona.md) | El recorrido de un dato de OSM a la pantalla, y cómo funciona cada pieza |
+| [`docs/comandos.md`](docs/comandos.md) | Qué hace cada comando, cuándo se usa y con qué muerde |
 | [`docs/stack.md`](docs/stack.md) | El stack de un vistazo, con el rival descartado de cada capa |
 | [`docs/decisiones/`](docs/decisiones/) | 0001–0038: el razonamiento y qué se dio a cambio |
 | [`docs/modelo-datos.md`](docs/modelo-datos.md) | Las entidades campo por campo |
