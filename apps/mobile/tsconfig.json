@@ -2,10 +2,7 @@
   "extends": ["expo/tsconfig.base", "../../tsconfig.base.json"],
   "compilerOptions": {
     "jsx": "react-jsx",
-    "lib": ["ESNext", "DOM"],
-    "paths": {
-      "@/*": ["./*"]
-    }
+    "lib": ["ESNext", "DOM"]
   },
   "include": ["**/*.ts", "**/*.tsx", ".expo/types/**/*.ts", "expo-env.d.ts", "nativewind-env.d.ts"],
   "exclude": ["node_modules"]
