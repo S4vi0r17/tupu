@@ -71,8 +71,6 @@ pe.tupu.app                                   ← package id de Android
 - **`puriq`**, el que anda, el que viaja — sin colisiones y visualmente distintivo. Se descartó
   porque conviven `puriy`, `purik` y `puriq`, y un nombre que se escribe de tres formas se escribe
   mal.
-- **`chasqui`** — el mensajero inca. Descartado por ocupado: hay una app con ese nombre en Play
-  Store y está Chazki, la startup peruana de logística.
 - **`wayra`**, viento — descartado por Wayra, la aceleradora de Telefónica, muy presente en Lima.
 - **`berma`** y **`muyu`** — libres en Perú, pero la primera evoca la orilla a la que te arrinconan
   y la segunda comparte nombre con varias apps de meditación en Play Store.

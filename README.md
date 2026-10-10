@@ -77,10 +77,6 @@ Sirvió para confirmar que los datos existen y son utilizables. Sus límites son
 proyecto viene a resolver: no calcula rutas, no guarda nada, y depende de servidores públicos que
 se saturan.
 
-> **En pausa desde el 2026-09-10.** El trabajo sigue en
-> [`LagartoSoft/chasqui`](https://github.com/LagartoSoft/chasqui) —
-> [por qué](docs/decisiones/0041-tupu-en-pausa-sigue-chasqui.md).
-
 ## El MVP
 
 La primera versión son cuatro cosas, y ninguna más ([0010](docs/decisiones/0010-alcance-del-mvp.md)):
