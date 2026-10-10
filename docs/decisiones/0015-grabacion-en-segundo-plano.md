@@ -9,7 +9,7 @@ seguir tomando posiciones **con la app minimizada y la pantalla apagada**, duran
 
 Es el punto más frágil de todo el proyecto, y conviene decirlo sin adornos: **no hay solución que
 funcione siempre**. Android mata procesos en segundo plano para ahorrar batería, y cada fabricante
-lo hace a su manera — Xiaomi, Huawei, Oppo y Samsung tienen capas propias de "optimización" que
+lo hace a su manera — Xiaomi, Oppo y Samsung tienen capas propias de "optimización" que
 matan tareas que el Android puro respeta. iOS es más predecible pero también más estricto con los
 permisos.
 

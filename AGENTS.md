@@ -5,7 +5,7 @@ archivo.
 
 ## Estado del proyecto
 
-**Planeación cerrada.** 38 decisiones tomadas, ninguna abierta.
+**Planeación cerrada.** 40 decisiones tomadas, ninguna abierta.
 
 | Documento | Para qué |
 |---|---|
@@ -13,7 +13,7 @@ archivo.
 | [`docs/como-funciona.md`](docs/como-funciona.md) | El recorrido de un dato de OSM a la pantalla, y cómo funciona cada pieza |
 | [`docs/comandos.md`](docs/comandos.md) | Qué hace cada comando, cuándo se usa y con qué muerde |
 | [`docs/stack.md`](docs/stack.md) | El stack de un vistazo, con el rival descartado de cada capa |
-| [`docs/decisiones/`](docs/decisiones/) | 0001–0038: el razonamiento y qué se dio a cambio |
+| [`docs/decisiones/`](docs/decisiones/) | 0001–0040: el razonamiento y qué se dio a cambio |
 | [`docs/modelo-datos.md`](docs/modelo-datos.md) | Las entidades campo por campo |
 | [`docs/glosario.md`](docs/glosario.md) | OSM, PostGIS, tiles, isócronas, APK… |
 | [`docs/conventions/commits.md`](docs/conventions/commits.md) | Todo mensaje de commit |

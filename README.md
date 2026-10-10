@@ -6,8 +6,8 @@ historial de recorridos. La app incluye una brújula que indica hacia dónde apu
 físicamente el teléfono sobre el mapa.
 
 > **Estado: en el aire y andando.** El lado servidor está desplegado, y la app muestra el mapa con
-> la red ciclista de Lima, dónde estás y hacia dónde miras. Falta dibujar la ruta en pantalla y
-> grabar el recorrido. Las 38 decisiones que definen el MVP están tomadas.
+> la red ciclista de Lima, dónde estás y hacia dónde miras. Falta dibujar la ruta en pantalla,
+> la voz y grabar el recorrido. Las 40 decisiones que definen el MVP están tomadas.
 >
 > Para entender cómo funciona, [`docs/como-funciona.md`](docs/como-funciona.md); para saber qué
 > comando corre qué, [`docs/comandos.md`](docs/comandos.md). El stack de un vistazo, con las
@@ -79,13 +79,14 @@ se saturan.
 
 ## El MVP
 
-La primera versión son cuatro cosas, y ninguna más ([0010](docs/decisiones/0010-alcance-del-mvp.md)):
-el mapa con las ciclovías resaltadas, una ruta en bici entre dos puntos con su distancia y tiempo,
-la grabación del recorrido guardada en el teléfono, y la brújula —el cono que muestra hacia dónde
-miras, con un botón que hace que el mapa te siga y rote
-([0039](docs/decisiones/0039-tres-modos-de-camara.md)). Sin cuentas y solo en Android
-**con Google Play Services**: sin ellos no hay ubicación, y esos teléfonos van a tener una app
-aparte ([0040](docs/decisiones/0040-app-aparte-para-telefonos-sin-google.md)). El porqué está en
+La primera versión son siete cosas, y ninguna más ([0010](docs/decisiones/0010-alcance-del-mvp.md),
+[0040](docs/decisiones/0040-alcance-con-voz-y-solo-con-google.md)): el mapa con las ciclovías
+resaltadas, una ruta en bici entre dos puntos con su distancia y tiempo, **una voz que anuncia
+cada giro** para no tener que mirar el teléfono, la grabación del recorrido guardada en el
+teléfono, la brújula —el cono que muestra hacia dónde miras, con un botón que hace que el mapa te
+siga y rote ([0039](docs/decisiones/0039-tres-modos-de-camara.md))—, un velocímetro y la pantalla
+que no se apaga sola. Sin cuentas y solo en Android
+**con Google Play Services**: sin ellos no hay ubicación. El porqué está en
 [`docs/como-funciona.md`](docs/como-funciona.md).
 
 Lo que se valida con eso es lo único que de verdad importa al principio: **si el motor de ruteo da

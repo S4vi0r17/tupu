@@ -101,8 +101,8 @@ enmascara lo programático — pero el MVP es Android ([0019](0019-mvp-solo-andr
   el rumbo del **sensor crudo**, salteándose el filtro de [0025](0025-brujula-heading-fusionado.md)
   — y 0027 ya avisó de que con el mapa rotando el suavizado pasa de conveniente a crítico: un cono
   temblando molesta, un mapa entero temblando marea. Además arrancaría el motor de ubicación
-  nativo de MapLibre, que es cambiar de dónde sale la posición en toda la app: eso es el pendiente
-  de los teléfonos sin Google Play Services y merece su propia decisión, no entrar de refilón.
+  nativo de MapLibre, que es cambiar de dónde sale la posición en toda la app: eso merece su
+  propia decisión, no entrar de refilón.
 - **Dos modos, `free` ↔ `follow-heading`.** Es 0027 tal cual con el botón en lugar de la
   grabación, y la decisión nueva habría sido más chica. Se descartó por el semáforo: la única
   salida al bamboleo sería apagar el seguimiento entero, y al arrancar ya no estarías centrado.

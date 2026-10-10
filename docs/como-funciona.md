@@ -194,9 +194,8 @@ un límite que conviene conocer antes de que aparezca en la calle.
 declara un `FusedLocationProviderClient` y lo obtiene con `LocationServices.getFusedLocationProviderClient(...)`.
 No comprueba si Play Services está y no cae a ningún otro proveedor.
 
-En un teléfono sin GMS —un Huawei posterior a 2019, por ejemplo— eso **no falla: calla**. No llega
-ninguna posición, no se lanza ningún error, y la app se queda sin punto azul sin poder explicar
-por qué. Comprobado en un Huawei Y7p con Android 10.
+En un teléfono sin Google Play Services eso **no falla: calla**. No llega ninguna posición, no
+se lanza ningún error, y la app se queda sin punto azul sin poder explicar por qué.
 
 Dos consecuencias que no son obvias:
 
@@ -208,17 +207,11 @@ Dos consecuencias que no son obvias:
 - **Los tres modos de cámara quedan muertos ahí.** Siguen a una posición que nunca llega: el
   botón se ve, se toca, y el mapa no se mueve ([0039](decisiones/0039-tres-modos-de-camara.md)).
 
-**La salida existe, y va en otra app.** MapLibre trae su propio motor de ubicación: con
-`org.maplibre.reactnative.locationEngine=default` —el valor que usa esta build— su
-`DefaultLocationEngineProvider` solo referencia `android.location.LocationManager`, el proveedor
-del sistema, sin nada de Google. Y lo expone en JS como `LocationManager`, con `addListener`,
-`start()` y `requestPermissions()`.
-
-No se usa acá porque **es solo de primer plano**, y la grabación necesita segundo plano con
-`expo-location` ([0015](decisiones/0015-grabacion-en-segundo-plano.md)). Tener las dos fuentes en
-la misma app sale caro en permisos y en errores irreproducibles, así que los teléfonos sin GMS van
-en una app aparte ([0040](decisiones/0040-app-aparte-para-telefonos-sin-google.md)). `tupu`
-**requiere un Android con Google Play Services** y se queda así.
+MapLibre trae su propio motor de ubicación, `LocationManager`, que usa el proveedor del sistema
+sin nada de Google. No se usa porque **es solo de primer plano**, y la voz y la grabación necesitan
+la posición con la pantalla apagada ([0015](decisiones/0015-grabacion-en-segundo-plano.md)).
+`tupu` **requiere un Android con Google Play Services**, y es una decisión tomada
+([0040](decisiones/0040-alcance-con-voz-y-solo-con-google.md)).
 
 ## Los tres modos de cámara
 

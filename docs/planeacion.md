@@ -27,7 +27,7 @@ El mapa del stack completo, con las alternativas que se descartaron en cada capa
 | 7 | Acceso a datos con **Drizzle** | [0007](decisiones/0007-drizzle-para-acceso-a-datos.md) |
 | 8 | `apps/api` se organiza **por funcionalidad** | [0008](decisiones/0008-apps-api-por-funcionalidad.md) |
 | 9 | Despliegue en **Dokploy** sobre un VPS | [0009](decisiones/0009-despliegue-en-dokploy.md) |
-| 10 | Alcance del **MVP**: mapa, ruta, grabación local y brújula · *la brújula redefinida por [0027](decisiones/0027-brujula-muestra-hacia-donde-miras.md)* | [0010](decisiones/0010-alcance-del-mvp.md) |
+| 10 | Alcance del **MVP**: mapa, ruta, grabación local y brújula · *la brújula redefinida por [0027](decisiones/0027-brujula-muestra-hacia-donde-miras.md), ampliado por [0040](decisiones/0040-alcance-con-voz-y-solo-con-google.md)* | [0010](decisiones/0010-alcance-del-mvp.md) |
 | 11 | **PostGIS** desde el inicio | [0011](decisiones/0011-postgis-desde-el-inicio.md) |
 | 12 | Ingesta de OSM por **extracto**, a mano | [0012](decisiones/0012-ingesta-de-osm-por-extracto.md) |
 | 13 | El recorrido se guarda en **SQLite** en el teléfono | [0013](decisiones/0013-recorrido-en-sqlite-local.md) |
@@ -57,7 +57,7 @@ El mapa del stack completo, con las alternativas que se descartaron en cada capa
 | 37 | Bun se queda con el **enlazador aislado** · *el móvil ya no puede ni resolver el cliente de Postgres* | [0037](decisiones/0037-bun-se-queda-con-el-enlazador-aislado.md) |
 | 38 | Las ciclovías se dibujan **desde el API** · *sustituye a [0026](decisiones/0026-ciclovias-dibujadas-desde-el-tile.md)* | [0038](decisiones/0038-ciclovias-dibujadas-desde-el-api.md) |
 | 39 | La cámara tiene **tres modos**, y un botón los cicla · *sustituye en parte a [0027](decisiones/0027-brujula-muestra-hacia-donde-miras.md)* | [0039](decisiones/0039-tres-modos-de-camara.md) |
-| 40 | Los teléfonos **sin Google Play Services** van en una app aparte | [0040](decisiones/0040-app-aparte-para-telefonos-sin-google.md) |
+| 40 | El MVP suma **voz, velocímetro y pantalla encendida**, y requiere Google Play Services · *sustituye en parte a [0010](decisiones/0010-alcance-del-mvp.md)* | [0040](decisiones/0040-alcance-con-voz-y-solo-con-google.md) |
 | — | ~~Alcance: cuentas + historial desde el inicio~~ — reemplazado por [0010](decisiones/0010-alcance-del-mvp.md) | — |
 | — | ~~El proyecto se llama rumbo~~ — reemplazado por [0034](decisiones/0034-el-proyecto-se-llama-tupu.md) | — |
 
@@ -95,6 +95,9 @@ Lo primero que conviene levantar, en este orden, porque cada paso desbloquea al 
    [0039](decisiones/0039-tres-modos-de-camara.md), probados en la calle. Falta la grabación en sí.
 7. ~~Desplegar el lado servidor~~ **Hecho**: los tres contenedores en Dokploy detrás de Traefik, y
    el APK compilado apuntando ahí ([`infra/README.md`](../infra/README.md)).
+8. **Voz, velocímetro y pantalla encendida**, sumados al MVP por
+   [0040](decisiones/0040-alcance-con-voz-y-solo-con-google.md). La voz va después de la pantalla de
+   ruta: anuncia sus maniobras. Lo difícil es detectar que te saliste y recalcular.
 
 ## Lo que hay que resolver escribiendo, no decidiendo
 
@@ -160,8 +163,6 @@ Nada de esto está sin decidir: está decidido que se hace **después**, y cada 
 | Cron para `osm:update` | Cuando correrlo a mano moleste | [0012](decisiones/0012-ingesta-de-osm-por-extracto.md), [0020](decisiones/0020-actualizacion-de-datos-en-un-comando.md) |
 | Entorno de pruebas | Cuando haya gente usando la app | [0018](decisiones/0018-sin-entorno-de-pruebas.md) |
 | iOS | Después del MVP | [0019](decisiones/0019-mvp-solo-android.md) |
-| **App aparte para teléfonos sin Google Play Services** | Repo propio, alcance mínimo. Sin fecha: `tupu` no cambia | [0040](decisiones/0040-app-aparte-para-telefonos-sin-google.md) |
-| **Cómo comparte `contracts` y `geo` con esa app** | Cuando arranque la segunda app — otro repo no resuelve `workspace:*` | [0040](decisiones/0040-app-aparte-para-telefonos-sin-google.md) |
 | **EAS Build con perfiles y scripts**, como el repo hermano `crs-field` | El primer APK que vaya a otra persona, o iOS — lo que llegue antes | [0005](decisiones/0005-expo-en-el-movil.md), [0019](decisiones/0019-mvp-solo-android.md) |
 | Ciclovías dibujadas desde el API | Cuando haga falta resaltar un tramo concreto | [0026](decisiones/0026-ciclovias-dibujadas-desde-el-tile.md) |
 | `react-native-background-geolocation` | Si `expo-location` resulta poco fiable en la calle | [0015](decisiones/0015-grabacion-en-segundo-plano.md) |
@@ -174,24 +175,13 @@ Nada de esto está sin decidir: está decidido que se hace **después**, y cada 
 ### Por qué tupu hoy necesita Google Play Services
 
 `expo-location` pide la posición al proveedor fusionado de Google, sin comprobar si existe y sin
-caer a ningún otro. En un teléfono sin GMS no falla: **calla**, y la app se queda sin punto azul
-sin poder decir por qué. Comprobado en un Huawei Y7p con Android 10, donde la brújula sí funciona
-porque el rumbo no pasa por Google.
+caer a ningún otro. En un teléfono sin Google Play Services no falla: **calla**, y la app se queda
+sin punto azul sin poder decir por qué.
 
-Con [0039](decisiones/0039-tres-modos-de-camara.md) el agujero creció: los tres modos de cámara
-siguen una posición que en ese teléfono nunca llega, así que el botón se ve, se toca y el mapa no
-se mueve.
-
-**Ya está decidido cómo se cubre, y no es tocando `tupu`**
-([0040](decisiones/0040-app-aparte-para-telefonos-sin-google.md)): va una **app aparte, en su
-propio repositorio**, minimalista —mapa, red ciclista y dónde estoy— que toma la posición del
-`LocationManager` de MapLibre, el del proveedor del sistema. El servidor no cambia: el API no sabe
-qué teléfono lo llama.
-
-Lo que sí se paga es que `packages/contracts` y `packages/geo` son workspaces de Bun y **otro
-repositorio no los resuelve**: hay que publicarlos, apuntarlos por git o copiarlos. Está sin
-elegir, con disparador propio arriba. El detalle técnico de la ubicación está en
-[`como-funciona.md`](como-funciona.md).
+**Es un requisito aceptado, no un pendiente**
+([0040](decisiones/0040-alcance-con-voz-y-solo-con-google.md)): la voz y la grabación necesitan la
+posición con la pantalla apagada, y eso es lo que da `expo-location` en segundo plano. Los
+teléfonos sin Google quedan fuera. El detalle técnico está en [`como-funciona.md`](como-funciona.md).
 
 ### Por qué EAS termina entrando
 
@@ -214,8 +204,6 @@ Se decidirán cuando toque, no antes ([0010](decisiones/0010-alcance-del-mvp.md)
   cómo se suben al servidor los recorridos guardados en el teléfono. El análisis del token ya está
   hecho: empezar con token opaco en base y cambiar después no cierra ninguna puerta.
 - **Rutas alternativas**, para comparar distancia y tiempo. Valhalla ya sabe darlas.
-- **Navegación por voz paso a paso** — no descartada, solo aplazada. Valhalla ya devuelve las
-  maniobras; falta la pantalla y la voz.
 - **Uso sin señal** — qué se guarda del mapa y cuánto pesa.
 - **Qué se cachea del motor de ruteo** y por cuánto tiempo.
 - **Distribución de la app** más allá de repartir el APK a mano.
