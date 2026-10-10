@@ -26,10 +26,22 @@ compose up -d --wait postgis
 
 echo '==> 2/4  Descargando el extracto de Perú'
 # -z descarga solo si Geofabrik tiene algo más nuevo que lo que ya está bajado
+# ! Se baja a un temporal y se renombra al final: escribir directo sobre el
+# ! .pbf dejaba uno cortado con fecha nueva si la descarga se interrumpía, y -z
+# ! lo daba por actualizado en la corrida siguiente.
 compose run --rm osm sh -c "
+  set -e
   mkdir -p /data/pbf
+  rm -f '$PBF.part'
   [ -f '$PBF' ] && nuevo_si='-z $PBF' || nuevo_si=''
-  curl --fail --location --progress-bar \$nuevo_si -o '$PBF' '$EXTRACT_URL'
+  curl --fail --location --remote-time --progress-bar \$nuevo_si -o '$PBF.part' '$EXTRACT_URL'
+
+  # Con 304 curl no escribe nada: lo bajado sigue siendo lo más nuevo
+  if [ -s '$PBF.part' ]; then
+    # -F porque .part no le dice el formato; -e lo lee entero, así un corte falla
+    osmium fileinfo -e -F pbf '$PBF.part' > /dev/null
+    mv '$PBF.part' '$PBF'
+  fi
   ls -lh '$PBF'
 "
 
