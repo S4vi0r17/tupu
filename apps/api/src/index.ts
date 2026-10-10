@@ -1,4 +1,5 @@
 import { Hono } from 'hono'
+import { compress } from 'hono/compress'
 import { cyclewaysRoutes } from './features/cycleways/index.ts'
 import { routingRoutes } from './features/routing/index.ts'
 import { config } from './shared/config.ts'
@@ -7,6 +8,7 @@ import { toErrorResponse } from './shared/errors.ts'
 const app = new Hono()
 
 app.onError(toErrorResponse)
+app.use(compress())
 
 // WHY Sin versión y fuera de /v1: lo consulta Traefik, no el móvil
 app.get('/health', (c) => c.json({ status: 'ok' }))
