@@ -7,7 +7,7 @@ físicamente el teléfono sobre el mapa.
 
 > **Estado: en el aire y andando.** El lado servidor está desplegado, y la app muestra el mapa con
 > la red ciclista de Lima, dónde estás y hacia dónde miras. Falta dibujar la ruta en pantalla,
-> la voz y grabar el recorrido. Las 40 decisiones que definen el MVP están tomadas.
+> la voz y grabar el recorrido. Las 41 decisiones que definen el MVP están tomadas.
 >
 > Para entender cómo funciona, [`docs/como-funciona.md`](docs/como-funciona.md); para saber qué
 > comando corre qué, [`docs/comandos.md`](docs/comandos.md). El stack de un vistazo, con las

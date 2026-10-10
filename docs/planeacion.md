@@ -55,9 +55,10 @@ El mapa del stack completo, con las alternativas que se descartaron en cada capa
 | 35 | ~~Bun instala con enlazador plano~~ — reemplazada por [0037](decisiones/0037-bun-se-queda-con-el-enlazador-aislado.md) | [0035](decisiones/0035-bun-instala-con-enlazador-plano.md) |
 | 36 | **NativeWind** para los estilos del móvil | [0036](decisiones/0036-nativewind-para-los-estilos.md) |
 | 37 | Bun se queda con el **enlazador aislado** · *el móvil ya no puede ni resolver el cliente de Postgres* | [0037](decisiones/0037-bun-se-queda-con-el-enlazador-aislado.md) |
-| 38 | Las ciclovías se dibujan **desde el API** · *sustituye a [0026](decisiones/0026-ciclovias-dibujadas-desde-el-tile.md)* | [0038](decisiones/0038-ciclovias-dibujadas-desde-el-api.md) |
+| 38 | Las ciclovías se dibujan **desde el API** · *sustituye a [0026](decisiones/0026-ciclovias-dibujadas-desde-el-tile.md), sustituida en parte por [0041](decisiones/0041-red-ciclista-en-una-sola-peticion.md)* | [0038](decisiones/0038-ciclovias-dibujadas-desde-el-api.md) |
 | 39 | La cámara tiene **tres modos**, y un botón los cicla · *sustituye en parte a [0027](decisiones/0027-brujula-muestra-hacia-donde-miras.md)* | [0039](decisiones/0039-tres-modos-de-camara.md) |
 | 40 | El MVP suma **voz, velocímetro y pantalla encendida**, y requiere Google Play Services · *sustituye en parte a [0010](decisiones/0010-alcance-del-mvp.md)* | [0040](decisiones/0040-alcance-con-voz-y-solo-con-google.md) |
+| 41 | La red ciclista se pide **entera, una vez** · *sustituye en parte a [0038](decisiones/0038-ciclovias-dibujadas-desde-el-api.md)* | [0041](decisiones/0041-red-ciclista-en-una-sola-peticion.md) |
 | — | ~~Alcance: cuentas + historial desde el inicio~~ — reemplazado por [0010](decisiones/0010-alcance-del-mvp.md) | — |
 | — | ~~El proyecto se llama rumbo~~ — reemplazado por [0034](decisiones/0034-el-proyecto-se-llama-tupu.md) | — |
 
@@ -76,7 +77,7 @@ El mapa del stack completo, con las alternativas que se descartaron en cada capa
 
 ## Planeación cerrada
 
-**40 decisiones. No queda ninguna abierta.** Cubren stack, datos, móvil, despliegue y proceso, y
+**41 decisiones. No queda ninguna abierta.** Cubren stack, datos, móvil, despliegue y proceso, y
 los tres huecos que aparecieron al auditar el resultado están cerrados también. El siguiente paso
 ya no es decidir: es escribir código.
 

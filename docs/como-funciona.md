@@ -33,7 +33,7 @@ Hay dos caminos distintos, y arrancan en la misma descarga.
                     ▼                              ▼
             PostGIS · tabla cycleways      Valhalla · /data/tiles
                     │                              │
-   GET /v1/cycleways/in-bbox            POST /v1/routing/plan
+   GET /v1/cycleways                    POST /v1/routing/plan
                     │                              │
                     ▼                              ▼
               GeoJSON                       polilínea + km + minutos
@@ -102,22 +102,12 @@ tile no sabe de carriles pintados ([0038](decisiones/0038-ciclovias-dibujadas-de
 
 ### Cómo se piden
 
-Cuando el mapa deja de moverse, `onRegionDidChange` da el recuadro visible, y
-`apps/mobile/lib/cycleways.ts` lo **ajusta a una cuadrícula de 0,02°** —unos dos kilómetros—
-antes de pedirlo:
+Toda la red de una vez, con `GET /v1/cycleways`: 2338 tramos, 84 KB con gzip. TanStack Query la
+pide una vez por sesión y no la vuelve a pedir al mover el mapa
+([0041](decisiones/0041-red-ciclista-en-una-sola-peticion.md)).
 
-```
-recuadro visible   -77.034…, -12.091…   →   ajustado   -77.04, -12.10
-```
-
-Mover el mapa un poco no cambia la clave de la consulta, así que TanStack Query responde de su
-caché en vez de salir a la red con la señal intermitente de la calle. El `staleTime` de esa
-consulta es de **una hora**: la red ciclista cambia cuando alguien corre `osm:update`, no mientras
-pedaleás.
-
-Del lado del API, `findCyclewaysInBbox` devuelve **GeoJSON ya armado**, simplificado con una
-tolerancia de unos dos metros y con tope de 5000 tramos. El móvil se lo pasa a MapLibre tal cual,
-sin traducir nada.
+El API la devuelve como GeoJSON ya armado, simplificado a unos dos metros y con coordenadas de
+cinco decimales. El móvil se la pasa a MapLibre tal cual.
 
 ## La brújula, paso a paso
 

@@ -199,13 +199,12 @@ aplicar después sin perder nada: el crudo es la fuente.
 y la app. No se guarda en ninguna parte, pero es igual de parte del modelo:
 
 ```ts
-type NearbyCyclewaysQuery = { lat: number; lng: number; radiusM: number }
-type CyclewayNearby = {
-  osmId: number
-  name: string | null
-  kind: 'track' | 'lane' | 'shared'
-  surface: string | null
-  distanceM: number          // lo calcula PostGIS, no el móvil
+type CyclewayCollection = {  // GET /v1/cycleways, GeoJSON tal cual
+  type: 'FeatureCollection'
+  features: {
+    geometry: { type: 'LineString'; coordinates: [number, number][] }
+    properties: { osmId: number; kind: 'track' | 'lane' | 'shared'; name: string | null }
+  }[]
 }
 
 type RoutePlanRequest = {
@@ -215,7 +214,7 @@ type RoutePlanRequest = {
 type RoutePlanResponse = {
   distanceM:  number
   durationS:  number
-  polyline:   string         // codificada con precisión 6 — ver 0003
+  shape:      string         // polilínea codificada con precisión 6
 }
 ```
 

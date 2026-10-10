@@ -1,6 +1,8 @@
 # 0038 — Las ciclovías se dibujan desde el API
 
 **Estado:** Aceptada · 2026-09-09 · **sustituye** a [0026](0026-ciclovias-dibujadas-desde-el-tile.md)
+**Sustituida en parte** por [0041](0041-red-ciclista-en-una-sola-peticion.md): la red se pide
+entera, no por recuadro.
 
 ## Contexto
 

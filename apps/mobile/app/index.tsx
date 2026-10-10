@@ -6,13 +6,13 @@ import {
   Map as MapView,
   type ViewStateChangeEvent,
 } from '@maplibre/maplibre-react-native'
-import { useRef, useState } from 'react'
+import { useRef } from 'react'
 import { type NativeSyntheticEvent, StyleSheet, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { CameraModeButton } from '../components/camera-mode-button.tsx'
 import { RiderPuck } from '../components/rider-puck.tsx'
 import { useFollowCamera } from '../lib/camera.ts'
-import { type Bbox, useCyclewaysInBbox } from '../lib/cycleways.ts'
+import { useCycleways } from '../lib/cycleways.ts'
 import { useHeading } from '../lib/heading.ts'
 import { useCurrentLocation } from '../lib/location.ts'
 import {
@@ -56,8 +56,7 @@ function noticeFor({
 }
 
 export default function MapScreen() {
-  const [bbox, setBbox] = useState<Bbox | null>(null)
-  const { collection, isError } = useCyclewaysInBbox(bbox)
+  const { collection, isError } = useCycleways()
 
   const { permission, point, accuracyM } = useCurrentLocation()
   const { degrees, hasCompass, needsCalibration } = useHeading(permission === 'granted')
@@ -68,11 +67,6 @@ export default function MapScreen() {
     point,
     headingDegrees: degrees,
   })
-
-  const onRegionDidChange = (event: NativeSyntheticEvent<ViewStateChangeEvent>) => {
-    const [west, south, east, north] = event.nativeEvent.bounds
-    setBbox({ west, south, east, north })
-  }
 
   const onRegionWillChange = (event: NativeSyntheticEvent<ViewStateChangeEvent>) => {
     releaseOnGesture(event.nativeEvent)
@@ -93,7 +87,6 @@ export default function MapScreen() {
         attribution
         logo={false}
         onRegionWillChange={onRegionWillChange}
-        onRegionDidChange={onRegionDidChange}
       >
         <Camera ref={cameraRef} initialViewState={{ center: LIMA_CENTER, zoom: INITIAL_ZOOM }} />
 

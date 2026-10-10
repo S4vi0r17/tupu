@@ -125,7 +125,7 @@ curl -s http://localhost:3001/health
 
 # producción
 curl -s https://tupu-api.s4vi0r.dev/health
-curl -s "https://tupu-api.s4vi0r.dev/v1/cycleways/in-bbox?west=-77.06&south=-12.14&east=-77.00&north=-12.08"
+curl -s --compressed https://tupu-api.s4vi0r.dev/v1/cycleways
 curl -s -X POST https://tupu-api.s4vi0r.dev/v1/routing/plan \
   -H 'content-type: application/json' \
   -d '{"from":{"lat":-12.1219,"lng":-77.0297},"to":{"lat":-12.0464,"lng":-77.0428}}'
