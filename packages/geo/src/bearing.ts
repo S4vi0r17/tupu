@@ -8,7 +8,7 @@ export function normalizeDegrees(degrees: number): number {
   return ((degrees % 360) + 360) % 360
 }
 
-/** Ángulo desde un punto hacia otro, en grados desde el norte y en sentido horario. */
+/** Grados desde el norte, en sentido horario. */
 export function bearingDegrees(from: Point, to: Point): number {
   const dLng = toRadians(to.lng - from.lng)
   const fromLat = toRadians(from.lat)
@@ -21,28 +21,15 @@ export function bearingDegrees(from: Point, to: Point): number {
   return normalizeDegrees(toDegrees(Math.atan2(y, x)))
 }
 
-/**
- * Diferencia más corta entre dos ángulos, en el rango [-180, 180].
- *
- * @remarks Es lo que evita que la brújula gire 350° para corregir 10° al cruzar el norte.
- */
+/** Diferencia más corta, en [-180, 180]: cruzar el norte no da la vuelta entera. */
 export function angleDeltaDegrees(from: number, to: number): number {
   return ((to - from + 540) % 360) - 180
 }
 
-/**
- * Peso de la lectura nueva frente al valor acumulado en cada paso, entre 0 y 1.
- *
- * @remarks Se afina en la calle: más peso tiembla, menos peso va con retraso.
- */
+/** Peso de la lectura nueva, de 0 a 1: más tiembla, menos va con retraso. */
 export const HEADING_SMOOTHING = 0.2
 
-/**
- * Suaviza el rumbo de la brújula con un filtro paso bajo exponencial.
- *
- * @remarks Promedia seno y coseno, no los grados: entre 359° y 1° la media
- * aritmética da 180° y la brújula pega la vuelta entera al cruzar el norte.
- */
+/** Filtro paso bajo sobre seno y coseno: la media de 359° y 1° en grados daría 180°. */
 export function smoothHeadingDegrees(
   previous: number | null,
   next: number,

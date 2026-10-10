@@ -1,10 +1,9 @@
-# Producción en Dokploy: Traefik por delante y solo el API expuesto (0009).
-# El de al lado, compose.yaml, es el de desarrollo y publica puertos en local.
+# Producción en Dokploy: solo el API sale a internet, detrás de Traefik (0009)
 
 services:
   api:
     build:
-      # ! La raíz del repo, no infra/: sin bun.lock ni packages/ no instala (0001)
+      # La raíz del repo: necesita bun.lock y packages/ (0001)
       context: ..
       dockerfile: apps/api/Dockerfile
     environment:
@@ -15,9 +14,7 @@ services:
     depends_on:
       postgis:
         condition: service_healthy
-    # El dominio se carga en la pestaña Domains de Dokploy, apuntando a este
-    # servicio en el puerto 3000: es Dokploy quien escribe las etiquetas de
-    # Traefik. Por eso `api` es el único que toca la red compartida.
+    # Dokploy escribe las etiquetas de Traefik desde su pestaña Domains, hacia el puerto 3000
     networks: [internal, dokploy-network]
     restart: unless-stopped
 
@@ -51,8 +48,7 @@ services:
       start_period: 30s
     restart: unless-stopped
 
-  # Igual que en desarrollo: contenedor de un solo uso para osm:update (0012).
-  # No lo arranca el despliegue, se corre a mano y tarda decenas de minutos.
+  # De un solo uso, para osm:update. El despliegue no lo arranca (0020)
   osm:
     build: ./osm
     profiles: ['tools']
@@ -70,7 +66,7 @@ services:
 
 networks:
   internal:
-  # La red que crea Dokploy y donde vive su Traefik
+  # La de Dokploy, donde vive su Traefik
   dokploy-network:
     external: true
 

@@ -3,8 +3,7 @@
     "biomejs.biome",
     "oven.bun-vscode",
     "expo.vscode-expo-tools",
-    "bradlc.vscode-tailwindcss",
-    "aaron-bond.better-comments"
+    "bradlc.vscode-tailwindcss"
   ],
   "unwantedRecommendations": ["esbenp.prettier-vscode", "dbaeumer.vscode-eslint"]
 }

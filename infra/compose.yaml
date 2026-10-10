@@ -8,7 +8,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?falta en apps/api/.env}
       POSTGRES_DB: ${POSTGRES_DB:?falta en apps/api/.env}
     ports:
-      # Solo la máquina local: en el VPS lo alcanza el API por la red interna
+      # Solo la máquina local
       - '127.0.0.1:${POSTGRES_PORT:-5433}:5432'
     volumes:
       - postgis-data:/var/lib/postgresql/data
@@ -23,8 +23,7 @@ services:
     image: ghcr.io/valhalla/valhalla:latest
     command: ['valhalla_service', '/data/valhalla.json', '1']
     ports:
-      # ! NUNCA se publica en el VPS: un motor de ruteo abierto es CPU gratis
-      # ! para cualquiera que lo encuentre (0009). Acá es 127.0.0.1 para probar.
+      # Solo la máquina local; en el VPS no se publica nunca (0009)
       - '127.0.0.1:${VALHALLA_PORT:-8002}:8002'
     volumes:
       - valhalla-data:/data
@@ -36,14 +35,13 @@ services:
       start_period: 30s
     restart: unless-stopped
 
-  # Contenedor de un solo uso: trae osmium y ogr2ogr, que no están en la imagen
-  # del API y solo hacen falta al actualizar los datos (0012).
+  # De un solo uso, para osm:update (0012)
   osm:
     build: ./osm
     profiles: ['tools']
     environment:
       DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgis:5432/${POSTGRES_DB}
-      # config.ts valida el entorno entero, aunque el ingest no llame a Valhalla
+      # config.ts exige la variable aunque la ingesta no use Valhalla
       VALHALLA_URL: http://valhalla:8002
     volumes:
       - ../:/repo

@@ -6,7 +6,7 @@ import { StatusBar } from 'expo-status-bar'
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      // WHY Con señal intermitente pedaleando, fallar a la primera es lo normal (0014)
+      // Pedaleando, la señal se corta: fallar a la primera es lo normal (0014)
       retry: 3,
       staleTime: 30_000,
     },

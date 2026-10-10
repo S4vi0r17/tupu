@@ -1,11 +1,11 @@
 import { Pressable, View, type ViewStyle } from 'react-native'
 import type { CameraMode } from '../lib/camera.ts'
 
-/** El mismo azul del ciclista: el botón habla de la cámara sobre él (0038). */
+// El azul del ciclista: el botón habla de la cámara sobre él
 const ACTIVE_COLOR = '#2563EB'
 const IDLE_COLOR = '#D4D4D4'
 
-/** Triángulo a base de bordes: React Native no dibuja polígonos. */
+// Triángulo hecho con bordes: React Native no dibuja polígonos
 const CONE: ViewStyle = {
   width: 0,
   height: 0,
@@ -16,10 +16,10 @@ const CONE: ViewStyle = {
   borderRightColor: 'transparent',
 }
 
-/** Cada etiqueta dice qué hará el toque, no en qué modo estás. */
+// Lo que hará el toque, no el modo actual
 const NEXT_ACTION_LABEL: Record<CameraMode, string> = {
   free: 'Centrar el mapa en tu posición',
-  follow: 'Girar el mapa hacia donde mirás',
+  follow: 'Girar el mapa hacia donde miras',
   'follow-heading': 'Dejar de seguir tu posición',
 }
 
@@ -46,7 +46,6 @@ type CameraModeButtonProps = {
   onPress: () => void
 }
 
-/** Cicla los tres modos de cámara: libre, te sigue, te sigue y gira (0039). */
 export function CameraModeButton({ mode, onPress }: CameraModeButtonProps) {
   return (
     <Pressable

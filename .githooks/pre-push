@@ -1,7 +1,4 @@
 #!/usr/bin/env sh
-# Biome no compila: sin esto nada verifica los tipos, porque tampoco hay CI (0023, 0031).
-# Para saltarlo en un push de emergencia: git push --no-verify
-
+# Sin CI, este es el único control antes de que el código llegue a main (0023)
 set -e
-bun run lint
-bun run typecheck
+bun run check

@@ -1,5 +1,4 @@
-// Metro no sabe de workspaces: hay que decirle dónde está la raíz del monorepo
-// y desde qué node_modules resolver, o los paquetes de packages/* no se ven (0002).
+// Metro no sabe de workspaces: sin esto no ve packages/* (0002)
 const path = require('node:path')
 const { getDefaultConfig } = require('expo/metro-config')
 const { withNativewind } = require('nativewind/metro')
@@ -15,13 +14,10 @@ config.resolver.nodeModulesPaths = [
   path.resolve(workspaceRoot, 'node_modules'),
 ]
 
-// ! NO pongas disableHierarchicalLookup acá. Bun instala aislado, así que cada
-// ! paquete guarda sus dependencias en su propio node_modules, y resolver
-// ! subiendo desde el archivo que importa es justo lo que lo hace funcionar (0037).
-// globalClassNamePolyfill deja usar className en View y Text sin envolverlos
-// ! projectRoot explícito: sin él, en un monorepo Tailwind busca las clases
-// ! desde otra carpeta y compila un CSS sin ninguna utilidad.
+// Sin disableHierarchicalLookup: con el enlazador aislado de Bun rompe la resolución (0037)
 module.exports = withNativewind(config, {
+  // className en View y Text sin envolverlos
   globalClassNamePolyfill: true,
+  // Sin él, Tailwind busca las clases en otra carpeta y no genera ninguna (0036)
   projectRoot,
 })

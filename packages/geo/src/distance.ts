@@ -1,16 +1,10 @@
 import type { Point } from './point.ts'
 
-/** Radio medio de la Tierra en metros, el que usa la fórmula de haversine. */
 const EARTH_RADIUS_M = 6_371_008.8
 
 const toRadians = (degrees: number): number => (degrees * Math.PI) / 180
 
-/**
- * Distancia sobre la superficie entre dos puntos.
- *
- * @remarks Haversine: asume Tierra esférica. A escala de Lima el error es de
- * centímetros, y no vale la pena Vincenty por eso.
- */
+/** Haversine: Tierra esférica, con error de centímetros a escala de ciudad. */
 export function distanceMeters(from: Point, to: Point): number {
   const dLat = toRadians(to.lat - from.lat)
   const dLng = toRadians(to.lng - from.lng)
@@ -21,7 +15,6 @@ export function distanceMeters(from: Point, to: Point): number {
   return 2 * EARTH_RADIUS_M * Math.asin(Math.sqrt(a))
 }
 
-/** Suma la distancia de un trazado punto a punto. */
 export function pathLengthMeters(path: readonly Point[]): number {
   let total = 0
   for (let i = 1; i < path.length; i++) {

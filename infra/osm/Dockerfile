@@ -1,5 +1,4 @@
-# Imagen de un solo uso para osm:update. No es la del API: lleva osmium y
-# ogr2ogr, que pesan y solo hacen falta al actualizar los datos (0012, 0020).
+# Solo para osm:update: osmium y ogr2ogr no van en la imagen del API (0012)
 FROM oven/bun:1-debian
 
 RUN apt-get update \

@@ -1,18 +1,9 @@
 import type { Point } from './point.ts'
 
-/**
- * Decimales con los que Valhalla codifica sus trazados.
- *
- * WHY Precisión 6, no la 5 de Google: decodificar con 5 devuelve coordenadas
- * diez veces fuera de sitio.
- */
+// No la 5 de Google: decodificar con 5 da coordenadas diez veces fuera de sitio
 export const VALHALLA_POLYLINE_PRECISION = 6
 
-/**
- * Decodifica una polilínea codificada al formato de Google, que es el que devuelve Valhalla.
- *
- * @throws {SyntaxError} Si la cadena termina a mitad de un valor.
- */
+/** @throws {SyntaxError} Si la cadena termina a mitad de un valor. */
 export function decodePolyline(encoded: string, precision = VALHALLA_POLYLINE_PRECISION): Point[] {
   const factor = 10 ** precision
   const points: Point[] = []

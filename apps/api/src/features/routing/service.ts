@@ -2,12 +2,7 @@ import type { RoutePlanRequest, RoutePlanResponse } from '@tupu/contracts'
 import { config } from '../../shared/config.ts'
 import { UpstreamError } from '../../shared/errors.ts'
 
-/**
- * El perfil ciclista de tupu, escrito en números (0029).
- *
- * WHY `use_roads` y `use_hills` por debajo del defecto son la premisa de la app,
- * no un ajuste conservador: rutas más largas y más tranquilas.
- */
+// Por debajo del defecto a propósito: rutas más largas y más tranquilas (0029)
 const BICYCLE_COSTING_OPTIONS = {
   bicycle_type: 'Hybrid',
   cycling_speed: 18,
@@ -23,11 +18,7 @@ type ValhallaRouteResponse = {
   }
 }
 
-/**
- * Pide a Valhalla una ruta en bici entre dos puntos.
- *
- * @throws {UpstreamError} Si Valhalla no responde o responde sin trazado.
- */
+/** @throws {UpstreamError} Si Valhalla no responde o responde sin trazado. */
 export async function planRoute(request: RoutePlanRequest): Promise<RoutePlanResponse> {
   const response = await fetch(`${config.VALHALLA_URL}/route`, {
     method: 'POST',
@@ -52,7 +43,7 @@ export async function planRoute(request: RoutePlanRequest): Promise<RoutePlanRes
   if (!trip?.summary || shape === undefined) throw new UpstreamError('Valhalla', trip)
 
   return {
-    // NOTE Valhalla devuelve la distancia en km y el tiempo en segundos
+    // Valhalla da la distancia en km
     distanceM: Math.round((trip.summary.length ?? 0) * 1000),
     durationS: Math.round(trip.summary.time ?? 0),
     shape,
