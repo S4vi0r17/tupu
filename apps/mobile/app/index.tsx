@@ -50,8 +50,8 @@ function noticeFor({
 }: NoticeState) {
   if (cyclewaysFailed) return 'No se pudo traer la red ciclista. El mapa base sigue funcionando.'
   if (isLocationDenied) return 'Sin permiso de ubicación no se puede mostrar dónde estás.'
-  if (!hasCompass) return 'Este teléfono no tiene brújula: no puede mostrar hacia dónde mirás.'
-  if (needsCalibration) return 'Brújula perdida. Mové el teléfono dibujando un ocho en el aire.'
+  if (!hasCompass) return 'Este teléfono no tiene brújula: no se puede mostrar hacia dónde miras.'
+  if (needsCalibration) return 'Brújula perdida. Mueve el teléfono dibujando un ocho en el aire.'
   return null
 }
 

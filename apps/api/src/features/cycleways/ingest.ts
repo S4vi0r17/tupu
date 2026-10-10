@@ -117,7 +117,7 @@ async function replaceCycleways(extractDate: string): Promise<number> {
 
     if (previous && count < previous.count * MAX_SHRINK_RATIO) {
       throw new Error(
-        `La ingesta bajó de ${previous.count} a ${count} tramos. Se revierte: revisá el extracto.`,
+        `La ingesta bajó de ${previous.count} a ${count} tramos. Se revierte: hay que revisar el extracto.`,
       )
     }
 

@@ -19,7 +19,7 @@ const CONE: ViewStyle = {
 // Lo que hará el toque, no el modo actual
 const NEXT_ACTION_LABEL: Record<CameraMode, string> = {
   free: 'Centrar el mapa en tu posición',
-  follow: 'Girar el mapa hacia donde mirás',
+  follow: 'Girar el mapa hacia donde miras',
   'follow-heading': 'Dejar de seguir tu posición',
 }
 

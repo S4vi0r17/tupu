@@ -28,7 +28,7 @@ export function toErrorResponse(error: Error, c: Context) {
   if (error instanceof UpstreamError) {
     console.error(error.message, error.cause)
     const body: ErrorBody = {
-      error: { code: 'upstream_unavailable', message: 'Servicio no disponible, intentá de nuevo' },
+      error: { code: 'upstream_unavailable', message: 'Servicio no disponible. Intenta de nuevo.' },
     }
     return c.json(body, 503 satisfies ContentfulStatusCode)
   }

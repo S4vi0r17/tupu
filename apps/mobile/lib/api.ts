@@ -5,7 +5,7 @@ import { hc } from 'hono/client'
 const apiUrl = process.env.EXPO_PUBLIC_API_URL
 
 if (!apiUrl) {
-  throw new Error('Falta EXPO_PUBLIC_API_URL. Copiá .env.example a .env antes de arrancar.')
+  throw new Error('Falta EXPO_PUBLIC_API_URL: copia .env.example a .env antes de arrancar.')
 }
 
 /** Tipado desde el API: si cambia un endpoint, el móvil no compila (0004). */
