@@ -1,4 +1,3 @@
 [install]
-# Explícito a propósito: es el valor por defecto de Bun 1.4, pero este repo ya
-# se rompió una vez por dar un defecto por supuesto. Ver 0035 y 0037.
+# Es el valor por defecto, escrito porque el repo ya se rompió por suponerlo (0037)
 linker = "isolated"

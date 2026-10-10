@@ -2,8 +2,8 @@
 
 Instrucciones para agentes de IA en este repo.
 
-Proyecto personal: una app para ciclistas en Lima. Leer primero
-[`docs/roadmap.md`](docs/roadmap.md) y [`docs/conventions/workflow.md`](docs/conventions/workflow.md).
+Proyecto personal: una app para ciclistas en Lima. Leer primero [`docs/roadmap.md`](docs/roadmap.md)
+y [`docs/conventions/workflow.md`](docs/conventions/workflow.md).
 
 ## Cómo trabajar
 
@@ -14,7 +14,8 @@ Proyecto personal: una app para ciclistas en Lima. Leer primero
 - Explicar antes de pedir una decisión: qué es la herramienta y qué problema de tupu resuelve,
   con el ejemplo real. Después las opciones, cada una con lo que se paga.
 - Seguir el [flujo de trabajo](docs/conventions/workflow.md): los docs se actualizan en el mismo
-  commit que el código, y nada se crea fuera de la estructura de [docs.md](docs/conventions/docs.md).
+  commit que el código, y nada se crea fuera de la estructura de
+  [docs.md](docs/conventions/docs.md).
 
 ## Stack
 
