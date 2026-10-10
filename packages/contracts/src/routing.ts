@@ -9,7 +9,7 @@ export const routePlanRequestSchema = z.object({
 export const routePlanResponseSchema = z.object({
   distanceM: z.number(),
   durationS: z.number(),
-  // NOTE Polilínea codificada con precisión 6, tal como la devuelve Valhalla
+  // Polilínea de Valhalla, con precisión 6
   shape: z.string(),
 })
 

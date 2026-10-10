@@ -2,27 +2,15 @@ import type { CameraRef, ViewStateChangeEvent } from '@maplibre/maplibre-react-n
 import { angleDeltaDegrees, type Point } from '@tupu/geo'
 import { type RefObject, useCallback, useEffect, useRef, useState } from 'react'
 
-/** Zoom al que se sigue al ciclista: entra la cuadra y la esquina siguiente. */
+// Entra la cuadra y la esquina siguiente
 const FOLLOW_ZOOM = 16
 
-/** Duración de cada tramo de la animación de cámara, en milisegundos. */
 const EASE_MS = 300
 
-/**
- * Grados que tiene que girar el rumbo para mover el mapa.
- *
- * @remarks El filtro de 0025 entrega un valor nuevo cada 50 ms. Sin umbral el
- * mapa recibiría veinte animaciones por segundo y se redibujaría en cada una.
- */
+// La brújula da un valor cada 50 ms: sin umbral serían veinte animaciones por segundo
 const MIN_BEARING_DELTA_DEG = 3
 
-/**
- * Qué hace la cámara con la posición del ciclista (0039).
- *
- * - `free`: no lo sigue, y el norte solo se mueve si lo giran con dos dedos
- * - `follow`: lo centra con el norte arriba
- * - `follow-heading`: lo centra y gira el mapa hacia donde mira
- */
+/** `follow` centra con el norte arriba; `follow-heading` además gira el mapa (0039). */
 export type CameraMode = 'free' | 'follow' | 'follow-heading'
 
 const NEXT: Record<CameraMode, CameraMode> = {
@@ -33,35 +21,29 @@ const NEXT: Record<CameraMode, CameraMode> = {
 
 type FollowCamera = {
   mode: CameraMode
-  /** Pasa al modo siguiente del ciclo. */
   cycleMode: () => void
-  /** Suelta la cámara si el movimiento del mapa vino de un dedo y no de nosotros. */
+  /** Pasa a `free` si el mapa lo movió un dedo. */
   releaseOnGesture: (event: ViewStateChangeEvent) => void
 }
 
 type FollowCameraOptions = {
   cameraRef: RefObject<CameraRef | null>
   point: Point | null
-  /** Rumbo ya suavizado de la brújula, en grados horarios desde el norte (0025). */
+  /** Ya suavizado (0025). */
   headingDegrees: number | null
 }
 
-/**
- * Mantiene la cámara sobre el ciclista mientras el modo lo pida (0039).
- *
- * @remarks Arranca en `follow`, así el primer fix del GPS ya centra el mapa.
- */
 export function useFollowCamera({
   cameraRef,
   point,
   headingDegrees,
 }: FollowCameraOptions): FollowCamera {
+  // follow para que el primer fix del GPS ya centre el mapa
   const [mode, setMode] = useState<CameraMode>('follow')
   const applied = useRef<{ point: Point; bearing: number } | null>(null)
 
   const changeMode = useCallback((next: CameraMode) => {
-    // WHY Olvidar lo aplicado obliga a recolocar la cámara al volver a seguir,
-    //     aunque el ciclista no se haya movido mientras tanto
+    // Al volver a seguir hay que recolocar la cámara aunque el ciclista no se haya movido
     applied.current = null
     setMode(next)
   }, [])
@@ -70,8 +52,7 @@ export function useFollowCamera({
 
   const releaseOnGesture = useCallback(
     (event: ViewStateChangeEvent) => {
-      // ! En Android userInteraction también es true en nuestras animaciones:
-      // ! lo que las separa es animated (CameraChangeTracker.kt)
+      // En Android userInteraction también es true en nuestras animaciones (CameraChangeTracker.kt)
       if (!event.userInteraction || event.animated) return
 
       changeMode('free')

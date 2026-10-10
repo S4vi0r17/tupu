@@ -7,20 +7,15 @@ import coneIcon from '../assets/heading-cone.png'
 const RIDER_SOURCE = 'tupu-rider'
 const CONE_IMAGE = 'tupu-heading-cone'
 
-/** Azul: en este mapa el verde y el ámbar ya son la red ciclista (0038). */
+// Azul porque el verde y el ámbar ya son la red ciclista
 const RIDER_COLOR = '#2563EB'
 
-/** Metros por píxel a zoom 0 en la latitud de Lima. */
+// En la latitud de Lima
 const METERS_PER_PIXEL_AT_ZOOM_0 = 153_054
 
 type CircleRadius = NonNullable<NonNullable<CircleLayerSpecification['paint']>['circle-radius']>
 
-/**
- * Traduce la incertidumbre del GPS al radio en píxeles que pide MapLibre.
- *
- * WHY Cada zoom parte en dos el metro por píxel, que es exactamente lo que
- * interpola `exponential` en base 2 entre los extremos de la escala.
- */
+// Cada nivel de zoom parte en dos el metro por píxel: interpolar en base 2 es exacto
 function accuracyRadius(accuracyM: number): CircleRadius {
   return [
     'interpolate',
@@ -39,7 +34,6 @@ type RiderPuckProps = {
   accuracyM: number | null
 }
 
-/** El punto azul con el cono de visión: hacia dónde mira el teléfono (0027). */
 export function RiderPuck({ point, headingDegrees, accuracyM }: RiderPuckProps) {
   const data = useMemo(
     () => ({
@@ -79,8 +73,7 @@ export function RiderPuck({ point, headingDegrees, accuracyM }: RiderPuckProps) 
               'icon-allow-overlap': true,
               'icon-ignore-placement': true,
               'icon-pitch-alignment': 'map',
-              // ! Alineado al mapa, no a la pantalla: el cono tiene que girar
-              // ! también cuando gire el mapa en el modo que lo sigue (0039).
+              // Al mapa y no a la pantalla, para que gire con él en follow-heading
               'icon-rotation-alignment': 'map',
               'icon-rotate': headingDegrees,
             }}

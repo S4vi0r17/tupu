@@ -6,12 +6,7 @@ const PBF_PATH = process.env.OSM_PBF ?? '/repo/infra/data/peru-latest.osm.pbf'
 const FILTERED_PATH = '/tmp/tupu-cycleways.osm.pbf'
 const RAW_TABLE = 'osm_cycleways_raw'
 
-/**
- * Caída máxima tolerada frente a la ingesta anterior.
- *
- * WHY Si la red pasa de 4.000 tramos a 12, la ingesta se rompió y cargar eso
- * deja la app sin ciclovías hasta que alguien mire (modelo de datos).
- */
+// Una red que se encoge a menos de la mitad es una ingesta rota, no una ciudad que borró ciclovías
 const MAX_SHRINK_RATIO = 0.5
 
 async function run(command: string[]): Promise<string> {
@@ -26,13 +21,7 @@ async function run(command: string[]): Promise<string> {
   return stdout.trim()
 }
 
-/**
- * Cómo etiqueta OSM la infraestructura ciclista (0012).
- *
- * ! Las variantes por lado no son un detalle: en Lima el carril pintado se
- * ! mapea casi siempre como cycleway:left o cycleway:right sobre la calle.
- * ! Sin ellas se pierde un tercio de la red, medido contra el extracto.
- */
+// En Lima el carril pintado va casi siempre en cycleway:left/right: sin eso falta un tercio
 const CYCLING_VALUES = 'lane,track,shared_lane,opposite_lane,opposite_track'
 
 async function filterCycleways(): Promise<void> {
@@ -83,8 +72,7 @@ async function readExtractDate(): Promise<string> {
     PBF_PATH,
   ])
 
-  // ! Un .pbf sin ese encabezado devuelve vacío; ahí vale más la fecha del
-  // ! archivo que guardar una fecha inventada.
+  // Sin ese encabezado la mejor fecha disponible es la del archivo
   if (!timestamp) return new Date(Bun.file(PBF_PATH).lastModified).toISOString().slice(0, 10)
   return timestamp.slice(0, 10)
 }
@@ -104,8 +92,7 @@ async function replaceCycleways(extractDate: string): Promise<number> {
       select distinct on (osm_id)
         osm_id::bigint,
         name,
-        -- La prioridad importa: una vía propia etiquetada además como
-        -- designada es track, y un carril pintado a un lado sigue siendo lane.
+        -- El orden importa: track gana a lane, y lane gana a shared
         case
           when highway = 'cycleway'
             or coalesce(other_tags -> 'cycleway', '') = 'track'

@@ -1,8 +1,4 @@
-/**
- * Distancia lista para pantalla: `840 m` o `12,4 km`.
- *
- * @remarks Texto para el usuario, así que va en español y con coma decimal (0003).
- */
+/** `840 m` o `12,4 km`, con coma decimal porque lo lee el usuario. */
 export function formatDistance(meters: number): string {
   if (meters < 1000) return `${Math.round(meters)} m`
 
@@ -10,7 +6,7 @@ export function formatDistance(meters: number): string {
   return `${km.toFixed(1).replace('.', ',')} km`
 }
 
-/** Duración lista para pantalla: `18 min` o `1 h 20 min`. */
+/** `18 min` o `1 h 20 min`. */
 export function formatDuration(seconds: number): string {
   const totalMinutes = Math.round(seconds / 60)
   const hours = Math.floor(totalMinutes / 60)

@@ -3,10 +3,10 @@ import { sql } from 'drizzle-orm'
 import { db } from '../../shared/db.ts'
 import { cycleways } from './schema.ts'
 
-/** Unos dos metros: a escala de ciudad no se nota y recorta el peso de la respuesta. */
+// Unos dos metros: no se nota a escala de ciudad y aligera la respuesta
 const SIMPLIFY_TOLERANCE_DEG = 0.00002
 
-/** Cinco decimales son un metro, por debajo de lo que ya se simplificó. */
+// Un metro, por debajo de lo que ya se simplificó
 const COORDINATE_DECIMALS = 5
 
 type CyclewayRow = {
@@ -16,7 +16,6 @@ type CyclewayRow = {
   geometry: CyclewayFeature['geometry']
 }
 
-/** La red ciclista entera, ya en GeoJSON (0041). */
 export async function findAllCycleways(): Promise<CyclewayFeature[]> {
   const rows = await db.execute<CyclewayRow>(sql`
     select

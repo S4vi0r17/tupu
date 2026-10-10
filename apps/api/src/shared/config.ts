@@ -10,13 +10,10 @@ const envSchema = z.object({
 function loadConfig() {
   const parsed = envSchema.safeParse(process.env)
 
-  // ! Falla en el arranque y no en la primera petición: sin esto, una clave
-  // ! olvidada se descubre recién cuando alguien usa el endpoint.
   if (!parsed.success) {
     const detail = z.flattenError(parsed.error).fieldErrors
     console.error('Configuración inválida:', detail)
-    // WHY throw y no process.exit: el móvil compila este archivo al importar
-    // AppType, y ahí `process` no está tipado como el de Bun.
+    // throw y no process.exit: el móvil compila este archivo al importar AppType
     throw new Error('Faltan variables de entorno. Ver .env.example')
   }
 
