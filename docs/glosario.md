@@ -1,115 +1,77 @@
 # Glosario
 
-Qué significa cada palabra rara que aparece en las decisiones, explicada con lo que hace **en
-tupu**, no en abstracto.
+«Tiles» nombra dos cosas sin relación: los del mapa y los de ruteo. En `docs/` siempre se dice cuál.
 
-> **Aviso sobre la palabra "tiles":** significa **dos cosas distintas y sin relación** en este
-> proyecto. Ver *Tiles del mapa* y *Tiles de ruteo* más abajo. Es una colisión de nombres
-> desafortunada pero es la que usa todo el mundo, así que en `docs/` siempre se dice cuál de las
-> dos.
+## Datos
 
-## Los datos
+**OpenStreetMap (OSM).** Mapa mundial libre que edita cualquiera. De ahí salen las ciclovías.
 
-**OpenStreetMap (OSM)** — un mapa mundial libre que edita cualquiera; Wikipedia, pero de mapas. Las
-ciclovías de Lima están ahí porque voluntarios las dibujaron. Es la fuente de todo lo geográfico
-del proyecto.
+**Overpass.** Servidores públicos para consultar OSM en vivo. Gratis, pero saturados (0012).
 
-**Overpass API** — servidores públicos donde se le pueden hacer preguntas a OSM en vivo
-("dame las ciclovías de Lima"). Gratis y siempre fresco, pero comunitario y saturado. Es lo que
-usa el prototipo y lo que [0012](decisiones/0012-ingesta-de-osm-por-extracto.md) descartó.
+**Extracto (`.pbf`).** OSM de una región en un archivo comprimido. Geofabrik publica el de Perú a
+diario.
 
-**Extracto / archivo `.pbf`** — un volcado de todo OSM de una región, en un archivo. Geofabrik
-publica el de Perú y lo actualiza a diario. Se descarga una vez y sirve para todo, sin depender de
-servidores ajenos.
+**Ingesta.** Bajar el extracto, filtrar las ciclovías y cargarlas en PostGIS.
 
-**Ingesta** — el proceso de bajar el extracto, filtrar lo que interesa (las ciclovías) y cargarlo
-en nuestra base.
+## Mapa
 
-## El mapa que se ve
+**Tiles del mapa.** El mapa cortado en cuadrados que el teléfono baja según lo que ve. Los
+vectoriales traen datos en vez de imágenes, y por eso se puede elegir cómo pintar cada cosa.
 
-**Tiles del mapa** — el mapa se corta en cuadraditos y el teléfono baja solo los que caben en
-pantalla. Cada cuadrado se pide por zoom, columna y fila: `/{z}/{x}/{y}`. A zoom de calle el mundo
-son cientos de millones de cuadrados; tu pantalla usa unos seis.
+**OpenFreeMap.** Quien sirve los tiles del mapa (0016).
 
-- **Raster** — el cuadrado llega como una **foto** ya dibujada. No se pueden cambiar los colores.
-- **Vectorial** — el cuadrado llega como **datos** ("aquí una línea, es la Av. Arequipa") y la app
-  los dibuja. Permite decir "ciclovías verdes y gruesas, todo lo demás gris", que es el producto.
+**MapLibre.** La librería que dibuja el mapa en la app.
 
-**Servidor de tiles** — quien guarda esos cuadraditos y los entrega. En el MVP es OpenFreeMap
-([0016](decisiones/0016-tiles-openfreemap-en-el-mvp.md)).
+## Ruteo
 
-**MapLibre** — la librería que dibuja el mapa en la app a partir de tiles vectoriales.
+**Valhalla.** El motor que calcula la ruta en bici y cuánto se tarda (0006).
 
-## El ruteo
+**Grafo de ruteo.** Las calles convertidas en algo navegable: qué conecta con qué, en qué sentido,
+con qué pendiente. El extracto trae líneas con etiquetas; el grafo hay que construirlo.
 
-**Motor de ruteo** — el programa que responde *"¿cuál es la mejor ruta en bici de aquí a allá y
-cuánto tardo?"*. En tupu es Valhalla ([0006](decisiones/0006-valhalla-para-ruteo.md)).
+**Tiles de ruteo.** El grafo cortado por zonas. No son imágenes. Para Perú ocupan unos 425 MB,
+más que el extracto: el `.pbf` viene comprimido y el grafo no.
 
-**Grafo de ruteo** — la red de calles convertida en algo navegable: qué intersección conecta con
-cuál, en qué sentido, cuánto se tarda en bici, qué pendiente tiene. El extracto de OSM **no** trae
-esto: trae líneas con etiquetas. Construir el grafo es el trabajo pesado.
+**Costeo.** Las preferencias de la ruta: cuánto evita avenidas o subidas. En Valhalla viajan en
+cada petición, así que se cambian sin reconstruir el grafo.
 
-**Tiles de ruteo (los de Valhalla)** — ese grafo, cortado en cuadrados geográficos para que el
-motor cargue en memoria solo la zona que necesita. **No son imágenes y no tienen nada que ver con
-los tiles del mapa.** Para Perú ocupan unos 425 MB, más que el extracto del que salen: el `.pbf`
-viene comprimido y el grafo no, porque está hecho para responder rápido y no para pesar poco.
+**Maniobra.** Cada giro de una ruta, con su frase para leer en voz alta.
 
-**Costeo (*costing*)** — las reglas de preferencia: cuánto premia una ciclovía, cuánto penaliza una
-subida, si evita el mal pavimento. En Valhalla viajan **en cada petición**, así que se pueden
-cambiar sin reconstruir nada — ésa es la razón por la que se eligió.
+**Isócrona.** La zona alcanzable en cierto tiempo.
 
-**Isócrona** — la mancha en el mapa de "hasta dónde llego en 20 minutos".
+**Map matching.** Pegar los puntos del GPS a las calles reales.
 
-**Map matching** — pegar los puntos GPS a las calles reales, para que el trazado guardado siga las
-vías en vez de zigzaguear con el error del GPS.
+## Base de datos
 
-## La base de datos
+**PostGIS.** Extensión de PostgreSQL que agrega tipos y funciones geográficas (0011).
 
-**PostgreSQL** — la base de datos. Entiende de números, texto y fechas.
+**Funciones `ST_`.** Las funciones de PostGIS: `ST_Length` da los metros de una línea.
 
-**PostGIS** — **no es una base de datos ni una tabla: es un plugin** que se instala dentro de
-PostgreSQL y le enseña geografía. Añade tipos de columna (punto, línea) y funciones para
-operarlos. Sin él, una ciclovía guardada es solo texto y no se puede preguntar qué hay cerca
-([0011](decisiones/0011-postgis-desde-el-inicio.md), [modelo de datos](modelo-datos.md)).
+**Índice GiST.** Índice espacial: la base mira solo las zonas relevantes.
 
-**Funciones `ST_`** — las funciones espaciales de PostGIS. `ST_DWithin(a, b, 300)` responde "¿están
-a menos de 300 m?" usando índice; `ST_Length` da los metros de un trazado.
+**Drizzle.** La capa entre el código y la base (0007).
 
-**Índice espacial (GiST)** — la base mantiene el mapa dividido en cajas para mirar solo las
-relevantes. Es lo que hace que buscar ciclovías cercanas tarde milisegundos y no segundos.
+**Migración.** Un cambio de estructura de la base, guardado como archivo para aplicarlo en orden.
 
-**ORM** — la capa entre el código y la base, para no escribir SQL a mano en todo. Aquí es Drizzle
-([0007](decisiones/0007-drizzle-para-acceso-a-datos.md)).
+## Despliegue
 
-**Migración** — un cambio de estructura de la base (crear una tabla, añadir una columna) guardado
-como un archivo, para poder aplicarlo en orden en cualquier máquina.
+**VPS.** Un servidor alquilado.
 
-## El despliegue
+**Dokploy.** El panel que despliega los contenedores en el VPS (0009).
 
-**VPS** — un servidor alquilado, una máquina Linux en internet.
+**Docker.** Cada pieza empaquetada con lo que necesita, para que corra igual en todas partes.
 
-**Dokploy** — el panel que se instala en ese VPS para desplegar contenedores sin hacerlo a mano
-([0009](decisiones/0009-despliegue-en-dokploy.md)).
+**Staging.** Una copia del sistema para ensayar. No hay (0018).
 
-**Docker / contenedor** — cada pieza (API, base, Valhalla) empaquetada con todo lo que necesita,
-para que corra igual en tu máquina y en el VPS.
+## Móvil
 
-**Staging** — una copia completa del sistema para ensayar antes de tocar producción. Este proyecto
-no tiene ([0018](decisiones/0018-sin-entorno-de-pruebas.md)).
+**Expo.** Herramientas para hacer la app con React Native.
 
-## El móvil
+**EAS.** El servicio de compilación de Expo. Hará falta para firmar y para iOS (0019).
 
-**Expo** — el conjunto de herramientas para hacer la app con React Native sin pelear con Xcode ni
-Android Studio.
+**APK.** El instalable de Android.
 
-**EAS** — el servicio de compilación en la nube de Expo. Necesario para iOS desde Linux; el MVP no
-lo usa ([0019](decisiones/0019-mvp-solo-android.md)).
+**Magnetómetro.** El sensor de la brújula. Es ruidoso y hay que suavizarlo.
 
-**APK** — el archivo instalable de una app Android. Se puede pasar por WhatsApp y ya.
-
-**Magnetómetro** — el sensor que detecta el campo magnético y permite saber hacia dónde apunta el
-teléfono. Es la base de la brújula, y sus lecturas son ruidosas: hay que suavizarlas o la flecha
-tiembla.
-
-**Tarea en segundo plano** — código que sigue corriendo con la app minimizada y la pantalla
-apagada. Es como se graba el recorrido ([0015](decisiones/0015-grabacion-en-segundo-plano.md)).
+**Segundo plano.** Código que sigue corriendo con la pantalla apagada. Así se graba el recorrido
+y así habla la voz (0015, 0040).

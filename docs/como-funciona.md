@@ -1,305 +1,150 @@
-# Cómo funciona tupu
+# Cómo funciona
 
-El recorrido completo de un dato, de OpenStreetMap a la pantalla del teléfono, y qué hace cada
-pieza. Para el *porqué* de cada elección están las [decisiones](decisiones/); acá está el *cómo*.
-
-Si aparece una palabra rara, está en el [glosario](glosario.md).
-
-## Lo que hay en pie hoy
-
-| | Estado |
-|---|---|
-| Mapa con la red ciclista de Lima | Funciona, con datos del API |
-| Dónde estoy, con el cono de la brújula | Funciona |
-| Mapa que te sigue y rota, en tres modos | Funciona, probado en la calle |
-| Ruta A→B | El API la calcula; **la pantalla todavía no la dibuja** |
-| Grabación del recorrido | No empezada |
-
-Y un requisito que conviene tener presente: **el teléfono necesita Google Play Services** para
-ubicarte. Está explicado más abajo, en «Dónde estoy».
+De OpenStreetMap a la pantalla. El porqué de cada pieza está en las [decisiones](decisiones/).
 
 ## El recorrido de un dato
 
-Hay dos caminos distintos, y arrancan en la misma descarga.
+Dos caminos que salen de la misma descarga, para que el mapa no muestre una ciclovía por la que
+el motor no sabe rutear (0020).
 
 ```
-                    Geofabrik: peru-latest.osm.pbf  (~250 MB)
-                                   │
-                    osm:update, a mano, unos 20 minutos
-                    ┌──────────────┴───────────────┐
-                    ▼                              ▼
-        osmium filtra ciclovías          valhalla_build_tiles
-        ogr2ogr las carga                construye el grafo
-                    ▼                              ▼
-            PostGIS · tabla cycleways      Valhalla · /data/tiles
-                    │                              │
-   GET /v1/cycleways                    POST /v1/routing/plan
-                    │                              │
-                    ▼                              ▼
-              GeoJSON                       polilínea + km + minutos
-                    └──────────────┬───────────────┘
-                                   ▼
-                            apps/mobile · MapLibre
+                Geofabrik: peru-latest.osm.pbf (245 MB)
+                               │
+                  osm:update, a mano, unos 20 min
+                ┌──────────────┴──────────────┐
+                ▼                             ▼
+      osmium filtra ciclovías        valhalla_build_tiles
+      ogr2ogr las carga              construye el grafo
+                ▼                             ▼
+      PostGIS: cycleways             Valhalla: /data/tiles
+                │                             │
+      GET /v1/cycleways              POST /v1/routing/plan
+                ▼                             ▼
+      GeoJSON                        polilínea, metros, segundos
+                └──────────────┬──────────────┘
+                               ▼
+                     apps/mobile: MapLibre
 ```
 
-Que los dos salgan de la **misma** descarga es a propósito: si el mapa y el ruteo se llenaran por
-separado, la app podría dibujar una ciclovía por la que el motor no sabe rutear
-([0020](decisiones/0020-actualizacion-de-datos-en-un-comando.md)).
+## La ingesta
 
-## Las cuatro piezas
+`infra/osm/update.sh` corre `apps/api/src/features/cycleways/ingest.ts`:
 
-```
-apps/api             Hono sobre Bun. Habla con PostGIS y con Valhalla
-apps/mobile          Expo Router. Lo único que ve el usuario
-packages/contracts   esquemas de Zod: qué se manda y qué se recibe
-packages/geo         matemática geográfica pura, sin red ni base de datos
-```
+1. `osmium` se queda con las vías etiquetadas como infraestructura ciclista.
+2. `ogr2ogr` las carga en una tabla cruda.
+3. Un `insert ... select` las reduce a tres clases y reemplaza la tabla en una transacción.
+4. Si la red queda en menos de la mitad que la corrida anterior, se revierte.
 
-`apps/*` importa de `packages/*` y **nunca al revés**; las dos apps no se importan entre sí. La
-única excepción es que el móvil importa de `@tupu/api` el tipo `AppType` y nada más, que es lo que
-hace que el cliente HTTP esté tipado: si el API cambia un endpoint, el móvil deja de compilar. Lo
-hace cumplir Biome ([0002](decisiones/0002-layout-del-repo.md), [0004](decisiones/0004-hono-en-el-api.md)).
-
-## La ingesta: de OSM a PostGIS
-
-`infra/osm/update.sh` son cuatro pasos, y el tercero corre
-`apps/api/src/features/cycleways/ingest.ts`, que vive junto a su feature
-([0008](decisiones/0008-apps-api-por-funcionalidad.md)).
-
-1. `osmium` se queda solo con las vías etiquetadas como infraestructura ciclista.
-2. `ogr2ogr` las mete en una tabla cruda.
-3. Un `INSERT ... SELECT` las normaliza a las tres clases y **reemplaza la tabla en una sola
-   transacción**.
-4. Si la red se encogiera a menos de la mitad de la corrida anterior, aborta. Una ingesta rota no
-   puede dejar la app sin ciclovías.
-
-Cada corrida deja una fila en `osm_imports` con la fecha del extracto y cuántos tramos entraron:
-es la edad real de los datos, no la fecha en que se corrió.
-
-### Las tres clases
-
-OSM etiqueta la infraestructura ciclista de varias formas y la app las reduce a tres, porque tres
-es lo que un ciclista necesita distinguir de un vistazo:
+Cada corrida deja en `osm_imports` la fecha del extracto y cuántos tramos entraron.
 
 | `kind` | Qué es | Cómo se dibuja |
 |---|---|---|
 | `track` | Vía propia, separada del tráfico | Verde continuo con halo blanco |
-| `lane` | Carril pintado sobre la calzada | Verde punteado, más fino |
-| `shared` | Se comparte el asfalto con los autos | Ámbar punteado |
+| `lane` | Carril pintado en la calzada | Verde punteado, más fino |
+| `shared` | Asfalto compartido con autos | Ámbar punteado |
 
-Los colores viven en `apps/mobile/lib/map.ts` porque MapLibre necesita el literal, no una clase de
-Tailwind.
+## El mapa
 
-## El mapa: dos capas que no se mezclan
+El fondo son tiles de OpenFreeMap, una URL en `MAP_STYLE_URL` (0016). La red ciclista va encima,
+desde el API: el tile no distingue carriles pintados y en el Centro traía 4 tramos donde PostGIS
+tiene 128 (0038).
 
-**El fondo** —calles, edificios, nombres— son tiles de OpenFreeMap, un servicio de terceros. Es
-una sola URL en `MAP_STYLE_URL`; cambiar de proveedor es cambiar esa línea
-([0016](decisiones/0016-tiles-openfreemap-en-el-mvp.md)).
+La red se pide entera una vez por sesión: 2338 tramos, 84 KB con gzip (0041). El API la manda
+simplificada a dos metros y con cinco decimales.
 
-**La red ciclista** se dibuja encima, con datos del API. Se intentó sacarla del propio tile y no
-alcanzó: sobre el Centro el tile traía 4 tramos donde PostGIS tiene 128, porque el esquema del
-tile no sabe de carriles pintados ([0038](decisiones/0038-ciclovias-dibujadas-desde-el-api.md)).
-
-### Cómo se piden
-
-Toda la red de una vez, con `GET /v1/cycleways`: 2338 tramos, 84 KB con gzip. TanStack Query la
-pide una vez por sesión y no la vuelve a pedir al mover el mapa
-([0041](decisiones/0041-red-ciclista-en-una-sola-peticion.md)).
-
-El API la devuelve como GeoJSON ya armado, simplificado a unos dos metros y con coordenadas de
-cinco decimales. El móvil se la pasa a MapLibre tal cual.
-
-## La brújula, paso a paso
-
-Es la pieza con más trampas, así que va entera.
+## La brújula
 
 ```
 magnetómetro + acelerómetro
-        │  Android fusiona y compensa la inclinación
+        │  Android los fusiona y compensa la inclinación
         ▼
-Location.watchHeadingAsync   { trueHeading, magHeading, accuracy }
-        │  se guarda el rumbo crudo en un ref
+watchHeadingAsync  →  rumbo crudo
         ▼
-tick de 50 ms  →  smoothHeadingDegrees(anterior, crudo, 0.2)
-        │  filtro paso bajo, en seno y coseno
+cada 50 ms: smoothHeadingDegrees(anterior, crudo, 0.2)
         ▼
-grados redondeados  →  icon-rotate del cono en MapLibre
+icon-rotate del cono
 ```
 
-**1. De dónde sale el rumbo.** No se lee el magnetómetro crudo: el sistema ya fusiona sensores y
-—esto es lo que importa— **compensa la inclinación del teléfono**, que en el portacelular va a
-unos 45°. Sin esa compensación el rumbo miente justo en la postura en que se usa
-([0025](decisiones/0025-brujula-heading-fusionado.md)).
+- El rumbo del sistema compensa la inclinación del portacelular; el magnetómetro crudo no (0025).
+- `trueHeading` vale -1 hasta el primer fix del GPS. Mientras tanto se usa el magnético: en Lima
+  difieren un par de grados.
+- El filtro avanza por reloj y no por lectura, porque Android deja de emitir cuando el rumbo se
+  queda quieto y el cono se clavaría antes de llegar.
+- Se promedian seno y coseno: la media de 359° y 1° en grados da 180°.
+- El único valor a afinar es `HEADING_SMOOTHING`. Más alto tiembla; más bajo va con retraso.
 
-**2. `trueHeading` vale `-1`** mientras no haya un fix del GPS con el que calcular la declinación
-magnética. Cuando pasa, se cae al norte magnético: en Lima la diferencia es de un par de grados y
-en el cono no se nota.
-
-**3. El filtro avanza en un tick, no con cada lectura.** Android deja de emitir en cuanto el rumbo
-se estabiliza. Si el filtro solo corriera con cada lectura, al terminar de girar se quedaría
-clavado unos diez grados antes del rumbo real, y ahí se moriría. Con el tick converge: un giro de
-90° se asienta en algo más de un segundo.
-
-**4. El suavizado es en el círculo.** Promediar ángulos como números falla al cruzar el norte:
-entre 359° y 1° la media aritmética da 180° y la flecha pega la vuelta entera. `smoothHeadingDegrees`
-en `packages/geo` promedia seno y coseno y recompone con `atan2`.
-
-**5. El mando a ajustar es uno solo**: `HEADING_SMOOTHING`, hoy `0.2`. Más peso tiembla, menos peso
-va con retraso. Se afina pedaleando.
-
-### Cuando la brújula no está
-
-| Situación | Cómo se detecta | Qué se ve |
+| Situación | Cómo se detecta | Qué ve el usuario |
 |---|---|---|
-| Teléfono sin magnetómetro | No llega ninguna lectura en 6 s | «Este teléfono no tiene brújula» y no se dibuja el cono |
-| Brújula descalibrada | El nivel que reporta Android baja de 2 | «Mové el teléfono dibujando un ocho en el aire» |
-| Permiso de ubicación denegado | La respuesta del diálogo | «Sin permiso de ubicación no se puede mostrar dónde estás» |
+| Sin magnetómetro | Ninguna lectura en 6 s | Aviso, y no se dibuja el cono |
+| Descalibrada | Nivel de Android menor a 2, tras 12 lecturas | Pedido de mover el teléfono en ocho |
+| Sin permiso de ubicación | Respuesta del diálogo | Aviso |
 
-Lo de las 6 segundos y el margen de 12 lecturas antes de pedir calibrar no son caprichos: sin
-magnetómetro el sensor **no falla, simplemente calla**, y Android arranca el nivel de calibración
-en 0 aunque esté bien.
+El cono se alinea al mapa y no a la pantalla, así gira con él en `follow-heading`.
 
-### Cómo se dibuja
+## La posición
 
-`apps/mobile/components/rider-puck.tsx` pone cuatro capas de MapLibre sobre el mismo punto:
+`watchPositionAsync` de `expo-location`, cada cinco metros. En Android pide la posición solo a
+Google Play Services: sin ellos no hay error, solo silencio. La brújula sí funciona, porque no
+pasa por Google. `hasServicesEnabledAsync()` no lo detecta.
 
-```
-círculo de precisión   radio en píxeles calculado desde los metros del GPS
-cono                   PNG con degradado, girado por icon-rotate
-halo blanco            para que el punto se lea sobre cualquier fondo
-punto azul             vos
-```
+El `LocationManager` de MapLibre no depende de Google, pero solo funciona en primer plano, y la
+voz y la grabación necesitan la pantalla apagada. Por eso la app requiere Google Play Services
+(0040).
 
-El cono está alineado **al mapa** y no a la pantalla, así que el día que el mapa rote al grabar,
-el cono va a seguir apuntando al norte magnético correcto sin tocar nada.
+## La cámara
 
-El azul es deliberado: en este mapa el verde y el ámbar ya significan otra cosa.
-
-## Dónde estoy, y por qué hace falta Google
-
-La posición sale de `Location.watchPositionAsync` de `expo-location`, cada cinco metros. Y ahí hay
-un límite que conviene conocer antes de que aparezca en la calle.
-
-**`expo-location` en Android pide la posición solo a Google Play Services.** Su módulo nativo
-declara un `FusedLocationProviderClient` y lo obtiene con `LocationServices.getFusedLocationProviderClient(...)`.
-No comprueba si Play Services está y no cae a ningún otro proveedor.
-
-En un teléfono sin Google Play Services eso **no falla: calla**. No llega ninguna posición, no
-se lanza ningún error, y la app se queda sin punto azul sin poder explicar por qué.
-
-Dos consecuencias que no son obvias:
-
-- **La brújula sigue funcionando** en ese teléfono. El rumbo sale de `SensorManager` directo, sin
-  pasar por Google. Ver el cono girar y no ver el punto es exactamente el síntoma.
-- **`hasServicesEnabledAsync()` no sirve para detectarlo.** Consulta el `LocationManager` del
-  sistema, que está encendido. Diría que todo está bien.
-
-- **Los tres modos de cámara quedan muertos ahí.** Siguen a una posición que nunca llega: el
-  botón se ve, se toca, y el mapa no se mueve ([0039](decisiones/0039-tres-modos-de-camara.md)).
-
-MapLibre trae su propio motor de ubicación, `LocationManager`, que usa el proveedor del sistema
-sin nada de Google. No se usa porque **es solo de primer plano**, y la voz y la grabación necesitan
-la posición con la pantalla apagada ([0015](decisiones/0015-grabacion-en-segundo-plano.md)).
-`tupu` **requiere un Android con Google Play Services**, y es una decisión tomada
-([0040](decisiones/0040-alcance-con-voz-y-solo-con-google.md)).
-
-## Los tres modos de cámara
-
-La cámara de MapLibre tiene tres mandos: `center`, `zoom` y `bearing` —hacia dónde apunta el borde
-de arriba de la pantalla—. Quién los mueve depende del modo
-([0039](decisiones/0039-tres-modos-de-camara.md)):
-
-| Modo | `center` | `bearing` |
+| Modo | Centro | Rumbo del mapa |
 |---|---|---|
-| `free` | Quieto | Solo los dos dedos |
-| `follow` | El ciclista | `0`, norte arriba |
-| `follow-heading` | El ciclista | El rumbo suavizado de la brújula |
+| `free` | Quieto | Solo con dos dedos |
+| `follow` | El ciclista | Norte arriba |
+| `follow-heading` | El ciclista | El de la brújula |
 
-`useFollowCamera` (`lib/camera.ts`) guarda lo último que le mandó a la cámara y solo vuelve a
-mandar si el punto cambió o si el rumbo giró más de 3°. Sin ese umbral llegarían veinte
-animaciones por segundo, porque el filtro de la brújula entrega un valor cada 50 ms.
+`useFollowCamera` solo mueve la cámara si el punto cambió o el rumbo giró 3° o más. Sin umbral
+serían veinte animaciones por segundo.
 
-### El gesto propio no se distingue solo
+Cualquier gesto vuelve a `free`. En Android, `userInteraction` es `true` también en nuestras
+animaciones; lo que distingue al dedo es `animated: false`.
 
-Para salir del modo hace falta saber si el mapa se movió por un dedo o por nosotros, y el campo
-obvio miente. En Android, `userInteraction` vale `true` **también para nuestras propias
-animaciones** — `CameraChangeTracker` cuenta `DEVELOPER_ANIMATION` como interacción. Si se usara
-tal cual, el seguimiento se apagaría solo en el primer movimiento.
+## El API
 
-Lo que separa los dos casos es el otro campo del evento:
-
-| Origen | `userInteraction` | `animated` |
-|---|---|---|
-| Un dedo | `true` | `false` |
-| Nuestro `easeTo` | `true` | `true` |
-| Animación interna del SDK | `false` | `true` |
-
-Así que un gesto es `userInteraction && !animated`. En iOS no hace falta, porque ahí se enmascara
-lo programático, pero el MVP es Android ([0019](decisiones/0019-mvp-solo-android.md)).
-
-## El API por dentro
-
-Cada funcionalidad es una carpeta con las mismas cuatro piezas
-([0008](decisiones/0008-apps-api-por-funcionalidad.md)):
+Una carpeta por funcionalidad (0008):
 
 ```
 features/cycleways/
-  routes.ts    la ruta HTTP y su validación. Nada más
+  routes.ts    ruta HTTP y validación
   queries.ts   PostGIS
-  schema.ts    las tablas de Drizzle
+  schema.ts    tablas de Drizzle
   index.ts     lo único que otra feature puede importar
 ```
 
-### Las rarezas de PostGIS que hay que conocer
+En SRID 4326, `geometry` mide en grados: las distancias se calculan con `::geography`. El índice
+GiST está sobre esa expresión; sobre la columna, el planificador hacía `Seq Scan`.
 
-- **`::geography`, no `::geometry`.** En 4326 las distancias de `geometry` salen en **grados**, así
-  que un radio de 1000 daría la vuelta al planeta.
-- **El índice GiST va sobre la expresión `(geom::geography)`**, no sobre la columna pelada. Todas
-  las consultas castean, y con el índice sobre `geometry` el planificador hacía `Seq Scan`. Está
-  verificado con `EXPLAIN`.
-- **`ST_DWithin`, no `ST_Distance(...) < r`.** El segundo no usa el índice.
-
-### El perfil ciclista
-
-`features/routing/service.ts` traduce «ruta de bici en Lima» a números de Valhalla:
+`features/routing/service.ts` lleva el perfil ciclista:
 
 ```ts
-bicycle_type: 'Hybrid',  cycling_speed: 18,
-use_roads: 0.2,          // huir de las avenidas
-use_hills: 0.2,          // huir de las cuestas
+bicycle_type: 'Hybrid', cycling_speed: 18,
+use_roads: 0.2,   // lejos de las avenidas
+use_hills: 0.2,   // lejos de las subidas
 avoid_bad_surfaces: 0.5,
 ```
 
-Esos dos `0.2` por debajo del defecto son la premisa de la app, no un ajuste tímido: rutas más
-largas y más tranquilas ([0029](decisiones/0029-perfil-ciclista-de-valhalla.md)). Están puestos a
-ojo y hay que afinarlos desde la primera salida.
-
-`use_hills` solo hace algo si el grafo se construyó **con** los tiles de elevación. Si esa carpeta
-está vacía, el parámetro no falla: se ignora en silencio.
-
-### Los errores
-
-Todo fallo sale con la misma forma, y el móvil distingue por el código:
+Están puestos a ojo (0029). `use_hills` solo funciona si el grafo se construyó con elevación; si
+no, se ignora sin avisar.
 
 | Código | HTTP | Cuándo |
 |---|---|---|
-| `bad_request` | 400 | La validación de Zod rechazó la petición |
+| `bad_request` | 400 | Zod rechazó la petición |
 | `upstream_unavailable` | 503 | Valhalla o PostGIS no respondieron |
 | `internal` | 500 | Cualquier otra cosa |
 
-Que Valhalla caído dé 503 y no 500 es lo que permite que la app diga «el servidor no está» en vez
-de «no hay ruta».
+## Contratos
 
-## Los contratos
+`packages/contracts` son esquemas de Zod: dan la validación y el tipo a la vez (0032). El móvil
+usa el cliente RPC de Hono tipado con `AppType`, así que renombrar un campo en el API rompe la
+compilación del móvil (0004).
 
-`packages/contracts` son esquemas de Zod, y de ellos salen **los tipos y la validación a la vez**
-([0032](decisiones/0032-zod-en-contracts.md)). Un cambio ahí toca el API y el móvil al mismo
-tiempo, por eso esos commits van solos.
+## Producción
 
-El cliente del móvil es el RPC de Hono tipado con `AppType`, así que renombrar un campo en el API
-rompe la compilación del móvil en vez de romper la app en la calle.
-
-## Lo que corre en producción
-
-Un solo proyecto de Dokploy con tres contenedores; solo el API sale a internet. Está todo en
-[`infra/README.md`](../infra/README.md), incluido cómo construir el grafo en el VPS.
+Un proyecto de Dokploy con API, PostGIS y Valhalla. Solo el API sale a internet. Detalle en
+[`infra/README.md`](../infra/README.md).
