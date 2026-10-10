@@ -22,8 +22,9 @@ bun run osm:update                       # descarga, carga ciclovías y construy
 `apps/api/.env` es la fuente única del lado servidor. El compose lo lee con `--env-file`, así que
 las credenciales del contenedor y las que usa el API no pueden quedar desalineadas.
 
-**La primera corrida tarda decenas de minutos** y baja unos 250 MB del extracto de Perú. Valhalla
-no arranca hasta que exista el grafo, que es lo que produce el último paso.
+**La primera corrida tarda unos 20 minutos**, y casi todo es la descarga de los 245 MB del extracto
+de Perú: construir el grafo, medido, son 2 min 17 s. Valhalla no arranca hasta que exista el grafo,
+que es lo que produce el último paso.
 
 ## Los cuatro pasos de `osm:update`
 
@@ -98,7 +99,7 @@ repositorio como contexto.
 
 ### Los datos de OSM, a mano y aparte
 
-Decenas de minutos y varios GB: no puede ir en un `git push`
+Unos 20 minutos y casi 1 GB de datos: no puede ir en un `git push`
 ([0009](../docs/decisiones/0009-despliegue-en-dokploy.md)). Por SSH en el VPS, en la carpeta donde
 Dokploy clonó el repositorio:
 
@@ -123,11 +124,36 @@ Al terminar, el script reinicia Valhalla con el grafo nuevo y el API empieza a d
 
 ### Dimensionar el VPS
 
-Valhalla es el que manda el tamaño, y el pico no es servir sino **construir el grafo**. Con el
-extracto de Perú, que hoy pesa unos 250 MB, la estimación de partida es **no bajar de 8 GB de RAM**
-y dejar **20-30 GB de disco** libres entre el `.pbf`, los tiles de elevación y el grafo. Es una
-estimación, no una medición: si el VPS queda corto, `valhalla_build_tiles` muere sin explicar
-mucho.
+Valhalla es el que manda el tamaño, y el pico no es servir sino **construir el grafo**. Medido el
+2026-10-10 con el extracto de Perú, Valhalla 3.8.3 y 16 hilos:
+
+| | Pico al construir | En reposo |
+|---|---|---|
+| RAM de `valhalla_build_tiles` | **3,1 GiB** | — |
+| RAM de los contenedores que sirven | — | ~300 MiB entre API, PostGIS y Valhalla |
+| Volumen de Valhalla | **2,7 GB** | 840 MB |
+| Volumen de PostGIS | — | 115 MB |
+| Imágenes de Docker | — | ~2 GB |
+
+El volumen en reposo se reparte así:
+
+| Archivo | Tamaño | Qué es |
+|---|---|---|
+| `tiles/` | 426 MB | El grafo. Pesa más que el `.pbf` porque no está comprimido |
+| `pbf/` | 245 MB | El extracto de Perú |
+| `timezones.sqlite` | 116 MB | Zonas horarias del mundo entero, no solo de Perú |
+| `elevation/` | 41 MB | Relieve del recuadro de Lima |
+| `admins.sqlite` | 12 MB | Fronteras, para las reglas de acceso por país |
+
+El pico de disco sale de los archivos intermedios de `valhalla_build_tiles` y de tener el grafo
+nuevo al lado del viejo mientras se construye; los dos se borran al terminar.
+
+Con eso, **4 GB de RAM y 10 GB de disco libres** alcanzan con margen. Los hilos siguen a los
+núcleos: un VPS con menos núcleos tarda más en construir, y es de esperar que el pico de RAM baje,
+pero eso no está medido. Si queda corto, `valhalla_build_tiles` muere sin explicar mucho.
+
+Para volver a medirlo, corré `docker stats` en otra terminal mientras corre `osm:update`, y
+`docker system df -v` para los volúmenes.
 
 ## Lo que falta
 

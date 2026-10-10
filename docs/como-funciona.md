@@ -25,7 +25,7 @@ Hay dos caminos distintos, y arrancan en la misma descarga.
 ```
                     Geofabrik: peru-latest.osm.pbf  (~250 MB)
                                    │
-                    osm:update, a mano, decenas de minutos
+                    osm:update, a mano, unos 20 minutos
                     ┌──────────────┴───────────────┐
                     ▼                              ▼
         osmium filtra ciclovías          valhalla_build_tiles

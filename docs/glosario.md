@@ -51,7 +51,8 @@ esto: trae líneas con etiquetas. Construir el grafo es el trabajo pesado.
 
 **Tiles de ruteo (los de Valhalla)** — ese grafo, cortado en cuadrados geográficos para que el
 motor cargue en memoria solo la zona que necesita. **No son imágenes y no tienen nada que ver con
-los tiles del mapa.** Construirlos para Perú son decenas de minutos y varios GB.
+los tiles del mapa.** Para Perú ocupan unos 425 MB, más que el extracto del que salen: el `.pbf`
+viene comprimido y el grafo no, porque está hecho para responder rápido y no para pesar poco.
 
 **Costeo (*costing*)** — las reglas de preferencia: cuánto premia una ciclovía, cuánto penaliza una
 subida, si evita el mal pavimento. En Valhalla viajan **en cada petición**, así que se pueden

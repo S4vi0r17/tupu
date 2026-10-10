@@ -43,7 +43,7 @@ Para saltar el hook en un push de emergencia: `git push --no-verify`.
 | `bun run infra:up` | Levanta PostGIS en Docker | segundos |
 | `bun run infra:down` | Lo apaga. Los volúmenes quedan | segundos |
 | `bun run db:migrate` | Aplica las migraciones: tablas y extensiones | segundos |
-| `bun run osm:update` | Descarga OSM, carga ciclovías y construye el grafo | **decenas de minutos** |
+| `bun run osm:update` | Descarga OSM, carga ciclovías y construye el grafo | **unos 20 minutos**, casi todo descarga |
 
 `osm:update` es el único comando largo del repo. Sus cuatro pasos y sus trampas están en
 [`infra/README.md`](../infra/README.md). Lo importante: **construye el grafo nuevo al lado y solo
