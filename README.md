@@ -55,13 +55,5 @@ sola. Sin cuentas. Solo Android con Google Play Services.
 
 ## Documentación
 
-| | |
-|---|---|
-| [Planeación](docs/planeacion.md) | Estado y lo aplazado |
-| [Cómo funciona](docs/como-funciona.md) | De OSM a la pantalla |
-| [Comandos](docs/comandos.md) | Qué corre cada uno |
-| [Stack](docs/stack.md) | Cada capa y su rival descartado |
-| [Decisiones](docs/decisiones/) | El porqué de cada elección |
-| [Modelo de datos](docs/modelo-datos.md) | Las entidades |
-| [Glosario](docs/glosario.md) | OSM, PostGIS, tiles… |
-| [Convenciones](docs/conventions/) | Commits, comentarios y docs |
+Todo en [`docs/`](docs/README.md). Cómo se trabaja, en
+[`docs/conventions/workflow.md`](docs/conventions/workflow.md).

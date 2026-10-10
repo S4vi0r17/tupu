@@ -1,6 +1,6 @@
 # 0029 — Perfil ciclista: prioriza ciclovía y evita subidas
 
-Aceptada · 2026-09-08 · Valores de partida, se afinan pedaleando
+Aceptada · 2026-09-08
 
 ## Contexto
 

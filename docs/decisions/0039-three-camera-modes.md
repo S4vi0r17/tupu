@@ -1,6 +1,6 @@
 # 0039 — La cámara del mapa tiene tres modos, y un botón los cicla
 
-Aceptada · 2026-09-10 · Reemplaza en parte a 0027: la rotación ya no depende de la grabación
+Aceptada · 2026-09-10 · Reemplaza en parte a 0027
 
 ## Contexto
 

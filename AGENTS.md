@@ -3,37 +3,23 @@
 Instrucciones para agentes de IA en este repo.
 
 Proyecto personal: una app para ciclistas en Lima. Leer primero
-[`docs/planeacion.md`](docs/planeacion.md).
+[`docs/roadmap.md`](docs/roadmap.md) y [`docs/conventions/workflow.md`](docs/conventions/workflow.md).
 
 ## Cómo trabajar
 
-- **No reabrir lo decidido.** Cada decisión en [`docs/decisiones/`](docs/decisiones/) dice contra
+- **No reabrir lo decidido.** Cada decisión en [`docs/decisions/`](docs/decisions/) dice contra
   qué se comparó. Para cambiarla se escribe una nueva que la reemplace.
 - Separar lo que necesita el MVP ahora de lo que se agrega después.
 - Preferir lo que hoy cuesta poco y evita una migración, aunque no sea lo más barato hoy.
 - Explicar antes de pedir una decisión: qué es la herramienta y qué problema de tupu resuelve,
   con el ejemplo real. Después las opciones, cada una con lo que se paga.
+- Seguir el [flujo de trabajo](docs/conventions/workflow.md): los docs se actualizan en el mismo
+  commit que el código, y nada se crea fuera de la estructura de [docs.md](docs/conventions/docs.md).
 
 ## Stack
 
-| | Se usa | No usar |
-|---|---|---|
-| Runtime y paquetes | Bun (0001) | npm, pnpm, yarn, Node |
-| API | Hono (0004) | Express, NestJS |
-| Base de datos | PostgreSQL + PostGIS (0011) | `jsonb` para geometrías |
-| Acceso a datos | Drizzle, también en el móvil (0007, 0033) | Prisma, SQL suelto |
-| Contratos | Zod (0032) | tipos escritos a mano |
-| Lint y formato | Biome (0031) | ESLint, Prettier |
-| Móvil | Expo Router, Zustand, TanStack Query (0014) | Redux, Context para estado compartido |
-| Estilos | NativeWind 5 con Tailwind 4 (0036) | `StyleSheet` a secas |
-| Mapa | MapLibre + OpenFreeMap (0005, 0016) | react-native-maps, Mapbox |
-| Ruteo | Valhalla propio (0006) | OSRM, Google, Mapbox |
-| Tests | Ninguno todavía (0024) | agregar tests sin hablarlo |
-
-## Idiomas
-
-En inglés: identificadores, archivos, ramas, campos del API, tablas y commits (0022).
-En español: comentarios, `docs/` y los textos de la app (0003).
+Lo que se usa y lo que no, en [`docs/stack.md`](docs/stack.md). Tests: ninguno todavía, y no se
+agregan sin hablarlo (0024).
 
 ## Dependencias
 
@@ -49,9 +35,10 @@ una regla mal escrita no dispara y parece verde.
 
 ## Convenciones
 
-- [Commits](docs/conventions/commits.md): sin trailers de coautoría ni firmas de herramientas.
+- [Flujo de trabajo](docs/conventions/workflow.md): ramas, qué doc se actualiza, nombres.
+- [Commits](docs/conventions/commits.md): en inglés, sin trailers de coautoría ni firmas.
 - [Comentarios](docs/conventions/comments.md): una línea, solo lo que el código no dice.
-- [Documentación](docs/conventions/docs.md): corta y sin relleno.
+- [Documentación](docs/conventions/docs.md): dónde va cada cosa, estilo y decisiones.
 
 ## Bloqueantes
 

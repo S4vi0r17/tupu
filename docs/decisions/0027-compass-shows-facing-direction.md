@@ -1,6 +1,6 @@
 # 0027 — La brújula muestra hacia dónde mira el teléfono, no el destino
 
-Aceptada · 2026-09-08 · Reemplaza el punto 4 de 0010 · La rotación del mapa, sustituida por 0039
+Aceptada · 2026-09-08 · Reemplaza en parte a 0010 · Reemplazada en parte por 0039
 
 ## Contexto
 

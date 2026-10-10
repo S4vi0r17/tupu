@@ -1,6 +1,6 @@
 # 0040 — El MVP suma voz, velocímetro y pantalla encendida, y requiere Google Play Services
 
-Aceptada · 2026-10-10 · Amplía 0010, que dejaba la voz fuera del MVP
+Aceptada · 2026-10-10 · Reemplaza en parte a 0010
 
 ## Contexto
 

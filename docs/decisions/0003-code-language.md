@@ -1,6 +1,6 @@
 # 0003 — Código en inglés, comentarios en español
 
-Aceptada · 2026-09-08 · Sustituida en parte por 0022: los commits van en inglés
+Aceptada · 2026-09-08 · Reemplazada en parte por 0022
 
 ## Contexto
 

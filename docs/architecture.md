@@ -1,6 +1,6 @@
 # Cómo funciona
 
-De OpenStreetMap a la pantalla. El porqué de cada pieza está en las [decisiones](decisiones/).
+De OpenStreetMap a la pantalla. El porqué de cada pieza está en las [decisiones](decisions/).
 
 ## El recorrido de un dato
 

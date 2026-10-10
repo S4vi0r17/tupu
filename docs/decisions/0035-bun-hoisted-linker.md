@@ -1,6 +1,6 @@
 # 0035 — Bun instala con enlazador plano
 
-Sustituida por 0037 · 2026-09-09
+Reemplazada por 0037 · 2026-09-09
 
 El diagnóstico era incorrecto: el problema era una línea de `metro.config.js`, no el enlazador.
 

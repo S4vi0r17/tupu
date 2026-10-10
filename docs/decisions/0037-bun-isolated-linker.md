@@ -1,6 +1,6 @@
 # 0037 — Bun se queda con el enlazador aislado
 
-Aceptada · 2026-09-09 · Sustituye a 0035
+Aceptada · 2026-09-09 · Reemplaza a 0035
 
 ## Contexto
 

@@ -1,6 +1,6 @@
 # 0034 — El proyecto se llama `tupu`
 
-Aceptada · 2026-09-09 · Sustituye al nombre `rumbo`
+Aceptada · 2026-09-09
 
 ## Contexto
 

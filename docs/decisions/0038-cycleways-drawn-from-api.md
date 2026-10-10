@@ -1,6 +1,6 @@
 # 0038 — Las ciclovías se dibujan desde el API
 
-Aceptada · 2026-09-09 · Sustituye a 0026 · Sustituida en parte por 0041: la red se pide entera
+Aceptada · 2026-09-09 · Reemplaza a 0026 · Reemplazada en parte por 0041
 
 ## Contexto
 

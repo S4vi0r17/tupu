@@ -1,6 +1,6 @@
 # 0022 — Mensajes de commit en inglés, con Conventional Commits
 
-Aceptada · 2026-09-08 · Reemplaza en parte a 0003, que los ponía en español
+Aceptada · 2026-09-08 · Reemplaza en parte a 0003
 
 ## Contexto
 

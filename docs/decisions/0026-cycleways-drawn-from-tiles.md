@@ -1,6 +1,6 @@
 # 0026 — Las ciclovías se dibujan desde el tile
 
-Sustituida por 0038 · 2026-09-08
+Reemplazada por 0038 · 2026-09-08
 
 El tile resultó no traer la red: 4 tramos donde PostGIS tiene 128.
 

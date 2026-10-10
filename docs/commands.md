@@ -58,7 +58,7 @@ adb install -r apps/mobile/android/app/build/outputs/apk/release/app-release.apk
 ```
 
 Unos cinco minutos. No necesita Metro. Va firmado con la clave de depuración de Expo: sirve para
-probar, no para repartir (ver EAS en la [planeación](planeacion.md)).
+probar, no para repartir (ver EAS en la [roadmap](roadmap.md)).
 
 `EXPO_PUBLIC_API_URL` queda dentro del APK. Para comprobar a qué API apunta y qué permisos trae:
 

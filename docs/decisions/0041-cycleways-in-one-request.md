@@ -1,7 +1,6 @@
 # 0041 — La red ciclista se pide entera, una vez
 
-Aceptada · 2026-10-10 · Reemplaza en parte a 0038: se sigue dibujando desde el API, cambia cómo
-se pide
+Aceptada · 2026-10-10 · Reemplaza en parte a 0038
 
 ## Contexto
 

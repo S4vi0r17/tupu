@@ -1,6 +1,6 @@
 # Planeación
 
-Estado del proyecto y lo que queda. Las decisiones están en [`decisiones/`](decisiones/).
+Estado del proyecto y lo que queda. Las decisiones están en [`decisions/`](decisions/).
 
 Actualizado el 2026-10-10.
 

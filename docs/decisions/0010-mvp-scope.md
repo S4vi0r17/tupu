@@ -1,7 +1,6 @@
 # 0010 — Alcance del MVP
 
-Aceptada · 2026-09-08 · Ampliada por 0040 (voz, velocímetro, pantalla encendida) · La brújula,
-redefinida por 0027
+Aceptada · 2026-09-08 · Reemplazada en parte por 0027 y 0040
 
 ## Contexto
 
