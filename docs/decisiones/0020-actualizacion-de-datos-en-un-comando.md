@@ -1,71 +1,39 @@
 # 0020 — Los datos de OSM se actualizan con un solo comando, a mano
 
-**Estado:** Aceptada · 2026-09-08
+Aceptada · 2026-09-08
 
 ## Contexto
 
-El extracto de Perú de OSM alimenta **dos cosas distintas**, y es fácil confundirlas porque las
-dos se llaman "tiles" ([glosario](../glosario.md)):
+El extracto de Perú alimenta dos cosas:
 
 ```
-Extracto de Perú (.pbf de OSM)
-        │
-        ├──→ filtrar ciclovías ──→ PostGIS      "¿qué ciclovías hay cerca de mí?"
-        │
-        └──→ construir el grafo ─→ Valhalla     "¿cómo llego hasta allá?"
+.pbf de Perú
+   ├── filtrar ciclovías  →  PostGIS
+   └── construir grafo    →  Valhalla
 ```
 
-La primera rama ya está decidida ([0012](0012-ingesta-de-osm-por-extracto.md)). Faltaba la segunda:
-[0009](0009-despliegue-en-dokploy.md) estableció que el grafo de ruteo **no puede construirse en
-cada despliegue** —son decenas de minutos y varios GB— pero no cuándo sí.
-
-Si las dos ramas se actualizan por caminos separados, se desincronizan: el mapa mostraría una
-ciclovía que el motor de ruteo no conoce, o al revés.
+El grafo no se construye en cada despliegue (0009). Si las dos ramas se actualizan por separado,
+el mapa puede mostrar una ciclovía que el motor no conoce.
 
 ## Decisión
 
-**Un solo comando, corrido a mano en el VPS**, que hace las dos ramas desde la misma descarga:
+`osm:update`, a mano en el VPS, hace las dos desde la misma descarga:
 
-```
-bun run osm:update
-  1. descarga el .pbf de Perú de Geofabrik
-  2. filtra ciclovías → carga en PostGIS, reemplazando en una transacción
-  3. construye el grafo de Valhalla en un directorio nuevo
-  4. cambia el motor al directorio nuevo y borra el viejo
-```
+1. Baja el `.pbf` de Perú.
+2. Carga las ciclovías en PostGIS, reemplazando en una transacción.
+3. Construye el grafo en un directorio nuevo.
+4. Cambia Valhalla al directorio nuevo.
 
-Los pasos 2 y 4 dejan el sistema servible durante todo el proceso: se construye al lado y se
-cambia al final. Si algo falla a la mitad, siguen valiendo los datos viejos.
+Si algo falla a la mitad, siguen los datos anteriores. El cron, después, es el mismo comando.
 
-Sigue el mismo criterio que [0012](0012-ingesta-de-osm-por-extracto.md): **a mano ahora, el cron
-después es el mismo comando**. No hay nada que rehacer para automatizarlo.
+## Se paga
 
-## Consecuencias
+- Durante la construcción el VPS lleva el pico de RAM y el doble de disco del grafo (medido en
+  [infra](../../infra/README.md)).
+- Un paso manual que se olvida, y que exige entrar al VPS.
 
-**A favor**
+## Descartado
 
-- **Imposible que el mapa y el ruteo queden desincronizados**: salen de la misma descarga, en la
-  misma corrida.
-- Un solo comando que recordar, en vez de dos procedimientos.
-- Construir al lado y cambiar al final significa que actualizar no implica una ventana sin servicio.
-
-**En contra**
-
-- **Durante la construcción el VPS va apretado.** Son decenas de minutos con el grafo nuevo y el
-  viejo ocupando RAM y disco a la vez, mientras el API sigue atendiendo. Hay que dimensionar el
-  VPS contando con ese pico, no con el uso normal.
-- **Hace falta el doble de disco** del que ocupa el grafo, por la misma razón.
-- Es un paso manual, y los pasos manuales se olvidan. Los datos de OSM van a envejecer hasta que
-  alguien se acuerde.
-- Correrlo requiere entrar al VPS. No es un botón.
-
-## Alternativas descartadas
-
-- **Construir el grafo en la máquina de desarrollo y subirlo** — el VPS nunca sufriría el pico de
-  RAM ni los minutos de CPU. Se descartó por dos razones: obliga a subir varios GB por una conexión
-  doméstica cada vez, y separa las dos ramas del diagrama en caminos distintos, que es exactamente
-  la desincronización que la decisión evita. Queda como salida si el pico de RAM resulta
-  inaceptable en el VPS que se contrate.
-- **Cron mensual automático** — aplazado, no descartado, igual que en
-  [0012](0012-ingesta-de-osm-por-extracto.md). Es el mismo comando; correrlo solo solo añade hoy el
-  riesgo de que falle de madrugada sin que nadie mire.
+- **Construir el grafo en local y subirlo.** Cientos de MB por una conexión doméstica, y las dos
+  ramas por caminos distintos.
+- **Cron mensual.** Aplazado: hoy fallaría de madrugada sin que nadie mire.

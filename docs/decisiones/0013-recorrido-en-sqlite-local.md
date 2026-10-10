@@ -1,58 +1,29 @@
 # 0013 — El recorrido se guarda en SQLite en el teléfono
 
-**Estado:** Aceptada · 2026-09-08
+Aceptada · 2026-09-08
 
 ## Contexto
 
-[0010](0010-alcance-del-mvp.md) dejó las cuentas fuera del MVP, así que los recorridos viven en el
-teléfono. Un recorrido de una hora tomando una posición por segundo son unos **3.600 puntos GPS**,
-cada uno con latitud, longitud, momento y precisión.
-
-La pregunta real no es dónde meterlos, sino **qué pasa si la app se cae a los 40 minutos**. Si el
-recorrido se escribe entero al terminar, una caída se lleva la hora completa — y grabando en
-segundo plano con la pantalla apagada ([0015](0015-grabacion-en-segundo-plano.md)), que el sistema
-mate el proceso no es un caso raro: es lo esperable.
+Sin cuentas (0010), los recorridos viven en el teléfono. Una hora a un punto por segundo son unos
+3600 puntos. Grabando con la pantalla apagada (0015), que Android mate la app a los 40 minutos es
+lo esperable: si el recorrido se escribe al final, se pierde entero.
 
 ## Decisión
 
-**SQLite en el dispositivo, con `expo-sqlite`.** Dos tablas: `rides` con la cabecera del recorrido
-y `ride_points` con los puntos, insertados **a medida que llegan**.
+SQLite con `expo-sqlite`. Dos tablas: `rides`, la cabecera, y `ride_points`, insertados a medida
+que llegan. Una caída pierde segundos, no el recorrido.
 
-Una caída pierde los últimos segundos, no el recorrido.
+El historial es una consulta, y sincronizar algún día será leer filas y mandarlas.
 
-Además deja el camino servido para cuando lleguen las cuentas: sincronizar es leer filas y
-mandarlas, y la forma de esas filas puede definirse desde ya en `packages/contracts`
-([0002](0002-layout-del-repo.md)) aunque en el MVP solo la use el móvil.
+## Se paga
 
-## Consecuencias
+- Una segunda base, con su esquema y sus migraciones.
+- Escribir punto a punto gasta batería: van en lotes chicos.
+- Con la sincronización habrá que decidir qué gana si un recorrido cambió en los dos lados.
 
-**A favor**
+## Descartado
 
-- **Resistente a caídas**, que es el requisito que decidió.
-- El historial —"mis recorridos por fecha, con sus kilómetros"— es una consulta, no leer y parsear
-  todo lo guardado.
-- Miles de filas no son nada para SQLite. El tamaño deja de ser una preocupación.
-- `expo-sqlite` es pieza oficial de Expo: sin configuración nativa propia
-  ([0005](0005-expo-en-el-movil.md)).
-
-**En contra**
-
-- **Hay SQL en el cliente**, y un esquema local que versionar y migrar cuando cambie. Es una
-  segunda base de datos en el proyecto, con sus propias migraciones, separada de la del servidor.
-- Insertar punto a punto escribe en disco todo el rato; hay que agrupar en lotes pequeños para no
-  castigar la batería.
-- Cuando llegue la sincronización habrá que decidir qué manda si un recorrido cambió en los dos
-  lados. Se aplaza, pero llegará.
-
-## Alternativas descartadas
-
-- **AsyncStorage** (clave-valor) — lo más simple de escribir. Se descartó por el requisito
-  central: obliga a tener los 3.600 puntos en memoria y reescribir el bloque entero en cada
-  guardado, así que o guardas seguido y castigas el disco, o guardas poco y pierdes el recorrido.
-  Tampoco está pensado para megabytes.
-- **Un archivo GeoJSON por recorrido** — simple, portable, y ya en el formato que querrá el
-  servidor. Se descartó porque añadir puntos a un archivo mientras se graba es incómodo, y porque
-  listar el historial obliga a abrir todos los archivos para leer sus cabeceras.
-- **MMKV u `op-sqlite`** — más rápidos que las piezas oficiales. Se descartó por desproporción:
-  el cuello de botella aquí nunca va a ser la velocidad de escritura, y ambos añaden configuración
-  nativa.
+- **AsyncStorage.** Obliga a tener los 3600 puntos en memoria y reescribirlos en cada guardado.
+- **Un GeoJSON por recorrido.** Agregar puntos mientras se graba es incómodo, y listar el historial
+  abre todos los archivos.
+- **MMKV u `op-sqlite`.** Más rápidos, pero la velocidad no es el problema y suman código nativo.

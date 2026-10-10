@@ -1,81 +1,42 @@
 # 0036 — NativeWind para los estilos del móvil
 
-**Estado:** Aceptada · 2026-09-09
+Aceptada · 2026-09-09
 
 ## Contexto
 
-[0014](0014-expo-router-zustand-tanstack-query.md) fijó navegación, estado y datos del móvil, pero
-**nunca se decidió cómo se escriben los estilos**. Por defecto quedaba `StyleSheet.create`, que es
-lo que traía el esqueleto.
-
-La preferencia es Tailwind: escala de espaciado y color consistente, e iteración rápida de
-interfaz, que en un proyecto donde el diseño importa es trabajo real y repetido.
+Nunca se decidió cómo se escriben los estilos del móvil; por defecto quedaba `StyleSheet.create`.
+La preferencia es Tailwind: escala consistente e iteración rápida.
 
 ## Decisión
 
-**NativeWind 5**, en su versión `5.0.0-preview.4`, con Tailwind 4.
+NativeWind `5.0.0-preview.4` con Tailwind 4.
 
 ```
-apps/mobile/global.css      @import tailwindcss + el tema de NativeWind
-apps/mobile/babel.config.js preset nativewind/babel
-apps/mobile/metro.config.js withNativewind(config, { globalClassNamePolyfill: true })
+apps/mobile/global.css        @import tailwindcss + tema de NativeWind
+apps/mobile/babel.config.js   preset nativewind/babel
+apps/mobile/metro.config.js   withNativewind(config, { globalClassNamePolyfill: true })
 ```
 
-`globalClassNamePolyfill` permite `className` en `View` y `Text` sin envolverlos.
+La 5 y no la 4.2.6 estable: la 4 depende de `react-native-css-interop`, que fija Tailwind 3.
 
-**Por qué la 5 y no la estable.** La 4.2.6 arrastra `react-native-css-interop`, que fija
-`tailwindcss ~3`. Elegirla es empezar una versión mayor atrás de Tailwind el mismo día que se
-escribe la primera pantalla. La 5 es la que usa Tailwind 4 de verdad.
+Biome ordena las clases con `useSortedClasses`, sin traer Prettier.
 
-## Consecuencias
+## Se paga
 
-**A favor**
+- Es un preview, con cuatro meses sin publicar cuando se adoptó.
+- Su guía apunta a Expo SDK 54; acá se usa la 57.
+- Suma `react-native-worklets` y transforms sobre la configuración de Metro.
+- Sin estas tres piezas compila, arranca y no aplica ninguna clase, sin error:
+  1. `postcss.config.js` con `@tailwindcss/postcss`.
+  2. `projectRoot` explícito en `withNativewind`, por el monorepo.
+  3. `lightningcss` fijado en `1.30.1` con `overrides`: con la 1.33 de la SDK 57 falla.
+- `@source` no funciona; las fuentes se detectan con `projectRoot`.
+- Al mapa no le sirve: MapLibre se estiliza con capas.
 
-- Escala de diseño consistente sin inventarla, y sin mantener un módulo de tema propio.
-- Modo oscuro, consultas de medios y variantes por estado sin escribir la lógica.
-- Los estilos se compilan en tiempo de construcción, no en cada render.
-- Biome tiene `useSortedClasses`, así que ordenar las clases no obliga a traer Prettier de vuelta
-  y [0031](0031-biome-para-lint-y-formato.md) sigue en pie.
+La única prueba válida es verlo en pantalla: el nombre de una clase en el bundle no demuestra nada.
 
-**En contra, y hay que tenerlo presente**
+## Descartado
 
-- **Es un preview.** El primero salió en septiembre de 2025 y el último en mayo de 2026: cuatro
-  meses sin publicar cuando se adoptó. Un fallo propio puede no tener arreglo aguas arriba.
-- **Su guía rápida apunta a Expo SDK 54 y acá se usa la 57.** Funciona, pero no es una
-  combinación que el proyecto pruebe.
-- **Suma `react-native-worklets` y un transform de Babel y Metro** sobre la configuración de Metro
-  del monorepo, que [0002](0002-layout-del-repo.md) ya marca como el sitio donde los errores son
-  peores de leer.
-- **Costó tres piezas que ninguna guía menciona juntas**, y sin las tres la app compila, arranca
-  y **no aplica ni una clase**, que es el fallo más caro de diagnosticar porque no hay error:
-  1. `postcss.config.js` con `@tailwindcss/postcss`. En Tailwind 4 el compilador es un paquete
-     aparte; sin él `@import "tailwindcss"` entra como CSS literal.
-  2. `projectRoot` explícito en `withNativewind`. En un monorepo, sin eso Tailwind busca las
-     clases desde otra carpeta y compila un CSS sin ninguna utilidad.
-  3. `lightningcss` fijado en `1.30.1` con `overrides`. La SDK 57 trae la 1.33 y
-     `react-native-css` se construyó contra la 1.30: juntas fallan con *failed to deserialize*.
-- **`@source` no funciona.** El parser de CSS de `react-native-css` tampoco lo digiere. La
-  detección de fuentes se arregla con `projectRoot`, no con `@source`.
-- **Al mapa no le sirve.** MapLibre se estiliza con especificaciones de capa, no con clases, y el
-  mapa es el peso visual de la app. NativeWind rinde en las superposiciones, que son pocas.
-
-**Qué se verificó al adoptarlo**, porque siendo un preview no alcanza con que instale:
-
-- El bundle de Android se construye entero.
-- El `.css` que aparece vacío en la exportación es el artefacto **web**; los estilos nativos van
-  dentro del bundle de JavaScript.
-- **La única prueba que vale es verlo en pantalla.** Buscar una clase compilada dentro del bundle
-  no prueba nada: el nombre de la clase ya contiene su propio valor. Se comprobó en el emulador,
-  y antes se bisecó con una regla de CSS propia para separar «el pipeline no anda» de «Tailwind
-  no genera utilidades».
-
-## Alternativas descartadas
-
-- **Módulo de tokens tipado más `StyleSheet`** — treinta líneas, cero dependencias, cero
-  transforms, y da la consistencia de una escala sin nada más. Era la recomendación. Se descartó
-  porque no da variantes, modo oscuro ni estados sin escribirlos a mano, y porque la velocidad de
-  iteración en la interfaz es un objetivo explícito del proyecto.
-- **NativeWind 4.2.6, la estable** — la opción prudente. Se descartó por quedar atada a Tailwind 3
-  y por sumar `react-native-reanimated`, que tampoco es gratis.
-- **Seguir con `StyleSheet` a secas** — es lo que había. Se descartó por lo mismo que se abrió la
-  discusión: escribir estilos así es lento y la escala se termina inventando dos veces.
+- **Tokens tipados y `StyleSheet`.** Cero dependencias, pero sin variantes, modo oscuro ni estados.
+- **NativeWind 4.2.6.** Atada a Tailwind 3 y suma `react-native-reanimated`.
+- **`StyleSheet` a secas.** Lento, y la escala se termina inventando.
