@@ -25,6 +25,8 @@ Actualizado el 2026-10-10.
 - Etiquetas del mapa horizontales cuando el mapa gira (0039).
 - La pantalla que explica el permiso de ubicación «siempre». Mal escrita, la gente lo niega (0015).
 - Detectar que el ciclista se salió de la ruta y recalcularla (0040).
+- Fijar versiones de imagen: Valhalla usa `latest` (lo medido fue 3.8.3) y la imagen de
+  `infra/osm` usa `oven/bun:1-debian`. Un `latest` puede cambiar el grafo sin aviso.
 
 ## Aplazado, con disparador
 
