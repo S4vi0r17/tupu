@@ -23,8 +23,8 @@ no se desalinean. En el del móvil va la URL que verá el teléfono, nunca `loca
 | `bun run dev:api` | API en el puerto 3001, con recarga |
 | `bun run dev:mobile` | Metro |
 
-No hay CI, así que el hook de pre-push es el único control (0023). Para saltarlo:
-`git push --no-verify`.
+No hay CI, así que el hook de pre-push es el único control (0023). `bun install` lo activa
+(`git config core.hooksPath .githooks`). Para saltarlo: `git push --no-verify`.
 
 ## Datos
 
