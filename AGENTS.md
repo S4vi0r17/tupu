@@ -2,7 +2,8 @@
 
 Instrucciones para agentes de IA en este repo.
 
-Proyecto personal: una app para ciclistas en Lima. Leer primero [`docs/planeacion.md`](docs/planeacion.md).
+Proyecto personal: una app para ciclistas en Lima. Leer primero
+[`docs/planeacion.md`](docs/planeacion.md).
 
 ## Cómo trabajar
 
