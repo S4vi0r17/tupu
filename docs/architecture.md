@@ -10,7 +10,10 @@ apps/mobile          Expo Router
 packages/contracts   esquemas de Zod entre el API y la app
 packages/geo         matemática geográfica pura
 infra/               Docker, PostGIS, Valhalla y la ingesta de OSM
-docs/                decisiones, convenciones y cómo funciona
+docs/                specs, decisiones, convenciones y cómo funciona
+scripts/             comprobaciones del repo
+.claude/ .agents/    configuración de agentes (conventions/agents.md)
+.codex/
 ```
 
 | Desde | Puede importar |

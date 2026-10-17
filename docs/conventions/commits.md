@@ -56,5 +56,7 @@ Solo el porqué, si el subject no lo dice.
 
 ## Reglas
 
+- Solo se commitea cuando se pide. El push, solo si se pide de forma explícita.
+- Nunca `--no-verify`: si un hook rechaza, se corrige la causa.
 - Sin trailers: ni `Co-Authored-By`, ni enlaces de sesión, ni firmas de herramientas.
 - Las migraciones de Drizzle, en su propio commit: no se revierten con `git revert` (0007).

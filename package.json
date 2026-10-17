@@ -23,7 +23,8 @@
     "lint": "biome check .",
     "lint:fix": "biome check --write .",
     "typecheck": "bun run --filter '*' typecheck",
-    "check": "bun run lint && bun run typecheck"
+    "check:agents": "scripts/check-agents.sh",
+    "check": "bun run lint && bun run typecheck && bun run check:agents"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.3.14",

@@ -14,5 +14,6 @@
 | [conventions/commits.md](conventions/commits.md) | Mensajes de commit |
 | [conventions/comments.md](conventions/comments.md) | Comentarios en el código |
 | [conventions/docs.md](conventions/docs.md) | Cómo se escriben los docs y las decisiones |
+| [conventions/agents.md](conventions/agents.md) | Qué lee cada herramienta de IA y qué tiene prohibido |
 
 El despliegue está en [`infra/README.md`](../infra/README.md).

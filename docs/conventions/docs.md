@@ -7,7 +7,7 @@ El contenido en español; los nombres de archivos y carpetas en inglés, en min�
 
 ```
 README.md                 qué es tupu, en una línea, y cómo levantarlo
-AGENTS.md                 punto de partida para agentes de IA: reglas y enlaces
+AGENTS.md                 punto de partida para agentes de IA; CLAUDE.md es un symlink
 infra/README.md           despliegue y tamaño del VPS
 docs/
   README.md               índice
@@ -19,7 +19,7 @@ docs/
   glossary.md             términos
   decisions/              una decisión por archivo, con su índice
   specs/                  lo que la app garantiza, regla por regla (0043)
-  conventions/            commits, comentarios, docs, flujo de trabajo
+  conventions/            flujo, commits, comentarios, docs y agentes
 ```
 
 No se crean documentos nuevos sin pasar por esta lista. Si algo no encaja, se agrega a la lista
