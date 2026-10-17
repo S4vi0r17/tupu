@@ -2,14 +2,14 @@
 
 Estado del proyecto y lo que queda. Las decisiones están en [`decisions/`](decisions/).
 
-Actualizado el 2026-10-10.
+Actualizado el 2026-10-16.
 
 ## Estado del MVP
 
 | Pieza | Estado |
 |---|---|
 | Ciclovías en el mapa | Hecho. La red entera en una petición (0041) |
-| Ruta en bici entre dos puntos | El API la calcula en producción. Falta la pantalla: tocar inicio y fin (0028) y dibujar el trazado |
+| Ruta en bici entre dos puntos | Hecho en código: toque largo o coordenadas, y el trazado en el mapa (0028). Falta probarla en la calle |
 | Voz en cada giro | Por hacer. Valhalla ya da las frases en español; falta que el API las devuelva (0040) |
 | Grabación del recorrido | Por hacer (0013, 0015) |
 | Brújula y cámara que te sigue | Hecho y probado en la calle el 2026-09-10 (0025, 0039) |
@@ -21,7 +21,6 @@ Actualizado el 2026-10-10.
 
 - Licencia del repositorio.
 - Icono de la app. El nombre y el `package id` ya están (`pe.tupu.app`).
-- Que la app muestre el 503 de Valhalla caído. El API ya lo devuelve como `upstream_unavailable`.
 - Etiquetas del mapa horizontales cuando el mapa gira (0039).
 - La pantalla que explica el permiso de ubicación «siempre». Mal escrita, la gente lo niega (0015).
 - Detectar que el ciclista se salió de la ruta y recalcularla (0040).

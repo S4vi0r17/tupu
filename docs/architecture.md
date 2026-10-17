@@ -105,6 +105,27 @@ serían veinte animaciones por segundo.
 Cualquier gesto vuelve a `free`. En Android, `userInteraction` es `true` también en nuestras
 animaciones; lo que distingue al dedo es `animated: false`.
 
+## La ruta
+
+Un toque largo en el mapa deja un punto y pregunta: «Ir aquí» o «Salir de aquí» (0028). También
+se puede pegar el destino como `-12.1211, -77.0301`. Si el par viene al revés se voltea solo: en
+Perú los rangos de latitud y longitud no se cruzan.
+
+Sin inicio fijado, la ruta sale del GPS. La posición se congela al elegir el destino; si no,
+cada cinco metros sería una ruta nueva. Elegir otro destino la vuelve a tomar.
+
+Inicio y destino viven en un store de Zustand, `useRouteEndpoints`, para que la voz los encuentre
+después. La ruta es una consulta de TanStack Query: la polilínea se decodifica dentro, así una
+mal formada es un error de la consulta y no tumba la pantalla. «No hay ruta» no se reintenta.
+
+Cuando llega, la cámara pasa a `free` y encuadra el trazado. Va en violeta, debajo del ciclista.
+
+| Respuesta | Qué ve el usuario |
+|---|---|
+| 200 | Distancia y tiempo, y «Quitar ruta» |
+| 422 `no_route` | Que no hay ruta en bici hasta ahí |
+| 503 o sin señal | Que el servidor no responde, con «Reintentar» |
+
 ## El API
 
 Una carpeta por funcionalidad (0008):
