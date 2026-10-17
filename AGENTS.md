@@ -26,6 +26,8 @@ Una por tema. Leer la que aplique antes de tocar algo:
 
 ## Cómo trabajar
 
+- El repo es la única fuente de verdad. Decisiones, specs y reglas viven aquí, nunca en la
+  memoria de un agente: lo que valga la pena recordar se escribe en `docs/`.
 - Breve, simple, minimalista: en el código, los comentarios y los docs.
 - No reabrir lo decidido. Cada decisión en [`docs/decisions/`](docs/decisions/) dice contra qué
   se comparó; para cambiarla se escribe una nueva que la reemplace.

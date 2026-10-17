@@ -35,6 +35,8 @@ compose fija el nombre del proyecto y los puertos.
 ## Restricciones
 
 - Ninguna herramienta añade atribución de IA a commits ni a PR.
+- Ninguna guarda reglas en su memoria local: lo que se aprende va a `docs/`, para que cualquiera
+  lo encuentre sin depender de un agente.
 - Prohibidos en Claude Code: `push --force`, `--no-verify` y leer o editar los `.env`.
 - Piden confirmación: `git push`, `git reset --hard`, `git clean`, `rm -rf`, `infra:down` y
   `osm:update`.
