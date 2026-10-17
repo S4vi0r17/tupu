@@ -2,7 +2,7 @@
 
 ## Un cambio, de punta a punta
 
-1. Rama desde `main`: `feat/…`, `fix/…`, `docs/…` (0021).
+1. Rama desde `staging`: `feat/…`, `fix/…`, `docs/…`, `chore/…` (0042).
 2. El código, con los [comentarios](comments.md) justos.
 3. Los docs que describen lo que cambió, en el mismo commit que el código:
 
@@ -17,7 +17,8 @@
 
 4. `bun run check`. El hook de pre-push lo corre igual; no hay CI (0023).
 5. [Commits](commits.md) en inglés, sin trailers.
-6. Pull request a `main`. Al mergear, Dokploy despliega.
+6. Pull request a `staging`. Cuando `staging` anduvo en el teléfono, PR de `staging` a `main`:
+   al mergear, Dokploy despliega.
 
 ## Antes de abrir el PR
 

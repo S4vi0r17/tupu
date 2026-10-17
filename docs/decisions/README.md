@@ -25,7 +25,7 @@ Una por archivo. El formato y cuándo escribir una, en
 | [0018](0018-no-staging-environment.md) | Sin entorno de pruebas: solo producción y local |  |
 | [0019](0019-android-only-mvp.md) | El MVP es solo Android |  |
 | [0020](0020-one-command-data-update.md) | Los datos de OSM se actualizan con un solo comando, a mano |  |
-| [0021](0021-github-feature-branches.md) | GitHub, con rama por funcionalidad y pull request |  |
+| [0021](0021-github-feature-branches.md) | GitHub, con rama por funcionalidad y pull request | Reemplazada en parte por 0042 |
 | [0022](0022-commit-messages-in-english.md) | Mensajes de commit en inglés, con Conventional Commits | Reemplaza en parte a 0003 |
 | [0023](0023-no-ci-dokploy-deploys.md) | Sin CI: Dokploy despliega al mergear |  |
 | [0024](0024-no-tests-during-mvp.md) | Sin tests durante el MVP |  |
@@ -46,3 +46,4 @@ Una por archivo. El formato y cuándo escribir una, en
 | [0039](0039-three-camera-modes.md) | La cámara del mapa tiene tres modos, y un botón los cicla | Reemplaza en parte a 0027 |
 | [0040](0040-voice-scope-requires-google.md) | El MVP suma voz, velocímetro y pantalla encendida, y requiere Google Play Services | Reemplaza en parte a 0010 |
 | [0041](0041-cycleways-in-one-request.md) | La red ciclista se pide entera, una vez | Reemplaza en parte a 0038 |
+| [0042](0042-changes-go-through-staging.md) | Los cambios entran por `staging`; `main` solo recibe a `staging` | Reemplaza en parte a 0021 |
