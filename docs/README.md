@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | [roadmap.md](roadmap.md) | Estado del MVP, pendientes y lo aplazado |
-| [architecture.md](architecture.md) | Cómo funciona, de OSM a la pantalla |
+| [architecture.md](architecture.md) | El repo y cómo funciona, de OSM a la pantalla |
 | [stack.md](stack.md) | Qué se usa en cada capa |
 | [commands.md](commands.md) | Qué corre cada comando |
 | [data-model.md](data-model.md) | Tablas y contratos |

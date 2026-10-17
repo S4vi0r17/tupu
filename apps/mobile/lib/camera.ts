@@ -24,6 +24,8 @@ type FollowCamera = {
   cycleMode: () => void
   /** Pasa a `free` si el mapa lo movió un dedo. */
   releaseOnGesture: (event: ViewStateChangeEvent) => void
+  /** Pasa a `free`, para que la cámara no pelee con un encuadre nuestro. */
+  release: () => void
 }
 
 type FollowCameraOptions = {
@@ -49,6 +51,8 @@ export function useFollowCamera({
   }, [])
 
   const cycleMode = useCallback(() => changeMode(NEXT[mode]), [changeMode, mode])
+
+  const release = useCallback(() => changeMode('free'), [changeMode])
 
   const releaseOnGesture = useCallback(
     (event: ViewStateChangeEvent) => {
@@ -79,5 +83,5 @@ export function useFollowCamera({
     })
   }, [cameraRef, headingDegrees, mode, point])
 
-  return { mode, cycleMode, releaseOnGesture }
+  return { mode, cycleMode, releaseOnGesture, release }
 }

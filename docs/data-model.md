@@ -113,6 +113,7 @@ type CyclewayCollection = {            // GET /v1/cycleways
   }[]
 }
 
+// POST /v1/routing/plan; 422 no_route si no hay camino en bici
 type RoutePlanRequest = { from: { lat: number; lng: number }; to: { lat: number; lng: number } }
 type RoutePlanResponse = { distanceM: number; durationS: number; shape: string }  // polilínea, precisión 6
 ```

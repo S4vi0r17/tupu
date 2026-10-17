@@ -2,22 +2,30 @@ import {
   Camera,
   type CameraRef,
   Map as MapView,
+  type PressEvent,
   type ViewStateChangeEvent,
 } from '@maplibre/maplibre-react-native'
-import { useRef } from 'react'
+import type { Point } from '@tupu/geo'
+import { useEffect, useRef, useState } from 'react'
 import { type NativeSyntheticEvent, StyleSheet, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { CameraModeButton } from '../components/camera-mode-button.tsx'
 import { CyclewayLayers } from '../components/cycleway-layers.tsx'
 import { MapLegend } from '../components/map-legend.tsx'
 import { RiderPuck } from '../components/rider-puck.tsx'
+import { RouteLayers } from '../components/route-layers.tsx'
+import { RoutePanel } from '../components/route-panel.tsx'
 import { useFollowCamera } from '../lib/camera.ts'
 import { useCycleways } from '../lib/cycleways.ts'
 import { useHeading } from '../lib/heading.ts'
 import { useCurrentLocation } from '../lib/location.ts'
 import { LIMA_CENTER, MAP_STYLE_URL } from '../lib/map.ts'
+import { useRouteEndpoints, useRoutePlan } from '../lib/route.ts'
 
 const INITIAL_ZOOM = 14
+
+// Deja libre la leyenda arriba y el panel de la ruta abajo
+const ROUTE_PADDING = { top: 140, right: 40, bottom: 220, left: 40 }
 
 type NoticeState = {
   cyclewaysFailed: boolean
@@ -46,14 +54,30 @@ export default function MapScreen() {
   const { degrees, hasCompass, needsCalibration } = useHeading(permission === 'granted')
 
   const cameraRef = useRef<CameraRef>(null)
-  const { mode, cycleMode, releaseOnGesture } = useFollowCamera({
+  const { mode, cycleMode, releaseOnGesture, release } = useFollowCamera({
     cameraRef,
     point,
     headingDegrees: degrees,
   })
 
+  const { start, destination } = useRouteEndpoints()
+  const plan = useRoutePlan(point)
+  const [pending, setPending] = useState<Point | null>(null)
+
+  const routeBounds = plan.status === 'ready' ? plan.bounds : null
+  useEffect(() => {
+    if (!routeBounds) return
+    release()
+    cameraRef.current?.fitBounds(routeBounds, { padding: ROUTE_PADDING, duration: 600 })
+  }, [release, routeBounds])
+
   const onRegionWillChange = (event: NativeSyntheticEvent<ViewStateChangeEvent>) => {
     releaseOnGesture(event.nativeEvent)
+  }
+
+  const onLongPress = (event: NativeSyntheticEvent<PressEvent>) => {
+    const [lng, lat] = event.nativeEvent.lngLat
+    setPending({ lat, lng })
   }
 
   const notice = noticeFor({
@@ -71,10 +95,18 @@ export default function MapScreen() {
         attribution
         logo={false}
         onRegionWillChange={onRegionWillChange}
+        onLongPress={onLongPress}
       >
         <Camera ref={cameraRef} initialViewState={{ center: LIMA_CENTER, zoom: INITIAL_ZOOM }} />
 
         <CyclewayLayers collection={collection} />
+
+        <RouteLayers
+          plan={plan}
+          start={start?.point ?? null}
+          destination={destination}
+          pending={pending}
+        />
 
         {point ? <RiderPuck point={point} headingDegrees={degrees} accuracyM={accuracyM} /> : null}
       </MapView>
@@ -94,6 +126,13 @@ export default function MapScreen() {
           <View className="self-end">
             <CameraModeButton mode={mode} onPress={cycleMode} />
           </View>
+
+          <RoutePanel
+            plan={plan}
+            pending={pending}
+            onPendingDone={() => setPending(null)}
+            isLocationDenied={permission === 'denied'}
+          />
         </View>
       </SafeAreaView>
     </View>
