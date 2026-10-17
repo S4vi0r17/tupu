@@ -21,12 +21,15 @@ export const CASING_COLOR = '#FFFFFF'
 
 type LineWidth = NonNullable<NonNullable<LineLayerSpecification['paint']>['line-width']>
 
-export const TRACK_WIDTH: LineWidth = ['interpolate', ['linear'], ['zoom'], 10, 1.8, 14, 4, 18, 9]
+// Píxeles a zoom 10, 14 y 18; MapLibre interpola en medio
+function byZoom(at10: number, at14: number, at18: number): LineWidth {
+  return ['interpolate', ['linear'], ['zoom'], 10, at10, 14, at14, 18, at18]
+}
 
-export const CASING_WIDTH: LineWidth = ['interpolate', ['linear'], ['zoom'], 10, 3.4, 14, 7, 18, 13]
-
+export const TRACK_WIDTH = byZoom(1.8, 4, 9)
+export const CASING_WIDTH = byZoom(3.4, 7, 13)
 // Carril y compartida, más finas que la vía propia
-export const THIN_WIDTH: LineWidth = ['interpolate', ['linear'], ['zoom'], 10, 1.2, 14, 2.8, 18, 6]
+export const THIN_WIDTH = byZoom(1.2, 2.8, 6)
 
 // Los guiones se leen como «sin separación del tráfico»
 export const LANE_DASH: [number, number] = [3, 1.5]
