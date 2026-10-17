@@ -1,0 +1,3 @@
+#!/usr/bin/env sh
+# Biome sobre lo preparado: el formato y el lint fallan aquí y no recién en el push
+exec bunx biome check --staged --no-errors-on-unmatched --files-ignore-unknown=true
