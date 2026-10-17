@@ -1,6 +1,6 @@
 # 0018 — Sin entorno de pruebas: solo producción y local
 
-Aceptada · 2026-09-08
+Aceptada · 2026-09-08 · Reemplazada por 0042
 
 ## Contexto
 

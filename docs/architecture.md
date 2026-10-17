@@ -2,6 +2,31 @@
 
 De OpenStreetMap a la pantalla. El porqué de cada pieza está en las [decisiones](decisions/).
 
+## El repo
+
+```
+apps/api             Hono sobre Bun, por funcionalidad
+apps/mobile          Expo Router
+packages/contracts   esquemas de Zod entre el API y la app
+packages/geo         matemática geográfica pura
+infra/               Docker, PostGIS, Valhalla y la ingesta de OSM
+docs/                specs, decisiones, convenciones y cómo funciona
+scripts/             comprobaciones del repo
+.claude/ .agents/    configuración de agentes (conventions/agents.md)
+.codex/
+```
+
+| Desde | Puede importar |
+|---|---|
+| `apps/*` | `packages/*` |
+| `packages/*` | Nada de `apps/*` |
+| `apps/mobile` | Del API, solo el tipo `AppType` |
+| `apps/api` | Nada del móvil |
+| `features/x` | De otra feature, solo su `index.ts` |
+
+Lo hace cumplir Biome (0002, 0008). Una regla mal escrita no dispara y parece verde: si se tocan,
+se prueban rompiéndolas a propósito.
+
 ## El recorrido de un dato
 
 Dos caminos que salen de la misma descarga, para que el mapa no muestre una ciclovía por la que
@@ -105,6 +130,22 @@ serían veinte animaciones por segundo.
 Cualquier gesto vuelve a `free`. En Android, `userInteraction` es `true` también en nuestras
 animaciones; lo que distingue al dedo es `animated: false`.
 
+## La ruta
+
+Un toque largo en el mapa deja un punto y pregunta: «Ir aquí» o «Salir de aquí» (0028). También
+se puede pegar el destino como `-12.1211, -77.0301`. Si el par viene al revés se voltea solo: en
+Perú los rangos de latitud y longitud no se cruzan.
+
+Sin inicio fijado, la ruta sale del GPS. La posición se congela al elegir el destino; si no,
+cada cinco metros sería una ruta nueva. Elegir otro destino la vuelve a tomar.
+
+Inicio y destino viven en un store de Zustand, `useRouteEndpoints`, para que la voz los encuentre
+después. La ruta es una consulta de TanStack Query: la polilínea se decodifica dentro, así una
+mal formada es un error de la consulta y no tumba la pantalla. «No hay ruta» no se reintenta.
+
+Cuando llega, la cámara pasa a `free` y encuadra el trazado. Va en violeta, debajo del ciclista.
+Qué ve el usuario en cada respuesta, en [SPEC-ROUTE-04](specs/route.md).
+
 ## El API
 
 Una carpeta por funcionalidad (0008):
@@ -135,6 +176,7 @@ no, se ignora sin avisar.
 | Código | HTTP | Cuándo |
 |---|---|---|
 | `bad_request` | 400 | Zod rechazó la petición |
+| `no_route` | 422 | Valhalla no encontró camino: sin calle cerca o a más de 500 km |
 | `upstream_unavailable` | 503 | Valhalla o PostGIS no respondieron |
 | `internal` | 500 | Cualquier otra cosa |
 
@@ -146,5 +188,6 @@ compilación del móvil (0004).
 
 ## Producción
 
-Un proyecto de Dokploy con API, PostGIS y Valhalla. Solo el API sale a internet. Detalle en
+Dos entornos de Dokploy con el mismo compose: desarrollo desde `develop` y producción desde `main`
+(0042). Cada uno con su API, PostGIS y Valhalla; solo el API sale a internet. Detalle en
 [`infra/README.md`](../infra/README.md).

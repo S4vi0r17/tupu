@@ -21,4 +21,8 @@ apps/mobile/ios/
 infra/data/
 *.pbf
 
+# Claude Code: lo local de cada uno y los worktrees de los agentes
+.claude/settings.local.json
+.claude/worktrees/
+
 .DS_Store

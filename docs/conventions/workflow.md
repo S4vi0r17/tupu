@@ -2,12 +2,14 @@
 
 ## Un cambio, de punta a punta
 
-1. Rama desde `main`: `feat/…`, `fix/…`, `docs/…` (0021).
-2. El código, con los [comentarios](comments.md) justos.
-3. Los docs que describen lo que cambió, en el mismo commit que el código:
+1. En `develop`. Una rama aparte, `feat/…` o `fix/…`, solo si puede quedar a medias días (0042).
+2. La regla antes que el código, en `docs/specs/` ([proceso](../specs/README.md), 0043).
+3. El código, con los [comentarios](comments.md) justos.
+4. Los docs que describen lo que cambió, en el mismo commit que el código:
 
    | Si cambia… | Se actualiza |
    |---|---|
+   | Lo que la app garantiza | Su spec en `specs/` |
    | Una pieza del MVP | `roadmap.md` |
    | Cómo funciona algo | `architecture.md` |
    | Un comando o un script | `commands.md` |
@@ -15,11 +17,12 @@
    | El despliegue o la infra | `infra/README.md` |
    | Algo decidido | Una decisión nueva ([docs.md](docs.md)) |
 
-4. `bun run check`. El hook de pre-push lo corre igual; no hay CI (0023).
-5. [Commits](commits.md) en inglés, sin trailers.
-6. Pull request a `main`. Al mergear, Dokploy despliega.
+5. `bun run check`. El hook de pre-push lo corre igual; no hay CI (0023).
+6. [Commits](commits.md) en inglés, sin trailers.
+7. Push a `develop`: despliega desarrollo. Cuando anduvo en la calle, PR de `develop` a `main`:
+   despliega producción. Después, `git pull origin main` en `develop`.
 
-## Antes de abrir el PR
+## Antes del PR a `main`
 
 - `bun run check` en verde.
 - Nada en `docs/` que contradiga el código.

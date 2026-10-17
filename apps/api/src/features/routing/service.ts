@@ -1,6 +1,6 @@
 import type { RoutePlanRequest, RoutePlanResponse } from '@tupu/contracts'
 import { config } from '../../shared/config.ts'
-import { UpstreamError } from '../../shared/errors.ts'
+import { NoRouteError, UpstreamError } from '../../shared/errors.ts'
 
 // Por debajo del defecto a propósito: rutas más largas y más tranquilas (0029)
 const BICYCLE_COSTING_OPTIONS = {
@@ -11,6 +11,18 @@ const BICYCLE_COSTING_OPTIONS = {
   avoid_bad_surfaces: 0.5,
 } as const
 
+// Más de 500 km (154), sin calle cerca (170-172), sin camino (442, 443); otro código es bug nuestro
+const NO_ROUTE_ERROR_CODES = new Set([154, 170, 171, 172, 442, 443])
+
+function isNoRoute(valhallaErrorBody: string): boolean {
+  try {
+    const code = (JSON.parse(valhallaErrorBody) as { error_code?: unknown }).error_code
+    return typeof code === 'number' && NO_ROUTE_ERROR_CODES.has(code)
+  } catch {
+    return false
+  }
+}
+
 type ValhallaRouteResponse = {
   trip?: {
     summary?: { length?: number; time?: number }
@@ -18,7 +30,10 @@ type ValhallaRouteResponse = {
   }
 }
 
-/** @throws {UpstreamError} Si Valhalla no responde o responde sin trazado. */
+/**
+ * @throws {NoRouteError} Si no hay camino en bici entre los dos puntos.
+ * @throws {UpstreamError} Si Valhalla no responde o responde sin trazado.
+ */
 export async function planRoute(request: RoutePlanRequest): Promise<RoutePlanResponse> {
   const response = await fetch(`${config.VALHALLA_URL}/route`, {
     method: 'POST',
@@ -35,7 +50,11 @@ export async function planRoute(request: RoutePlanRequest): Promise<RoutePlanRes
     throw new UpstreamError('Valhalla', cause)
   })
 
-  if (!response.ok) throw new UpstreamError('Valhalla', await response.text())
+  if (!response.ok) {
+    const body = await response.text()
+    if (isNoRoute(body)) throw new NoRouteError(body)
+    throw new UpstreamError('Valhalla', body)
+  }
 
   const trip = ((await response.json()) as ValhallaRouteResponse).trip
   const shape = trip?.legs?.[0]?.shape

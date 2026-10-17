@@ -1,4 +1,13 @@
 #!/usr/bin/env sh
 # Sin CI, este es el único control antes de que el código llegue a main (0023)
 set -e
+
+# main solo recibe PR desde develop (0042)
+while read -r _ _ remote_ref _; do
+  if [ "$remote_ref" = "refs/heads/main" ]; then
+    echo "Push a main rechazado: abre un PR desde develop (0042)." >&2
+    exit 1
+  fi
+done
+
 bun run check

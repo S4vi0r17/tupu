@@ -17,7 +17,8 @@ no se desalinean. En el del móvil va la URL que verá el teléfono, nunca `loca
 
 | Comando | Qué hace |
 |---|---|
-| `bun run check` | Lint y tipos. Lo corre el hook de pre-push |
+| `bun run check` | Lint, tipos y la configuración de agentes. Lo corre el hook de pre-push |
+| `bun run check:agents` | Symlinks de `CLAUDE.md`, reglas y skills, y tareas de editor ([agents.md](conventions/agents.md)) |
 | `bun run lint` / `lint:fix` | Biome, incluidas las reglas de dependencia |
 | `bun run typecheck` | `tsc --noEmit` en los cuatro paquetes |
 | `bun run dev:api` | API en el puerto 3001, con recarga |
@@ -80,6 +81,8 @@ curl -s -X POST https://tupu-api.s4vi0r.dev/v1/routing/plan \
   -H 'content-type: application/json' \
   -d '{"from":{"lat":-12.1219,"lng":-77.0297},"to":{"lat":-12.0464,"lng":-77.0428}}'
 ```
+
+Desarrollo responde igual en `tupu-api.dev.s4vi0r.dev` (0042).
 
 | Respuesta | Qué pasa |
 |---|---|
