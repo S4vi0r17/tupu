@@ -141,12 +141,7 @@ después. La ruta es una consulta de TanStack Query: la polilínea se decodifica
 mal formada es un error de la consulta y no tumba la pantalla. «No hay ruta» no se reintenta.
 
 Cuando llega, la cámara pasa a `free` y encuadra el trazado. Va en violeta, debajo del ciclista.
-
-| Respuesta | Qué ve el usuario |
-|---|---|
-| 200 | Distancia y tiempo, y «Quitar ruta» |
-| 422 `no_route` | Que no hay ruta en bici hasta ahí |
-| 503 o sin señal | Que el servidor no responde, con «Reintentar» |
+Qué ve el usuario en cada respuesta, en [SPEC-ROUTE-04](specs/route.md).
 
 ## El API
 
