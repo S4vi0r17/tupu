@@ -18,6 +18,7 @@ docs/
   data-model.md           tablas y contratos
   glossary.md             términos
   decisions/              una decisión por archivo, con su índice
+  specs/                  lo que la app garantiza, regla por regla (0043)
   conventions/            commits, comentarios, docs, flujo de trabajo
 ```
 

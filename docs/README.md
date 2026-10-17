@@ -8,6 +8,7 @@
 | [commands.md](commands.md) | Qué corre cada comando |
 | [data-model.md](data-model.md) | Tablas y contratos |
 | [glossary.md](glossary.md) | OSM, PostGIS, tiles… |
+| [specs/](specs/) | Lo que la app garantiza, regla por regla |
 | [decisions/](decisions/) | El porqué de cada elección |
 | [conventions/workflow.md](conventions/workflow.md) | Cómo se trabaja y dónde va cada cosa |
 | [conventions/commits.md](conventions/commits.md) | Mensajes de commit |

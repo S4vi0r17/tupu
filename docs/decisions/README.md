@@ -47,3 +47,4 @@ Una por archivo. El formato y cuándo escribir una, en
 | [0040](0040-voice-scope-requires-google.md) | El MVP suma voz, velocímetro y pantalla encendida, y requiere Google Play Services | Reemplaza en parte a 0010 |
 | [0041](0041-cycleways-in-one-request.md) | La red ciclista se pide entera, una vez | Reemplaza en parte a 0038 |
 | [0042](0042-changes-go-through-staging.md) | Los cambios entran por `staging`; `main` solo recibe a `staging` | Reemplaza en parte a 0021 |
+| [0043](0043-specs-before-code.md) | Las reglas se escriben antes que el código, y se verifican a mano hasta que haya tests |  |
