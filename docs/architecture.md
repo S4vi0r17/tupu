@@ -2,6 +2,28 @@
 
 De OpenStreetMap a la pantalla. El porqué de cada pieza está en las [decisiones](decisions/).
 
+## El repo
+
+```
+apps/api             Hono sobre Bun, por funcionalidad
+apps/mobile          Expo Router
+packages/contracts   esquemas de Zod entre el API y la app
+packages/geo         matemática geográfica pura
+infra/               Docker, PostGIS, Valhalla y la ingesta de OSM
+docs/                decisiones, convenciones y cómo funciona
+```
+
+| Desde | Puede importar |
+|---|---|
+| `apps/*` | `packages/*` |
+| `packages/*` | Nada de `apps/*` |
+| `apps/mobile` | Del API, solo el tipo `AppType` |
+| `apps/api` | Nada del móvil |
+| `features/x` | De otra feature, solo su `index.ts` |
+
+Lo hace cumplir Biome (0002, 0008). Una regla mal escrita no dispara y parece verde: si se tocan,
+se prueban rompiéndolas a propósito.
+
 ## El recorrido de un dato
 
 Dos caminos que salen de la misma descarga, para que el mapa no muestre una ciclovía por la que
