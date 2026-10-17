@@ -56,5 +56,17 @@ Solo el porqué, si el subject no lo dice.
 
 ## Reglas
 
+- Solo se commitea cuando se pide. El push, solo si se pide de forma explícita.
+- Nunca `--no-verify`: si un hook rechaza, se corrige la causa.
 - Sin trailers: ni `Co-Authored-By`, ni enlaces de sesión, ni firmas de herramientas.
 - Las migraciones de Drizzle, en su propio commit: no se revierten con `git revert` (0007).
+
+## Hooks
+
+`bun install` los activa (`core.hooksPath` apunta a `.githooks/`).
+
+| Hook | Qué hace |
+|---|---|
+| `pre-commit` | Biome sobre lo preparado |
+| `commit-msg` | Rechaza un mensaje fuera de este formato. Lee los tipos y scopes de estas tablas |
+| `pre-push` | Rechaza un push a `main` (0042) y corre `bun run check` |

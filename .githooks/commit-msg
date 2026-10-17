@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+# Valida el mensaje contra commits.md, de donde lee los tipos y los scopes. Argumento: el archivo del mensaje.
+export LC_ALL=C.UTF-8
+cd "$(git rev-parse --show-toplevel)" || exit 1
+
+message=$(grep -v '^#' "$1")
+subject=$(printf '%s\n' "$message" | sed -n '/./{p;q}')
+
+case "$subject" in Merge\ * | Revert\ * | fixup!\ * | squash!\ *) exit 0 ;; esac
+
+# Las palabras entre comillas invertidas de cada tabla
+words_in() { sed -n "/^## $1/,/^## /p" docs/conventions/commits.md | grep '^|' | grep -o '`[a-z]*`' | tr -d '`' | paste -sd '|'; }
+types=$(words_in Tipo)
+scopes=$(words_in Scope)
+
+errors=()
+format="^($types)(\(($scopes)\))?!?: [a-z0-9\`]"
+[ -z "$subject" ] && errors+=("el mensaje está vacío")
+[ -n "$subject" ] && ! [[ "$subject" =~ $format ]] &&
+  errors+=("el formato es «type(scope): subject» en minúscula, con los tipos y scopes de commits.md")
+[ "${#subject}" -gt 72 ] && errors+=("el subject tiene ${#subject} caracteres; el máximo es 72")
+[[ "$subject" == *. ]] && errors+=("el subject no lleva punto final")
+printf '%s\n' "$message" | grep -qiE '^(co-authored-by|signed-off-by):|generated with' &&
+  errors+=("sin trailers ni atribución de IA")
+
+[ "${#errors[@]}" -eq 0 ] && exit 0
+echo "Commit rechazado (docs/conventions/commits.md):" >&2
+printf '  - %s\n' "${errors[@]}" >&2
+exit 1

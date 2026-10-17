@@ -1,0 +1,40 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Verificar",
+      "type": "shell",
+      "command": "bun run check",
+      "group": { "kind": "build", "isDefault": true }
+    },
+    {
+      "label": "Formatear",
+      "type": "shell",
+      "command": "bun run lint:fix"
+    },
+    {
+      "label": "Levantar PostGIS",
+      "type": "shell",
+      "command": "bun run infra:up"
+    },
+    {
+      "label": "API en desarrollo",
+      "type": "shell",
+      "command": "bun run dev:api",
+      "isBackground": true
+    },
+    {
+      "label": "Metro",
+      "type": "shell",
+      "command": "bun run dev:mobile",
+      "isBackground": true
+    },
+    {
+      "label": "Preparar el clon",
+      "type": "shell",
+      "command": "bun install",
+      "runOptions": { "runOn": "folderOpen" },
+      "presentation": { "reveal": "silent" }
+    }
+  ]
+}

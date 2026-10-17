@@ -1,6 +1,6 @@
 # 0021 — GitHub, con rama por funcionalidad y pull request
 
-Aceptada · 2026-09-08
+Aceptada · 2026-09-08 · Reemplazada en parte por 0042
 
 ## Contexto
 

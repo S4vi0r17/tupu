@@ -2,12 +2,14 @@
 
 ## Un cambio, de punta a punta
 
-1. Rama desde `main`: `feat/…`, `fix/…`, `docs/…` (0021).
-2. El código, con los [comentarios](comments.md) justos.
-3. Los docs que describen lo que cambió, en el mismo commit que el código:
+1. Rama desde `staging`: `feat/…`, `fix/…`, `docs/…`, `chore/…` (0042).
+2. La regla antes que el código, en `docs/specs/` ([proceso](../specs/process.md), 0043).
+3. El código, con los [comentarios](comments.md) justos.
+4. Los docs que describen lo que cambió, en el mismo commit que el código:
 
    | Si cambia… | Se actualiza |
    |---|---|
+   | Lo que la app garantiza | Su spec y `specs/traceability.md` |
    | Una pieza del MVP | `roadmap.md` |
    | Cómo funciona algo | `architecture.md` |
    | Un comando o un script | `commands.md` |
@@ -15,9 +17,10 @@
    | El despliegue o la infra | `infra/README.md` |
    | Algo decidido | Una decisión nueva ([docs.md](docs.md)) |
 
-4. `bun run check`. El hook de pre-push lo corre igual; no hay CI (0023).
-5. [Commits](commits.md) en inglés, sin trailers.
-6. Pull request a `main`. Al mergear, Dokploy despliega.
+5. `bun run check`. El hook de pre-push lo corre igual; no hay CI (0023).
+6. [Commits](commits.md) en inglés, sin trailers.
+7. Pull request a `staging`. Cuando `staging` anduvo en el teléfono, PR de `staging` a `main`:
+   al mergear, Dokploy despliega.
 
 ## Antes de abrir el PR
 

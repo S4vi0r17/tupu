@@ -21,6 +21,8 @@ Actualizado el 2026-10-16.
 
 - Licencia del repositorio.
 - Icono de la app. El nombre y el `package id` ya están (`pe.tupu.app`).
+- `opposite_track` cae en `shared` y no en `track`: falta en la clasificación de la ingesta
+  (SPEC-CYCLE-01). Arreglarlo pide correr `osm:update`.
 - Etiquetas del mapa horizontales cuando el mapa gira (0039).
 - La pantalla que explica el permiso de ubicación «siempre». Mal escrita, la gente lo niega (0015).
 - Detectar que el ciclista se salió de la ruta y recalcularla (0040).
