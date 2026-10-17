@@ -13,6 +13,14 @@ export class UpstreamError extends Error {
   }
 }
 
+/** Valhalla respondió, pero no hay camino en bici entre los dos puntos. Sale como 422. */
+export class NoRouteError extends Error {
+  constructor(override readonly cause?: unknown) {
+    super('No hay ruta entre los puntos pedidos')
+    this.name = 'NoRouteError'
+  }
+}
+
 type ErrorBody = {
   error: { code: string; message: string }
 }
@@ -23,6 +31,14 @@ export function toErrorResponse(error: Error, c: Context) {
       error: { code: 'bad_request', message: error.message },
     }
     return c.json(body, error.status)
+  }
+
+  if (error instanceof NoRouteError) {
+    console.info(error.message, error.cause)
+    const body: ErrorBody = {
+      error: { code: 'no_route', message: 'No hay ruta en bici entre esos puntos.' },
+    }
+    return c.json(body, 422 satisfies ContentfulStatusCode)
   }
 
   if (error instanceof UpstreamError) {

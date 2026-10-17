@@ -135,6 +135,7 @@ no, se ignora sin avisar.
 | Código | HTTP | Cuándo |
 |---|---|---|
 | `bad_request` | 400 | Zod rechazó la petición |
+| `no_route` | 422 | Valhalla no encontró camino: sin calle cerca o a más de 500 km |
 | `upstream_unavailable` | 503 | Valhalla o PostGIS no respondieron |
 | `internal` | 500 | Cualquier otra cosa |
 
