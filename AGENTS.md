@@ -19,6 +19,7 @@ Una por tema. Leer la que aplique antes de tocar algo:
 | [`comments.md`](docs/conventions/comments.md) | Comentarios y TSDoc |
 | [`docs.md`](docs/conventions/docs.md) | Dónde va cada doc, su estilo y las decisiones |
 | [`agents.md`](docs/conventions/agents.md) | Qué lee cada herramienta de IA y qué tiene prohibido |
+| [`editors.md`](docs/conventions/editors.md) | Tareas de VS Code y Zed |
 | [`stack.md`](docs/stack.md) | Qué se usa y qué no |
 | [`architecture.md`](docs/architecture.md) | El repo, qué puede importar a qué y cómo funciona |
 | [`roadmap.md`](docs/roadmap.md) | Lo que falta, y lo que bloquea pasar el APK o crear cuentas |

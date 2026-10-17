@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Comprueba que la configuración de agentes esté entera: instrucciones, reglas y skills.
+# Comprueba que la configuración de agentes y editores esté entera.
 set -uo pipefail
 cd "$(dirname "$0")/.." || exit 1
 
@@ -25,6 +25,12 @@ for skill in .claude/skills/*/; do
   [ "$(readlink ".agents/skills/$name")" = "../../.claude/skills/$name" ] ||
     errors+=(".agents/skills/$name debe enlazar a .claude/skills/$name")
 done
+
+bun -e '
+  const vscode = (await Bun.file(".vscode/tasks.json").json()).tasks.map((task) => task.label)
+  const zed = (await Bun.file(".zed/tasks.json").json()).map((task) => task.label)
+  process.exit(vscode.toSorted().join() === zed.toSorted().join() ? 0 : 1)
+' || errors+=("las tareas de .vscode/tasks.json y .zed/tasks.json no coinciden")
 
 [ "${#errors[@]}" -eq 0 ] && exit 0
 printf '%s\n' "${errors[@]}" >&2

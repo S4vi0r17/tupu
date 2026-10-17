@@ -19,7 +19,7 @@ docs/
   glossary.md             términos
   decisions/              una decisión por archivo, con su índice
   specs/                  lo que la app garantiza, regla por regla (0043)
-  conventions/            flujo, commits, comentarios, docs y agentes
+  conventions/            flujo, commits, comentarios, docs, agentes y editores
 ```
 
 No se crean documentos nuevos sin pasar por esta lista. Si algo no encaja, se agrega a la lista

@@ -1,0 +1,8 @@
+[
+  { "label": "Verificar", "command": "bun run check", "reveal": "always" },
+  { "label": "Formatear", "command": "bun run lint:fix", "reveal": "always" },
+  { "label": "Levantar PostGIS", "command": "bun run infra:up", "reveal": "always" },
+  { "label": "API en desarrollo", "command": "bun run dev:api", "reveal": "always" },
+  { "label": "Metro", "command": "bun run dev:mobile", "reveal": "always" },
+  { "label": "Preparar el clon", "command": "bun install", "reveal": "always" }
+]

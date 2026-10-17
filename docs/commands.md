@@ -18,7 +18,7 @@ no se desalinean. En el del móvil va la URL que verá el teléfono, nunca `loca
 | Comando | Qué hace |
 |---|---|
 | `bun run check` | Lint, tipos y la configuración de agentes. Lo corre el hook de pre-push |
-| `bun run check:agents` | Symlinks de `CLAUDE.md`, reglas y skills ([agents.md](conventions/agents.md)) |
+| `bun run check:agents` | Symlinks de `CLAUDE.md`, reglas y skills, y tareas de editor ([agents.md](conventions/agents.md)) |
 | `bun run lint` / `lint:fix` | Biome, incluidas las reglas de dependencia |
 | `bun run typecheck` | `tsc --noEmit` en los cuatro paquetes |
 | `bun run dev:api` | API en el puerto 3001, con recarga |
