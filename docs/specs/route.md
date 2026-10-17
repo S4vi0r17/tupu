@@ -6,6 +6,8 @@
 
 ## SPEC-ROUTE-01 — El destino se fija con un toque largo o pegando coordenadas
 
+**Código:** `lib/coordinates.ts`, `components/route-panel.tsx`
+
 ### Criterios
 
 1. Un toque largo marca el punto y ofrece «Ir aquí», «Salir de aquí» y «Cancelar».
@@ -24,6 +26,8 @@
 
 ## SPEC-ROUTE-02 — Sin inicio fijado, la ruta sale de la posición al elegir el destino
 
+**Código:** `lib/route.ts`
+
 ### Criterios
 
 1. Con GPS y sin inicio, elegir el destino toma la posición de ese momento como inicio.
@@ -39,6 +43,8 @@ Sin verificar en el teléfono.
 ---
 
 ## SPEC-ROUTE-03 — El API distingue «no hay ruta» de «Valhalla no responde»
+
+**Código:** `features/routing/service.ts`, `shared/errors.ts`
 
 `POST /v1/routing/plan`, con el perfil ciclista de 0029.
 
@@ -63,6 +69,8 @@ Sin verificar en el teléfono.
 ---
 
 ## SPEC-ROUTE-04 — La app dice qué pasó con la ruta
+
+**Código:** `components/route-panel.tsx`, `components/route-layers.tsx`, `app/index.tsx`
 
 ### Criterios
 

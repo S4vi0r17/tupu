@@ -6,6 +6,8 @@
 
 ## SPEC-CAMERA-01 — Un botón cicla tres modos
 
+**Código:** `lib/camera.ts`, `components/camera-mode-button.tsx`
+
 | Modo | Centro | Rumbo del mapa |
 |---|---|---|
 | `free` | Quieto | Solo con dos dedos |
@@ -25,6 +27,8 @@ En la calle, 2026-09-10.
 ---
 
 ## SPEC-CAMERA-02 — La cámara se mueve solo si hace falta
+
+**Código:** `lib/camera.ts`
 
 ### Criterios
 

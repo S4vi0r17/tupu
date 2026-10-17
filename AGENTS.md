@@ -14,7 +14,7 @@ Una por tema. Leer la que aplique antes de tocar algo:
 | Convención | Aplica a |
 |---|---|
 | [`workflow.md`](docs/conventions/workflow.md) | Cómo se trabaja: ramas, spec, docs, verificar y reportar. **Obligatoria** |
-| [`process.md`](docs/specs/process.md) | Todo cambio de comportamiento: la regla antes que el código |
+| [`specs/`](docs/specs/README.md) | Todo cambio de comportamiento: la regla antes que el código (SDD) |
 | [`commits.md`](docs/conventions/commits.md) | Todo mensaje de commit y los hooks |
 | [`comments.md`](docs/conventions/comments.md) | Comentarios y TSDoc |
 | [`docs.md`](docs/conventions/docs.md) | Dónde va cada doc, su estilo y las decisiones |

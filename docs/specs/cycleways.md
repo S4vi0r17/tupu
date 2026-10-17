@@ -6,6 +6,8 @@
 
 ## SPEC-CYCLE-01 — Cada tramo cae en una de tres clases
 
+**Código:** `features/cycleways/ingest.ts`, `components/cycleway-layers.tsx`, `components/map-legend.tsx`
+
 En `cycleway`, `cycleway:both`, `cycleway:left` o `cycleway:right`. La primera que aplica gana.
 
 | Clase | Cuándo | Se dibuja |
@@ -30,6 +32,8 @@ En `cycleway`, `cycleway:both`, `cycleway:left` o `cycleway:right`. La primera q
 
 ## SPEC-CYCLE-02 — Una ingesta que encoge la red a menos de la mitad se revierte
 
+**Código:** `features/cycleways/ingest.ts`
+
 ### Criterios
 
 1. Con 2338 tramos en la corrida anterior, una de 1168 se revierte y deja la tabla como estaba.
@@ -42,6 +46,8 @@ Lectura de `ingest.ts`, 2026-10-16. Sin correrlo contra una red encogida.
 ---
 
 ## SPEC-CYCLE-03 — La red viaja entera en una petición
+
+**Código:** `features/cycleways/queries.ts`, `lib/cycleways.ts`
 
 ### Criterios
 

@@ -6,6 +6,8 @@
 
 ## SPEC-COMPASS-01 — El cono apunta hacia donde mira el teléfono, sin temblar
 
+**Código:** `lib/heading.ts`, `packages/geo/src/bearing.ts`, `components/rider-puck.tsx`
+
 ### Criterios
 
 1. Usa `trueHeading`; mientras vale -1, antes del primer fix, usa `magHeading`.
@@ -20,6 +22,8 @@ En la calle, con el teléfono en el portacelular, 2026-09-10.
 ---
 
 ## SPEC-COMPASS-02 — Cuando la brújula no sirve, la app lo dice
+
+**Código:** `lib/heading.ts`, `app/index.tsx`
 
 | Situación | Cómo se detecta | Aviso |
 |---|---|---|

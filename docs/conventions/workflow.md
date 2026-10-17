@@ -3,13 +3,13 @@
 ## Un cambio, de punta a punta
 
 1. En `develop`. Una rama aparte, `feat/…` o `fix/…`, solo si puede quedar a medias días (0042).
-2. La regla antes que el código, en `docs/specs/` ([proceso](../specs/process.md), 0043).
+2. La regla antes que el código, en `docs/specs/` ([proceso](../specs/README.md), 0043).
 3. El código, con los [comentarios](comments.md) justos.
 4. Los docs que describen lo que cambió, en el mismo commit que el código:
 
    | Si cambia… | Se actualiza |
    |---|---|
-   | Lo que la app garantiza | Su spec y `specs/traceability.md` |
+   | Lo que la app garantiza | Su spec en `specs/` |
    | Una pieza del MVP | `roadmap.md` |
    | Cómo funciona algo | `architecture.md` |
    | Un comando o un script | `commands.md` |

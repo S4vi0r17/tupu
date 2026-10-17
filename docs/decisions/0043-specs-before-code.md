@@ -12,7 +12,7 @@ criterio que alguien pudiera comprobar. Lo que viene, detectar que el ciclista s
 ## Decisión
 
 SDD: ninguna regla llega al código sin su spec en `docs/specs/`, con criterios numerados y
-verificables. El proceso está en [`specs/process.md`](../specs/process.md).
+verificables. El proceso está en [`specs/README.md`](../specs/README.md).
 
 Sin tests todavía (0024). Cada criterio dice cómo se verifica hoy: con `curl`, en el teléfono o
 en la calle, con fecha. Cuando lleguen los tests, cada criterio se vuelve uno.
