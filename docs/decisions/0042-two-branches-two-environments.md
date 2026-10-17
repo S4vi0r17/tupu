@@ -12,7 +12,7 @@ reposo los tres servicios usan unos 300 MiB (medido el 2026-10-10). Lo caro es c
 ## Decisión
 
 ```
-develop ── commit ── push ──▶ desarrollo   tupu-api-dev.s4vi0r.dev
+develop ── commit ── push ──▶ desarrollo   tupu-api.dev.s4vi0r.dev
    │
    └── PR, cuando anduvo en la calle ──▶ main ──▶ producción   tupu-api.s4vi0r.dev
 ```

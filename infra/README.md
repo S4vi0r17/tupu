@@ -44,7 +44,7 @@ Dos entornos del mismo proyecto, con el mismo `infra/compose.prod.yaml` (0042):
 | Entorno | Rama | Dominio |
 |---|---|---|
 | `production` | `main` | `tupu-api.s4vi0r.dev` |
-| `development` | `develop` | `tupu-api-dev.s4vi0r.dev` |
+| `development` | `develop` | `tupu-api.dev.s4vi0r.dev` |
 
 Cada uno con su servicio Compose, sus variables, sus volúmenes y Autodeploy en su rama. Traefik
 delante; solo el API sale a internet. PostGIS y Valhalla viven en la red `internal` de cada uno.
