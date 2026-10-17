@@ -2,7 +2,7 @@
 
 ## Un cambio, de punta a punta
 
-1. Rama desde `staging`: `feat/…`, `fix/…`, `docs/…`, `chore/…` (0042).
+1. En `develop`. Una rama aparte, `feat/…` o `fix/…`, solo si puede quedar a medias días (0042).
 2. La regla antes que el código, en `docs/specs/` ([proceso](../specs/process.md), 0043).
 3. El código, con los [comentarios](comments.md) justos.
 4. Los docs que describen lo que cambió, en el mismo commit que el código:
@@ -19,10 +19,10 @@
 
 5. `bun run check`. El hook de pre-push lo corre igual; no hay CI (0023).
 6. [Commits](commits.md) en inglés, sin trailers.
-7. Pull request a `staging`. Cuando `staging` anduvo en el teléfono, PR de `staging` a `main`:
-   al mergear, Dokploy despliega.
+7. Push a `develop`: despliega desarrollo. Cuando anduvo en la calle, PR de `develop` a `main`:
+   despliega producción. Después, `git pull origin main` en `develop`.
 
-## Antes de abrir el PR
+## Antes del PR a `main`
 
 - `bun run check` en verde.
 - Nada en `docs/` que contradiga el código.

@@ -188,5 +188,6 @@ compilación del móvil (0004).
 
 ## Producción
 
-Un proyecto de Dokploy con API, PostGIS y Valhalla. Solo el API sale a internet. Detalle en
+Dos entornos de Dokploy con el mismo compose: desarrollo desde `develop` y producción desde `main`
+(0042). Cada uno con su API, PostGIS y Valhalla; solo el API sale a internet. Detalle en
 [`infra/README.md`](../infra/README.md).

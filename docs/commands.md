@@ -82,6 +82,8 @@ curl -s -X POST https://tupu-api.s4vi0r.dev/v1/routing/plan \
   -d '{"from":{"lat":-12.1219,"lng":-77.0297},"to":{"lat":-12.0464,"lng":-77.0428}}'
 ```
 
+Desarrollo responde igual en `tupu-api-dev.s4vi0r.dev` (0042).
+
 | Respuesta | Qué pasa |
 |---|---|
 | `{"status":"ok"}` | El API está arriba y su configuración es válida |

@@ -37,10 +37,17 @@ después, el grafo queda sin pendientes y `use_hills` no hace nada (0029).
 Valhalla escucha en `127.0.0.1` en local. En el VPS no se publica: un motor de ruteo abierto es
 CPU gratis para cualquiera (0009).
 
-## Producción
+## Dokploy
 
-Un proyecto de Dokploy tipo Compose, con `infra/compose.prod.yaml`. Traefik delante; solo el API
-sale a internet. PostGIS y Valhalla viven en la red `internal`.
+Dos entornos del mismo proyecto, con el mismo `infra/compose.prod.yaml` (0042):
+
+| Entorno | Rama | Dominio |
+|---|---|---|
+| `production` | `main` | `tupu-api.s4vi0r.dev` |
+| `development` | `develop` | `tupu-api-dev.s4vi0r.dev` |
+
+Cada uno con su servicio Compose, sus variables, sus volúmenes y Autodeploy en su rama. Traefik
+delante; solo el API sale a internet. PostGIS y Valhalla viven en la red `internal` de cada uno.
 
 La imagen del API se construye desde la raíz del repo, porque necesita `bun.lock` y `packages/`.
 `--filter '@tupu/api'` deja fuera las dependencias del móvil: unos 150 MB.
@@ -61,6 +68,8 @@ Solo `POSTGRES_USER`, `POSTGRES_PASSWORD` y `POSTGRES_DB`, distintas de las de `
 4. Cargar las variables y desplegar. El API migra al arrancar.
 5. Construir el grafo: Valhalla no arranca sin él.
 
+Desarrollo, igual: rama `develop`, su dominio y otra contraseña.
+
 ### El grafo en el VPS
 
 Por SSH, desde la carpeta que clonó Dokploy:
@@ -77,6 +86,8 @@ ENV_FILE=.env \
 `COMPOSE_PROJECT` tiene que ser exacto. Dokploy le agrega un sufijo (`tupu-intra-6txm2f`), y con
 otro nombre Docker crea volúmenes vacíos en vez de usar los que sirven.
 
+Un entorno a la vez: dos grafos en construcción son dos picos de 3,1 GiB, y no entran en 4 GB.
+
 ## Tamaño del VPS
 
 Medido el 2026-10-10 con el extracto de Perú, Valhalla 3.8.3 y 16 hilos:
@@ -84,7 +95,7 @@ Medido el 2026-10-10 con el extracto de Perú, Valhalla 3.8.3 y 16 hilos:
 | | Pico | En reposo |
 |---|---|---|
 | RAM al construir el grafo | 3,1 GiB | |
-| RAM de los tres servicios | | ~300 MiB |
+| RAM de los tres servicios, por entorno | | ~300 MiB |
 | Volumen de Valhalla | 2,7 GB | 840 MB |
 | Volumen de PostGIS | | 115 MB |
 | Imágenes de Docker | | ~2 GB |
@@ -97,7 +108,7 @@ Medido el 2026-10-10 con el extracto de Perú, Valhalla 3.8.3 y 16 hilos:
 | `elevation/`, solo Lima | 41 MB |
 | `admins.sqlite`, fronteras | 12 MB |
 
-Alcanzan 4 GB de RAM y 10 GB libres. Con menos núcleos el grafo tarda más; es de esperar que use
+Alcanzan 4 GB de RAM y 10 GB libres; con los dos entornos, unos 12 GB (estimado). Con menos núcleos el grafo tarda más; es de esperar que use
 menos RAM, pero no está medido. Para volver a medir: `docker stats` mientras corre `osm:update`.
 
 ## Pendiente

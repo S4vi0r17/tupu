@@ -15,7 +15,7 @@ Actualizado el 2026-10-16.
 | Brújula y cámara que te sigue | Hecho y probado en la calle el 2026-09-10 (0025, 0039) |
 | Velocímetro | Por hacer (0040) |
 | Pantalla que no se apaga sola | Por hacer (0040) |
-| Servidor | Desplegado en Dokploy ([infra](../infra/README.md)) |
+| Servidor | Producción desplegada en Dokploy. Falta crear el entorno de desarrollo (0042, [infra](../infra/README.md)) |
 
 ## Pendientes sin decisión
 
@@ -40,7 +40,6 @@ Actualizado el 2026-10-16.
 | CI | Cuando haya tests, o un despliegue roto cueste una tarde | 0023 |
 | Tiles del mapa propios | Cuando llegue el uso sin señal | 0016 |
 | Cron para `osm:update` | Cuando correrlo a mano moleste | 0012, 0020 |
-| Entorno de pruebas | Cuando haya gente usando la app | 0018 |
 | iOS | Después del MVP | 0019 |
 | `react-native-background-geolocation` | Si `expo-location` falla en la calle | 0015 |
 | Buscar destino por nombre | Cuando pegar coordenadas moleste | 0028 |
